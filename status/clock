@@ -1,0 +1,12 @@
+#!/bin/sh
+
+icon=""
+date="$(date '+%a %d %b %Y')"
+hour_minute="$(date '+%H:%M')"
+
+printf "%s %s ", "$icon" "$hour_minute"
+
+case $BUTTON in
+    1) dunstify --replace=1 "$date" "Right click to open calcurse";;
+	3) st -f 'mono:pixelsize=20:antialias=true:autohint=true' -e calcurse & disown;;
+esac

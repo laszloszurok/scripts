@@ -1,0 +1,3 @@
+#!/bin/bash
+# my hp laptops wireless card does not use its right settings by default, so i have to run this to have normal wifi signal strength
+sudo modprobe -r rtl8723de && sleep 5 && sudo modprobe rtl8723de ant_sel=2

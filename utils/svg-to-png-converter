@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# needs inkscape installed
+# usage: svg-to-png-converter /path/to/folder/containing/svgs
+# pngs will be in the same dir
+
+path=$1
+
+if [ ! -d "$path" ]; then
+    printf "%s\n" "Directory does not exist"
+else
+    printf "%s\n" "Converting svg files to png, please wait"
+    for file in "$path"/*.svg; do
+        inkscape -z -e "$path"/`basename "$file" .svg`.png -w 1024 -h 1024 "$file"
+    done
+    printf "%s\n" "Conversion finished (files are in the $path directory)"
+fi

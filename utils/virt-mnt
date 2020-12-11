@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script is used to mount a shared directory on a virt-manager virtual machine
+
+# exit if not using sudo
+if ! [ $(id -u) = 0 ]; then
+   echo "The script need to be run as root." >&2
+   exit 1
+fi
+
+# checking who is the current user
+if [ $SUDO_USER ]; then
+    current_user=$SUDO_USER
+else
+    current_user=$(whoami)
+fi
+
+[ -d /home/$current_user/shared ] || sudo -u $current_user mkdir /home/$current_user/shared && echo "Created directory /home/$current_user/shared"
+
+mount -t 9p -o trans=virtio /host_device /home/$current_user/shared && echo "Shared directory mounted successfully under /home/$current_user/shared" || echo "Something went wrong. Check your virt-manager filesystem passthrough settings. (expected target path: /host_device)"

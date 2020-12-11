@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# If this script is given an image, it sets that image as the wallpaper.
+# Otherwise it sets the wallpaper to the last image that was used.
+
+wallpaper=$HOME/.config/wallpaper
+[ -f "$1" ] && ln -sf "$(readlink -f "$1")" "$wallpaper" && notify-send -i "$wallpaper" "Changing wallpaper..."
+xwallpaper --zoom "$wallpaper"

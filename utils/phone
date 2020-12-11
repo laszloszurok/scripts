@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# This script is used to mount and unmount an Android phone with jmtpfs in an easier way.
+
+print_usage() {
+    echo "Usage: phone -m DIRECTORY to mount, phone -u DIRECTORY to unmount"
+}
+
+if [ "$1" == "-m" ]; then
+    [ -n "$2" ] && jmtpfs $2 || print_usage
+else
+    if [ "$1" == "-u" ]; then
+        [ -n "$2" ] && fusermount -u $2 || print_usage
+    else
+        print_usage
+    fi
+fi

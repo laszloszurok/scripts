@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo -A $(dmenu_path | dmenu -h 26 -fn "monospace:12" -p "run with sudo:")

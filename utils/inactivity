@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# This script uses the output of the xset command to determine if the screen is turned off.
+# If it is, it starts xautolock, then it waits for the given time (based on the battery status)
+# and then checks the state of the monitor again. If the screen is still off after the wait time,
+# no audio is playing and qbittorrent is not running, the system will be suspended with systemctl.
+
+xset dpms 300 300 300 # monitor switches off after 300 seconds
+
+while true
+do
+    MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
+    if [ "$MON_STATE" == "On" ]; then
+        killall xautolock
+    fi
+    if [ "$MON_STATE" == "Off" ]; then
+        xautolock -time 2 -locker slock &
+        BAT_STATE=`< /sys/class/power_supply/BAT1/status`
+        [ "$BAT_STATE" == "Discharging" ] && TIME_TO_WAIT=600 || TIME_TO_WAIT=900
+        NUM="0"
+        while [ $NUM -lt $TIME_TO_WAIT -a $MON_STATE == "Off" ]
+        do
+            NUM=$[$NUM+1]
+            MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
+            sleep 1
+        done
+        MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
+        AUDIO_STATE=$(cat /proc/asound/card0/pcm0p/sub0/status | head -1 | awk '{print $NF}')
+        [ "$MON_STATE" == "Off" ] && [ "$AUDIO_STATE" != "RUNNING"  ] && [ -z "$(pidof qbittorrent)" ] && systemctl suspend
+    fi
+    sleep 30
+done
