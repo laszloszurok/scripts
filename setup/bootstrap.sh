@@ -159,6 +159,9 @@ alias cfg="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
 cfg config --local status.showUntrackedFiles no
 cfg checkout -f
 
+# cloning my scripts
+git clone https://github.com/laszloszurok/scripts $HOME/source/scripts
+
 # cloning my suckless builds
 git clone https://github.com/laszloszurok/dwm.git $HOME/source/suckless-builds/dwm
 git clone https://github.com/laszloszurok/dwmblocks.git $HOME/source/suckless-builds/dwmblocks
@@ -183,7 +186,7 @@ echo $passwd | sudo -S -u $current_user make install
 
 cd
 
-# cloning my wallpaper repo
+# cloning my wallpapers
 git clone https://github.com/laszloszurok/Wallpapers $HOME/pictures/wallpapers
 
 # spotify wm
