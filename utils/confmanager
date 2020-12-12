@@ -28,7 +28,7 @@ else
     commit_msg=${arg_array[$len-1]} # last arg is a commit message
 fi
 
-git_command="/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME" # the command to manage the bare repo
+git_command="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME" # the command to manage the bare repo
 
 if [ "$action" == "a" ]; then
     [ $len -lt 2 ] && print_usage && exit 1 # exit if arguments are wrong
