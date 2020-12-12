@@ -8,10 +8,6 @@ stty "$stty_orig"                        # restore terminal setting.
 # checking who is the current user
 current_user=$(whoami)
 
-# check internet connection
-systemctl enable --now NetworkManager
-ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo "internet connection ok" || `echo "no internet connection"; exit 1`
-
 # sync mirrors, update the system
 echo $passwd | sudo -S pacman -Syyu
 
@@ -73,7 +69,7 @@ echo $passwd | sudo -S pacman -S --noconfirm \
 
 # printing service
 echo $passwd | sudo -S pacman -S --noconfirm cups
-systemctl enable org.cups.cupsd.socket
+echo $passwd | sudo -S systemctl enable org.cups.cupsd.socket
 
 # firewall
 echo $passwd | sudo -S pacman -S --noconfirm ufw
@@ -96,7 +92,7 @@ echo $passwd | sudo -S pacman -S --noconfirm \
     qbittorrent gimp scrot lxsession dunst sxiv texlive-most usbutils newsboat youtube-dl pass translate-shell galculator gnu-netcat caclurse
 
 # installing yay
-git clone https://aur.archlinux.org/yay.git $HOME/source
+git clone https://aur.archlinux.org/yay.git $HOME/source/yay
 cd $HOME/source/yay
 makepkg -si
 
@@ -118,26 +114,6 @@ yay -S --noconfirm zoxide-bin
 
 # nextdns settings
 echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
-
-# service to launch slock on suspend
-echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
-Description=Lock X session using slock for user %i
-Before=sleep.target
-Before=suspend.target
-
-[Service]
-User=%i
-Type=simple
-Environment=DISPLAY=:0
-ExecStartPre=/usr/bin/xset dpms force suspend
-ExecStart=/usr/local/bin/slock
-TimeoutSec=infinity
-
-[Install]
-WantedBy=sleep.target
-WantedBy=suspend.target"
-
-echo $passwd | sudo -S systemctl enable slock@$current_user.service
 
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
@@ -213,7 +189,27 @@ echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"
 EndSection"
 
 # theme settings
-echo $passwd | sudo -S tee /etc/environment <<< "QT_QPA_PLATFORMTHEME=qt5ct"
+echo $passwd | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=qt5ct"
+
+# service to launch slock on suspend
+echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
+Description=Lock X session using slock for user %i
+Before=sleep.target
+Before=suspend.target
+
+[Service]
+User=%i
+Type=simple
+Environment=DISPLAY=:0
+ExecStartPre=/usr/bin/xset dpms force suspend
+ExecStart=/usr/local/bin/slock
+TimeoutSec=infinity
+
+[Install]
+WantedBy=sleep.target
+WantedBy=suspend.target"
+
+echo $passwd | sudo -S systemctl enable slock@$current_user.service
 
 echo "
 Finished
