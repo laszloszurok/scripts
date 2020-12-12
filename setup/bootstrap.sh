@@ -123,9 +123,8 @@ EndSection"
 # cloning my configs from github to a bare repository for config file management
 echo ".cfg" >> .gitignore
 git clone --bare https://github.com/laszloszurok/suckless-arch $HOME/.cfg
-alias cfg="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
-cfg config --local status.showUntrackedFiles no
-cfg checkout -f
+/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME config --local status.showUntrackedFiles no
+/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME checkout -f
 
 # cloning my scripts
 git clone https://github.com/laszloszurok/scripts $HOME/source/scripts
