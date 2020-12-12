@@ -13,122 +13,114 @@ systemctl enable --now NetworkManager
 ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo "internet connection ok" || `echo "no internet connection"; exit 1`
 
 # sync mirrors, update the system
-pacman -Syyu
-
-# fixing wireless driver, connecting to wifi
-echo $passwd | sudo -S pacman -S --noconfirm dkms git
-git clone https://github.com/lwfinger/rtw88.git $HOME/.config/rtw88
-cd $HOME/.config/rtw88
-echo $passwd | sudo -S make
-make install
-cd
-echo $passwd | sudo -S dkms add ./.config/rtw88
-echo $passwd | sudo -S dkms install rtlwifi-new/0.6
-nmtui
+echo $passwd | sudo -S pacman -Syyu
 
 # x related
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S xf86-video-intel xf86-video-amdgpu xorg xorg-xinit
+    xf86-video-intel xf86-video-amdgpu xorg xorg-xinit
 
 # installing my most used software
 
+# git
+echo $passwd | sudo -S pacman -S --noconfirm git
+
 # graphical file explorer
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S pcmanfm-gtk3 gvfs gvfs-mtp ntfs-3g
+    pcmanfm-gtk3 gvfs gvfs-mtp ntfs-3g
 
 # archiving tools
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S zip unzip xarchiver
+    zip unzip xarchiver
 
 # pdf reader and office suite
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S zathura zathura-pdf-poppler libreoffice-still
+    zathura zathura-pdf-poppler libreoffice-still
 
 # themeing tools and themes
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S lxappearance qt5ct arc-gtk-theme arc-icon-theme picom python-pywal
+    lxappearance qt5ct arc-gtk-theme arc-icon-theme picom python-pywal
 
 # shell
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S zsh zsh-syntax-highlighting
+    zsh zsh-syntax-highlighting
 
 # other x tools
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S numlockx xclip xautolock xwallpaper
+    numlockx xclip xautolock xwallpaper
 
 # virt-manager
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S virt-manager qemu ebtables dnsmasq
-usermod -aG libvirt $current_user
-systemctl enable --now libvirtd
-virsh net-autostart default
+    virt-manager qemu ebtables dnsmasq
+echo $passwd | sudo -S usermod -aG libvirt $current_user
+echo $passwd | sudo -S systemctl enable --now libvirtd
+echo $passwd | sudo -S virsh net-autostart default
 
 # fonts
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S ttf-font-awesome ttf-dejavu
+    ttf-font-awesome ttf-dejavu
 
 # browsers
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S firefox qutebrowser
+    firefox qutebrowser
 
 # multimedia
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S mpv pulseaudio pulseaudio-alsa playerctl ffmpeg
+    mpv pulseaudio pulseaudio-alsa playerctl ffmpeg
 
 # vifm
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S vifm ffmpegthumbnailer ueberzug
+    vifm ffmpegthumbnailer ueberzug
 
 # printing service
-echo $passwd | sudo -S pacman -S --noconfirm pacman -S cups
+echo $passwd | sudo -S pacman -S --noconfirm cups
 systemctl enable org.cups.cupsd.socket
 
 # firewall
-echo $passwd | sudo -S pacman -S --noconfirm pacman -S ufw
+echo $passwd | sudo -S pacman -S --noconfirm ufw
 ufw default deny incoming
 ufw default allow outgoing
-ufw enable
+echo $passwd | sudo -S ufw enable
 
 # power saving
-echo $passwd | sudo -S pacman -S --noconfirm pacman -S powertop
+echo $passwd | sudo -S pacman -S --noconfirm powertop
 sh -c "echo -e '[Unit]\nDescription=PowerTop\n\n[Service]\nType=oneshot\nRemainAfterExit=true\nExecStart=/usr/bin/powertop --auto-tune\n\n[Install]\nWantedBy=multi-user.target\n' > /etc/systemd/system/powertop.service"
-systemctl enable --now powertop
+echo $passwd | sudo -S systemctl enable --now powertop
 
 # neovim
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S nodejs npm python-pip neovim
-sudo -u $current_user python3 -m pip install --user --upgrade pynvim
+    nodejs npm python-pip neovim
+echo $passwd | sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim
 
 # misc
 echo $passwd | sudo -S pacman -S --noconfirm \
-    pacman -S qbittorrent gimp scrot lxsession dunst sxiv texlive-most usbutils newsboat youtube-dl pass translate-shell galculator gnu-netcat caclurse
+    qbittorrent gimp scrot lxsession dunst sxiv texlive-most usbutils newsboat youtube-dl pass translate-shell galculator gnu-netcat caclurse
 
 # installing yay
 git clone https://aur.archlinux.org/yay.git $HOME/source
 cd $HOME/source/yay
-echo $passwd | sudo -S makepkg -si
+makepkg -si
 
 cd
 
 # installing softwer from the AUR
-echo $passwd | sudo -S yay -Sy spotify
-echo $passwd | sudo -S yay -Sy spicetify-cli
-echo $passwd | sudo -S yay -Sy protonvpn-cli-ng
-echo $passwd | sudo -S yay -Sy windscribe-cli
-echo $passwd | sudo -S yay -Sy hugo
-echo $passwd | sudo -S yay -Sy vscodium-bin
-echo $passwd | sudo -S yay -Sy ripcord
-echo $passwd | sudo -S yay -Sy brave-bin
-echo $passwd | sudo -S yay -Sy scrcpy
-echo $passwd | sudo -S yay -Sy palenight-gtk-theme
-echo $passwd | sudo -S yay -Sy nextdns
-echo $passwd | sudo -S yay -Sy zoxide-bin
+yay -S --noconfirm spotify
+yay -S --noconfirm spicetify-cli
+yay -S --noconfirm protonvpn-cli-ng
+yay -S --noconfirm windscribe-cli
+yay -S --noconfirm hugo
+yay -S --noconfirm vscodium-bin
+yay -S --noconfirm ripcord
+yay -S --noconfirm brave-bin
+yay -S --noconfirm scrcpy
+yay -S --noconfirm palenight-gtk-theme
+yay -S --noconfirm nextdns
+yay -S --noconfirm zoxide-bin
 
 # nextdns settings
 echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
 
 # service to launch slock on suspend
-echo $passwd | sudo -S echo "[Unit]
+echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
 Description=Lock X session using slock for user %i
 Before=sleep.target
 Before=suspend.target
@@ -143,14 +135,14 @@ TimeoutSec=infinity
 
 [Install]
 WantedBy=sleep.target
-WantedBy=suspend.target" > /etc/systemd/system/slock@.service
+WantedBy=suspend.target"
 
 echo $passwd | sudo -S systemctl enable slock@$current_user.service
 
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
-echo $passwd | sudo -S echo "Section \"ServerFlags\"
+echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
     Option \"DontVTSwitch\" \"True\"
-EndSection" > /etc/X11/xorg.conf.d/xorg.conf
+EndSection"
 
 # cloning my configs from github to a bare repository for config file management
 echo ".cfg" >> .gitignore
@@ -193,35 +185,35 @@ git clone https://github.com/laszloszurok/Wallpapers $HOME/pictures/wallpapers
 git clone https://github.com/dasJ/spotifywm.git $HOME/.config/spotifywm
 cd $HOME/.config/spotifywm
 make
-echo $passwd | sudo -S -u $current_user echo "LD_PRELOAD=/usr/lib/libcurl.so.4:$HOME/.config/spotifywm/spotifywm.so /usr/bin/spotify" > /usr/local/bin/spotify
+echo $passwd | sudo -S -u $current_user tee /usr/local/bin/spotify <<< "LD_PRELOAD=/usr/lib/libcurl.so.4:$HOME/.config/spotifywm/spotifywm.so /usr/bin/spotify"
 echo $passwd | sudo -S chmod +x /usr/local/spotify
 
-cd /home/$current_user
+cd
 
 # changing the default shell to zsh
 mkdir $HOME/.cache/zsh
-echo $passwd | sudo -S echo "ZDOTDIR=\$HOME/.config/zsh" > /etc/zsh/zshenv
-echo $passwd | sudo -S -u $current_user chsh -s /usr/bin/zsh
+echo $passwd | sudo -S tee /etc/zsh/zshenv <<< "ZDOTDIR=\$HOME/.config/zsh"
+chsh -s /usr/bin/zsh
 
 echo $passwd | sudo -S mkdir /usr/share/xsessions
-echo $passwd | sudo -S echo "[Desktop Entry]
+echo $passwd | sudo -S tee /usr/share/xsessions/dwm.desktop <<< "[Desktop Entry]
 Encoding=UTF-8
 Name=dwm
 Comment=Dynamic Window Manager
 Exec=/usr/local/bin/dwm
-Type=Application" > /usr/share/xsessions/dwm.desktop
+Type=Application"
 
 # touchpad settings
-echo $passwd | sudo -S echo "Section \"InputClass\"
+echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"InputClass\"
     Identifier \"touchpad\"
     Driver \"libinput\"
     MatchIsTouchpad \"on\"
     Option \"Tapping\" \"on\"
     Option \"NaturalScrolling\" \"true\"
-EndSection" > /etc/X11/xorg.conf.d/30-touchpad.conf
+EndSection"
 
 # theme settings
-echo $passwd | sudo -S echo "QT_QPA_PLATFORMTHEME=qt5ct" >> /etc/environment
+echo $passwd | sudo -S tee /etc/environment <<< "QT_QPA_PLATFORMTHEME=qt5ct"
 
 echo "
 Finished
