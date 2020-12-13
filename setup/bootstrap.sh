@@ -121,7 +121,6 @@ echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerF
 EndSection"
 
 # cloning my configs from github to a bare repository for config file management
-echo ".cfg" >> .gitignore
 git clone --bare https://github.com/laszloszurok/config $HOME/.cfg
 /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME config --local status.showUntrackedFiles no
 /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME checkout -f
