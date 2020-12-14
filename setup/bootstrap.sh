@@ -99,7 +99,6 @@ makepkg -si
 cd
 
 # installing softwer from the AUR
-yay -S --noconfirm spotify
 yay -S --noconfirm spicetify-cli
 yay -S --noconfirm protonvpn-cli-ng
 yay -S --noconfirm windscribe-cli
@@ -111,6 +110,7 @@ yay -S --noconfirm scrcpy
 yay -S --noconfirm palenight-gtk-theme
 yay -S --noconfirm nextdns
 yay -S --noconfirm zoxide-bin
+yay -S --noconfirm bottom-bin
 
 # nextdns settings
 echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
