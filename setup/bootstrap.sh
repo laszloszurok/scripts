@@ -111,6 +111,7 @@ yay -S --noconfirm palenight-gtk-theme
 yay -S --noconfirm nextdns
 yay -S --noconfirm zoxide-bin
 yay -S --noconfirm bottom-bin
+yay -S --noconfirm dragon-drag-and-drop
 
 # nextdns settings
 echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
