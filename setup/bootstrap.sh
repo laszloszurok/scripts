@@ -139,17 +139,17 @@ git clone https://github.com/laszloszurok/wmname.git $HOME/source/suckless-build
 
 # installing my suckless builds
 cd $HOME/source/suckless-builds/dwm
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 cd ../dwmblocks
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 cd ../dmenu
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 cd ../st
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 cd ../slock
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 cd ../wmname
-echo $passwd | sudo -S -u $current_user make install
+echo $passwd | sudo -S make install
 
 cd
 
