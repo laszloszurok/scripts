@@ -2,7 +2,7 @@
 
 UNREAD=$(newsboat -x print-unread | awk '{ print $1 }')
 
-if [ $UNREAD -gt 0 ]; then
+if [ $((UNREAD)) -gt 0 ]; then
     printf "%s", ""
 else
     printf "%s", ""
