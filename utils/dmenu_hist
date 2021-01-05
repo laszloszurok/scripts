@@ -28,11 +28,13 @@ if [ -z "$TERMINAL_CMD" ]; then
   TERMINAL_CMD="xfce4-terminal -e"
   elif [ "$(which xterm)" ]; then
   TERMINAL_CMD="xterm -e"
+  elif [ "$(which kitty)" ]; then
+  TERMINAL_CMD="kitty -e"
   fi
 fi
 
 # pass every command line argument to dmenu except the first (which is
-# used to decide if the selected program shuld be executed as sudo)
+# used to decide if the selected program shuld be executed with sudo)
 [ $1 == "sudo" ] && prompt="[sudo]run:" || prompt="run:"
 dmenu_cmd="dmenu -h 26 -fn monospace:size=12 -i -p $prompt ${@:2}"
 
