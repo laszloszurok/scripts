@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# This script is a modified version of the original passmenu script which is part
+# of the pass program. This script has history functionality, which means when you
+# open up the password picker the entries will be listed in the order you last used
+# them.
+
+shopt -s nullglob globstar
+
+typeit=0
+if [[ $1 == "--type" ]]; then
+	typeit=1
+	shift
+fi
+
+# dmenu settings
+passmenu_cmd="dmenu -h 26 -fn monospace:size=12 -i -p copy:"
+
+# files to work with
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
+recent_cache="$cache_dir/recent"
+all_cache="$cache_dir/all"
+list="$cache_dir/list"
+list_no_dups="$cache_dir/list_no_dups"
+
+mkdir -p "$cache_dir"
+
+# Insert the picked entry to the first line of the cache file
+# and remove any other occurrences. This way the last picked
+# entry will always be the first in the list.
+update_cache() {
+    sed -i "\|$1|d" $recent_cache
+    echo -e "$1\n$(< "$recent_cache")" > "$recent_cache"
+}
+
+# get the full list of password entries from the password store
+prefix=${PASSWORD_STORE_DIR-~/.password-store}
+password_files=( "$prefix"/**/*.gpg )
+password_files=( "${password_files[@]#"$prefix"/}" )
+password_files=( "${password_files[@]%.gpg}" )
+
+# write to recent_cache if it does not exist
+[ ! -f $recent_cache ] && echo "${password_files[@]}" | tr " " "\n" > "$recent_cache"
+
+# always write the full list to all_cache, so the list will be always up to date
+echo "${password_files[@]}" | tr " " "\n" > "$all_cache"
+
+# merge our recent cache with the full list
+echo "$(cat $recent_cache $all_cache)" > "$list"
+
+# find the first occurrences of every entry and remove any other occurrences,
+# so there will be no duplicates in the list
+awk '!visited[$0]++' "$list" > "$list_no_dups"
+
+# read in the full list without duplicates
+list=$(< "$list_no_dups")
+
+# pipe the list into dmenu to show the password picker
+password=$(printf '%s\n' "$list" | $passmenu_cmd "$@")
+
+# check if the user picked an entry, exit if didn't
+[[ -n $password ]] || exit
+
+# update the cache with the picked entry
+update_cache "$password"
+
+if [[ $typeit -eq 0 ]]; then
+	pass show -c "$password" 2>/dev/null
+else
+	pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } |
+		xdotool type --clearmodifiers --file -
+fi
