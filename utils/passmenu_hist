@@ -1,20 +1,12 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # This script is a modified version of the original passmenu script which is part
 # of the pass program. This script has history functionality, which means when you
 # open up the password picker the entries will be listed in the order you last used
 # them.
 
-shopt -s nullglob globstar
-
-typeit=0
-if [[ $1 == "--type" ]]; then
-	typeit=1
-	shift
-fi
-
 # dmenu settings
-passmenu_cmd="dmenu -h 26 -fn monospace:size=12 -i -p copy:"
+passmenu_cmd="dmenu -h 26 -fn monospace:size=12 -l 20 -g 2 -c -i -p copy:"
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
@@ -45,6 +37,16 @@ password_files=( "${password_files[@]%.gpg}" )
 # always write the full list to all_cache, so the list will be always up to date
 echo "${password_files[@]}" | tr " " "\n" > "$all_cache"
 
+# remove anything from recent_cache that is not present in all_cache (eg. the user deleted an entry from the password-store)
+for i in $(<"$recent_cache")
+do
+    for j in $(<"$all_cache")
+    do 
+        [ "$i" == "$j" ] && found=1 && break || found=0
+    done
+    [ "$found" -eq 0 ] && sed -i "\|$i|d" $recent_cache
+done
+
 # merge our recent cache with the full list
 echo "$(cat $recent_cache $all_cache)" > "$list"
 
@@ -64,9 +66,4 @@ password=$(printf '%s\n' "$list" | $passmenu_cmd "$@")
 # update the cache with the picked entry
 update_cache "$password"
 
-if [[ $typeit -eq 0 ]]; then
-	pass show -c "$password" 2>/dev/null
-else
-	pass show "$password" | { IFS= read -r pass; printf %s "$pass"; } |
-		xdotool type --clearmodifiers --file -
-fi
+pass show -c "$password" 2>/dev/null
