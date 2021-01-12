@@ -76,6 +76,4 @@ extract() {
 	done
 }
 
-for arg in $@; do
-    extract "$arg"
-done
+extract $1
