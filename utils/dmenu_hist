@@ -36,7 +36,7 @@ fi
 # pass every command line argument to dmenu except the first (which is
 # used to decide if the selected program shuld be executed with sudo)
 [ $1 == "sudo" ] && prompt="[sudo]run:" || prompt="run:"
-dmenu_cmd="dmenu -h 26 -fn monospace:size=12 -i -p $prompt ${@:2}"
+dmenu_cmd="dmenu -h 26 -fn monospace:size=12 -l 20 -g 4 -c -i -p $prompt ${@:2}"
 
 max_recent=199 # Number of recent commands to track
 
@@ -84,7 +84,7 @@ word0=${cmd%% *}
 match="^$word0$"
 
 get_type () {
-    while type=$(echo $known_types | xargs -n1 | $dmenu_cmd -p type:); do
+    while type=$(echo $known_types | xargs -n1 | $dmenu_cmd -g 1 -p type:); do
         [[ $known_types =~ " $type " ]] || continue
         echo "$word0" >> "$config_dir/$type"
         break
