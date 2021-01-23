@@ -67,7 +67,7 @@ while [[ "${#partition_list[@]}" -gt "0" ]]; do
 
     if [ "$answer" == "y" ]; then
         mkdir -p "$mountpoint"
-        mount "$device$partition_num" "$mountpoint" && echo "Partition mounted successfully!" || echo "Something went wrong!"
+        mount "/dev/$device$partition_num" "$mountpoint" && echo "Partition mounted successfully!" || echo "Something went wrong!"
     elif [ "$answer" == "n" ]; then
         echo "Partitioning not finished! Exiting..."
         exit 1
