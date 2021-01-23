@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ ! -f ./packagelist ] && "Missing packagelist! Aborting..." && exit 1
+
 stty_orig=$(stty -g)                     # save original terminal setting.
 stty -echo                               # turn-off echoing.
 IFS= read -p "sudo password:" -r passwd  # read the password
@@ -11,110 +13,43 @@ current_user=$(whoami)
 # sync mirrors, update the system
 echo $passwd | sudo -S pacman -Syyu
 
-# x related
-echo $passwd | sudo -S pacman -S --noconfirm \
-    xf86-video-intel xf86-video-amdgpu xorg xorg-xinit
-
-# installing my most used software
-
-# git
+# install git
 echo $passwd | sudo -S pacman -S --noconfirm git
-
-# graphical file explorer
-echo $passwd | sudo -S pacman -S --noconfirm \
-    pcmanfm-gtk3 gvfs gvfs-mtp ntfs-3g
-
-# archiving tools
-echo $passwd | sudo -S pacman -S --noconfirm \
-    zip unzip xarchiver
-
-# pdf reader and office suite
-echo $passwd | sudo -S pacman -S --noconfirm \
-    zathura zathura-pdf-poppler libreoffice-still
-
-# themeing tools and themes
-echo $passwd | sudo -S pacman -S --noconfirm \
-    lxappearance qt5ct arc-gtk-theme arc-icon-theme picom python-pywal
-
-# shell
-echo $passwd | sudo -S pacman -S --noconfirm \
-    zsh zsh-syntax-highlighting
-
-# other x tools
-echo $passwd | sudo -S pacman -S --noconfirm \
-    numlockx xclip xautolock xwallpaper
-
-# virt-manager
-echo $passwd | sudo -S pacman -S --noconfirm \
-    virt-manager qemu ebtables dnsmasq
-echo $passwd | sudo -S usermod -aG libvirt $current_user
-echo $passwd | sudo -S systemctl enable --now libvirtd
-echo $passwd | sudo -S virsh net-autostart default
-
-# fonts
-echo $passwd | sudo -S pacman -S --noconfirm \
-    ttf-font-awesome ttf-dejavu
-
-# browsers
-echo $passwd | sudo -S pacman -S --noconfirm \
-    firefox qutebrowser
-
-# multimedia
-echo $passwd | sudo -S pacman -S --noconfirm \
-    mpv pulseaudio pulseaudio-alsa playerctl ffmpeg
-
-# vifm
-echo $passwd | sudo -S pacman -S --noconfirm \
-    vifm ffmpegthumbnailer ueberzug
-
-# printing service
-echo $passwd | sudo -S pacman -S --noconfirm cups
-echo $passwd | sudo -S systemctl enable org.cups.cupsd.socket
-
-# firewall
-echo $passwd | sudo -S pacman -S --noconfirm ufw
-ufw default deny incoming
-ufw default allow outgoing
-echo $passwd | sudo -S ufw enable
-
-# power saving
-echo $passwd | sudo -S pacman -S --noconfirm powertop
-sh -c "echo -e '[Unit]\nDescription=PowerTop\n\n[Service]\nType=oneshot\nRemainAfterExit=true\nExecStart=/usr/bin/powertop --auto-tune\n\n[Install]\nWantedBy=multi-user.target\n' > /etc/systemd/system/powertop.service"
-echo $passwd | sudo -S systemctl enable --now powertop
-
-# neovim
-echo $passwd | sudo -S pacman -S --noconfirm \
-    nodejs npm python-pip neovim
-echo $passwd | sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim
-
-# misc
-echo $passwd | sudo -S pacman -S --noconfirm \
-    qbittorrent gimp scrot lxsession dunst sxiv texlive-most usbutils newsboat youtube-dl pass translate-shell galculator gnu-netcat caclurse
 
 # installing yay
 git clone https://aur.archlinux.org/yay.git $HOME/source/yay
 cd $HOME/source/yay
 makepkg -si
-
 cd
 
-# installing softwer from the AUR
-yay -S --noconfirm spicetify-cli
-yay -S --noconfirm protonvpn-cli-ng
-yay -S --noconfirm windscribe-cli
-yay -S --noconfirm hugo
-yay -S --noconfirm vscodium-bin
-yay -S --noconfirm ripcord
-yay -S --noconfirm brave-bin
-yay -S --noconfirm scrcpy
-yay -S --noconfirm palenight-gtk-theme
-yay -S --noconfirm nextdns
-yay -S --noconfirm zoxide-bin
-yay -S --noconfirm bottom-bin
-yay -S --noconfirm dragon-drag-and-drop
+# install every package from packagelist
+< ./packagelist | xargs yay --save --sudoloop -S --noconfirm
+
+# installing pynvim
+echo $passwd | sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim
 
 # nextdns settings
 echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
+
+# virt-manager
+echo $passwd | sudo -S usermod -aG libvirt $current_user
+echo $passwd | sudo -S systemctl enable --now libvirtd
+echo $passwd | sudo -S virsh net-autostart default
+
+# printing service
+echo $passwd | sudo -S systemctl enable org.cups.cupsd.socket
+
+# firewall
+echo $passwd | sudo -S ufw default deny incoming
+echo $passwd | sudo -S ufw default allow outgoing
+echo $passwd | sudo -S ufw enable
+
+# power saving service
+echo $passwd | sudo -S sh -c "echo -e '[Unit]\nDescription=PowerTop\n\n[Service]\nType=oneshot\nRemainAfterExit=true\nExecStart=/usr/bin/powertop --auto-tune\n\n[Install]\nWantedBy=multi-user.target\n' > /etc/systemd/system/powertop.service"
+echo $passwd | sudo -S systemctl enable --now powertop
+
+# cron service
+echo $passwd | sudo -S systemctl enable cronie.service
 
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
@@ -130,27 +65,21 @@ git clone --bare https://github.com/laszloszurok/config $HOME/.cfg
 git clone https://github.com/laszloszurok/scripts $HOME/source/scripts
 
 # cloning my suckless builds
-git clone https://github.com/laszloszurok/dwm.git $HOME/source/suckless-builds/dwm
-git clone https://github.com/laszloszurok/dwmblocks.git $HOME/source/suckless-builds/dwmblocks
-git clone https://github.com/laszloszurok/dmenu.git $HOME/source/suckless-builds/dmenu
-git clone https://github.com/laszloszurok/st.git $HOME/source/suckless-builds/st
-git clone https://github.com/laszloszurok/slock.git $HOME/source/suckless-builds/slock
-git clone https://github.com/laszloszurok/wmname.git $HOME/source/suckless-builds/wmname
+suckless_dir="$HOME/source/suckless-builds"
+git clone https://github.com/laszloszurok/dwm.git $suckless_dir/dwm
+git clone https://github.com/laszloszurok/dwmblocks.git $suckless_dir/dwmblocks
+git clone https://github.com/laszloszurok/dmenu.git $suckless_dir/dmenu
+git clone https://github.com/laszloszurok/st.git $suckless_dir/st
+git clone https://github.com/laszloszurok/slock.git $suckless_dir/slock
+git clone https://github.com/laszloszurok/wmname.git $suckless_dir/wmname
 
 # installing my suckless builds
-cd $HOME/source/suckless-builds/dwm
-echo $passwd | sudo -S make install
-cd ../dwmblocks
-echo $passwd | sudo -S make install
-cd ../dmenu
-echo $passwd | sudo -S make install
-cd ../st
-echo $passwd | sudo -S make install
-cd ../slock
-echo $passwd | sudo -S make install
-cd ../wmname
-echo $passwd | sudo -S make install
-
+cd $suckless_dir
+for d in $suckless_dir/*/ ; do
+    cd "$d"
+    echo $passwd | sudo -S make install
+    cd ..
+done
 cd
 
 # cloning my wallpapers
@@ -166,7 +95,6 @@ echo $passwd | sudo -S chmod +x /usr/local/spotify
 cd
 
 # changing the default shell to zsh
-mkdir $HOME/.cache/zsh
 echo $passwd | sudo -S tee /etc/zsh/zshenv <<< "ZDOTDIR=\$HOME/.config/zsh"
 chsh -s /usr/bin/zsh
 
@@ -188,7 +116,7 @@ echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"
 EndSection"
 
 # theme settings
-echo $passwd | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=qt5ct"
+echo $passwd | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=gtk2"
 
 # service to launch slock on suspend
 echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
