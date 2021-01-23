@@ -21,7 +21,7 @@ echo "127.0.0.1   localhost
 127.0.1.1   $hostname.localdomain    $hostname"
 
 # installing some packages
-pacman -S grub efibootmgr networkmanager network-manager-applet wireless_tools wpa_supplicant os-prober mtools dosfstools base-devel linux-headers
+pacman -S grub efibootmgr networkmanager wireless_tools wpa_supplicant os-prober mtools dosfstools base-devel linux-headers
 
 # grub
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
