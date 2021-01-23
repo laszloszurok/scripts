@@ -31,7 +31,7 @@ done
 cfdisk /dev/"$device"
 
 # mounting
-partitions=$(lsblk -lfm | grep sdb | awk '{if (NR!=1) print($1 " " $2)}')
+partitions=$(lsblk -lfm | grep 'sd[a-z][0-9]\+\|vd[a-z][0-9]\+\|hd[a-z][0-9]\+' | awk '{if (NR!=1) print($1 " " $2)}')
 
 echo "
 List of partitions:"
