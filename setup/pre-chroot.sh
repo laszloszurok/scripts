@@ -31,47 +31,51 @@ done
 cfdisk /dev/"$device"
 
 # mounting
-partitions=$(lsblk -lfm | grep "$device" | awk '{if (NR!=1) print($1 " " $2)}')
-
-echo "
-List of partitions:"
-echo "${partitions[@]}"
+partitions=$(lsblk -lfm | grep "^\($device\)[0-9]\+")
 
 partition_list=$(echo "${partitions[@]}" | awk '{print($1)}')
 
 echo "
-Mounting partitions..."
+Creating filesystems..."
 
 while [[ "${#partition_list[@]}" -gt "0" ]]; do
+    echo "
+    List of partitions:"
+    echo "${partitions[@]}"
 
-    read -p "Number of the partition to mount (eg. 1): " partition_num
+    read -p "Number of the partition to format (eg. 1): " partition_num
 
     while [[ ! $partition_list =~ (^|[[:space:]])$device$partition_num($|[[:space:]]) ]]; do
         echo "Bad partition number, please try again!"
-        read -p "Number of the partition to mount (eg. 1): " partition_num
+        read -p "Number of the partition to format (eg. 1): " partition_num
     done
-    echo "Mounting $device$partition_num"
-
-    fstype=$(echo "${partitions[@]}" | grep "$device$partition_num" | awk '{print($2)}')
+    echo "Formatting $device$partition_num"
 
     current="$device$partition_num"
 
-    [ "$fstype" == "swap" ] && echo "This is a swap partition. Executing swapon..." && \
-        swapon "$device$partition_num" && echo "Done!" || \
-        read -p "Type the exact path to the mountpoint (eg. /mnt/boot): " mountpoint && \
-        read -p "Mount $device$partition_num to $mountpoint? (y/n): " answer && \
-        while [ "$answer" != "y" ] && [ "$answer" != "n" ]; do
-            echo "Unknown option, try again!"
-            read -p "Mount $device$partition_num to $mountpoint? (y/n): " answer
-        done
+    fs_options=("efi" "ext4" "swap")
+    echo "Filesystem options: ${fs_options[@]}"
+    read -p "Chose an option (eg. efi): " option
+    while [[ ! $fs_options =~ (^|[[:space:]])$option($|[[:space:]]) ]]; do
+        echo "Unknown option, please try again!"
+        read -p "Chose an option (eg. efi): " option
+    done
 
-    if [ "$answer" == "y" ]; then
-        mkdir -p "$mountpoint"
-        mount "/dev/$device$partition_num" "$mountpoint" && echo "Partition mounted successfully!" || echo "Something went wrong!"
-    elif [ "$answer" == "n" ]; then
-        echo "Partitioning not finished! Exiting..."
-        exit 1
-    fi
+    case "$option" in
+        "efi") mkfs.fat -F32 $device$partition_num && \
+            echo "Mounting efi partition..." && \
+            mkdir -p /mnt/boot/efi && \
+            mount /dev/$device$partition_num /mnt/boot/efi && \
+            echo "Done!" ;;
+        "ext4") mkfs.ext4 $device$partition_num && \
+            echo "Mounting root partition..." && \
+            mount /dev/$device$partition_num /mnt && \
+            echo "Done!" ;;
+        "swap") mkswap $device$partition_num && \
+            echo "Mounting swap partition..." && \
+            swapon /dev/$device$partition_num && \
+            echo "Done!" ;;
+    esac
 
     # This deletes the current item from the list BUT actually removes matching prefixes for every item too,
     # for eg. if current=sda1, sda1 will be removed, sda11 will become 1. This is a problem!
