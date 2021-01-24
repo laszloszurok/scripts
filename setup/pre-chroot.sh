@@ -88,4 +88,5 @@ pacstrap /mnt base linux linux-firmware neovim
 # filesystem table
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "Done. Type the following command: arch-chroot /mnt"
+echo "
+Done. Type the following command: arch-chroot /mnt"
