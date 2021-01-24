@@ -3,7 +3,7 @@
 # internet connection and time
 dhcpcd
 ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo "internet connection ok" || `echo "no internet connection"; exit 1`
-timedatectl set-ntp true
+timedatectl set-ntp true &>/dev/null
 
 # partitioning
 lsblk
