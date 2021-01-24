@@ -38,7 +38,7 @@ partition_list=$(echo "${partitions[@]}" | awk '{print($1)}')
 echo "
 Creating filesystems..."
 
-while [[ "${#partition_list[@]}" -gt "0" ]]; do
+while [[ ! -z "$partition_list" ]]; do
     echo "
     List of partitions:"
     echo "${partitions[@]}"
@@ -56,7 +56,7 @@ while [[ "${#partition_list[@]}" -gt "0" ]]; do
     fs_options=("efi" "ext4" "swap")
     echo "Filesystem options: ${fs_options[@]}"
     read -p "Chose an option (eg. efi): " option
-    while [[ ! "$fs_options" =~ (^|[[:space:]])$option($|[[:space:]]) ]]; do
+    while [[ ! "${fs_options[@]}" =~ (^|[[:space:]])$option($|[[:space:]]) ]]; do
         echo "Unknown option, please try again!"
         read -p "Chose an option (eg. efi): " option
     done
