@@ -56,22 +56,22 @@ while [[ "${#partition_list[@]}" -gt "0" ]]; do
     fs_options=("efi" "ext4" "swap")
     echo "Filesystem options: ${fs_options[@]}"
     read -p "Chose an option (eg. efi): " option
-    while [[ ! $fs_options =~ (^|[[:space:]])$option($|[[:space:]]) ]]; do
+    while [[ ! "$fs_options" =~ (^|[[:space:]])$option($|[[:space:]]) ]]; do
         echo "Unknown option, please try again!"
         read -p "Chose an option (eg. efi): " option
     done
 
     case "$option" in
-        "efi") mkfs.fat -F32 $device$partition_num && \
+        "efi") mkfs.fat -F32 /dev/$device$partition_num && \
             echo "Mounting efi partition..." && \
             mkdir -p /mnt/boot/efi && \
             mount /dev/$device$partition_num /mnt/boot/efi && \
             echo "Done!" ;;
-        "ext4") mkfs.ext4 $device$partition_num && \
+        "ext4") mkfs.ext4 /dev/$device$partition_num && \
             echo "Mounting root partition..." && \
             mount /dev/$device$partition_num /mnt && \
             echo "Done!" ;;
-        "swap") mkswap $device$partition_num && \
+        "swap") mkswap /dev/$device$partition_num && \
             echo "Mounting swap partition..." && \
             swapon /dev/$device$partition_num && \
             echo "Done!" ;;
