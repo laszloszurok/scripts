@@ -80,6 +80,7 @@ while [[ ! -z "$partition_list" ]]; do
     # This deletes the current item from the list BUT actually removes matching prefixes for every item too,
     # for eg. if current=sda1, sda1 will be removed, sda11 will become 1. This is a problem!
     partition_list=( "${partition_list[@]/$current}" )
+    partition_list=("${partition_list[@]}")
 done
 
 # base install
