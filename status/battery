@@ -12,7 +12,7 @@ elif [ "$capacity" -le 50 -a "$capacity" -gt 30 ]; then
 elif [ "$capacity" -le 30 -a "$capacity" -gt 20 ]; then
     icon=""
 elif [ "$capacity" -le 20 ]; then
-    icon=""
+    icon=""
 fi
  
 echo "$icon"
