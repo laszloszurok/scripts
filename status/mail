@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# This script works together with a modified version of Luke Smith's mailsync
+# script from mutt-wizard. It checks if there are new mails for any account
+# and displays a status indicator icon accordingly (with dwmblocks).
+
+icon=""
+
+MBSYNCRC="$HOME/.config/mailsync/mbsyncrc"
+
+accounts="$(awk '/^Channel/ {print $2}' "$MBSYNCRC")"
+
+counter=0
+checkfornew() {
+    for account in $accounts; do
+        new=$(find "$HOME/.local/share/mail/$account/INBOX/new/" "$HOME/.local/share/mail/$account/Inbox/new/" "$HOME/.local/share/mail/$account/inbox/new/" -type f 2> /dev/null)
+        newcount=$(echo "$new" | sed '/^\s*$/d' | wc -l)
+        [ "$newcount" -gt "0" ] && icon="" && counter=$((counter+newcount))
+
+    done
+}
+
+notify() {
+    [ "$counter" -gt "0" ] && dunstify "$counter new mail(s)" "Rightclick to open aerc" || dunstify "No new mail" "Rightclick to open aerc"
+}
+
+checkfornew
+
+case $BUTTON in
+    1) notify ;;
+    3) st -e aerc & disown; dunstify "Running mailsync..."; mailsync ;;
+esac
+
+echo "$icon"
