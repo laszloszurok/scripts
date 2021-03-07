@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+icon=""
+
+connect_protonvpn() {
+    dunstify --replace=1 "Connecting..."
+    sudo -A protonvpn c -f &>/dev/null
+    get_status
+    [ "$connection" == "Connected" ] \
+        && dunstify --replace=1 "Connected to protonvpn!" \
+        && icon="" \
+        || dunstify --replace=1 "Something went wrong."
+}
+
+disconnect_protonvpn() {
+    dunstify --replace=1 "Disconnecting..."
+    sudo -A protonvpn d &>/dev/null
+    get_status
+    [ ! "$connection" == "Connected" ] \
+        && dunstify --replace=1 "Disconnected from protonvpn!" \
+        && icon="" \
+        || dunstify --replace=1 "Something went wrong."
+}
+
+chose_option() {
+    local option=$(
+        yad \
+            --list \
+            --title="Choose an option" \
+            --column="Options" "Protonvpn" "Disconnect" \
+            --height=200 \
+            --width=250
+    )
+
+    option=${option/"|"/""}
+
+    case $option in
+        "Protonvpn") connect_protonvpn ;;
+        "Disconnect") disconnect_protonvpn ;;
+    esac
+}
+
+get_status() {
+    status_protonvpn=$(protonvpn status)
+    connection=$(echo "$status_protonvpn" | awk 'NR==1 {printf($2)}')
+}
+
+check_status() {
+    get_status
+
+    [ "$connection" == "Connected" ] \
+        && dunstify --replace=1 "$status_protonvpn" \
+        && icon="" \
+        && return 0
+
+    dunstify --replace=1 "No VPN connection!"
+    icon=""
+}
+
+case $BUTTON in
+    1) check_status ;;
+    3) chose_option ;;
+esac
+
+echo $icon
