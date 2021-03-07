@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+config_paths=(
+    "$HOME/.config" 
+    "$HOME/source/suckless-builds"
+    "$HOME/source/scripts"
+)
+
+# cache files
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/confmenu"
+recent_cache="$cache_dir/recent"
+all_cache="$cache_dir/all"
+list="$cache_dir/list"
+list_no_dups="$cache_dir/list_no_dups"
+
+mkdir -p "$cache_dir"
+
+# dmenu settings
+dmenu_cmd="dmenu -h 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p configure: $@"
+
+# find a terminal emulator
+if [ -z "$TERMINAL_CMD" ]; then
+  if [ "$(which st)" ]; then
+  TERMINAL_CMD="st -e"
+  elif [ "$(which terminal)" ]; then
+  TERMINAL_CMD="terminal -e"
+  elif [ "$(which urxvt)" ]; then
+  TERMINAL_CMD="urxvt -e"
+  elif [ "$(which termite)" ]; then
+  TERMINAL_CMD="termite -e"
+  elif [ "$(which terminator)" ]; then
+  TERMINAL_CMD="terminator -e"
+  elif [ "$(which gnome-terminal)" ]; then
+  TERMINAL_CMD="gnome-terminal -e"
+  elif [ "$(which lxterminal)" ]; then
+  TERMINAL_CMD="lxterminal -e"
+  elif [ "$(which sakura)" ]; then
+  TERMINAL_CMD="sakura -e"
+  elif [ "$(which xfce4-terminal)" ]; then
+  TERMINAL_CMD="xfce4-terminal -e"
+  elif [ "$(which xterm)" ]; then
+  TERMINAL_CMD="xterm -e"
+  elif [ "$(which kitty)" ]; then
+  TERMINAL_CMD="kitty -e"
+  fi
+fi
+
+update_cache() {
+    sed -i "\|$1|d" $recent_cache
+    echo -e "$1\n$(< "$recent_cache")" > "$recent_cache"
+}
+
+# get the contents of the config folders and create recent_cache if it does not exist
+config_list=$(find ${config_paths[@]} -type f -maxdepth 2 -not -path '*/\.git/*')
+[ ! -f $recent_cache ] && echo "$config_list" > "$recent_cache"
+
+# always write the full list to all_cache, so the list will be always up to date
+echo "$config_list" > "$all_cache"
+
+# remove anything from recent_cache that is not present in all_cache
+for i in $(<"$recent_cache"); do
+    for j in $(<"$all_cache"); do 
+        [ "$i" == "$j" ] && found=1 && break || found=0
+    done
+    [ "$found" -eq 0 ] && sed -i "\|$i|d" $recent_cache
+done
+
+# merge our recent cache with the full list
+cat "$recent_cache" "$all_cache" > "$list"
+
+# find the first occurrences of every entry and remove any other occurrences,
+# so there will be no duplicates in the list
+awk '!visited[$0]++' "$list" > "$list_no_dups"
+
+# read in the full list without duplicates
+list=$(< "$list_no_dups")
+
+# replace $HOME with ~ for every list item
+list=$(echo "$list" | sed "s\\$HOME\~\g")
+
+# pipe the list items into dmenu
+item=$(printf '%s\n' "${list[@]}" | $dmenu_cmd)
+
+# exit if the user did not pick an item
+[[ -n $item ]] || exit
+
+# undo the replacement for the picked item (otherwise won't open correctly)
+item=$(echo "$item" | sed "s\~\\$HOME\g")
+
+update_cache "$item"
+
+# determine on which path the picked item is and open it in $EDITOR
+ $TERMINAL_CMD "$EDITOR" "$item"
