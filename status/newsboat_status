@@ -2,11 +2,9 @@
 
 UNREAD=$(newsboat -x print-unread | awk '{ print $1 }')
 
-if [ $((UNREAD)) -gt 0 ]; then
-    printf "%s", ""
-else
-    printf "%s", ""
-fi
+[ "$UNREAD" -gt "0" ] && icon="" || icon=""
+
+printf "%s", "$icon"
 
 case $BUTTON in
     1) dunstify --replace=1 "$UNREAD unread news" "Ritht click to open newsboat";;
