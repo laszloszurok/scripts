@@ -42,10 +42,8 @@ nodejs
 npm
 python-pip
 neovim
-neomutt
 curl
 isync
-msmtp
 notmuch
 cronie
 qbittorrent
@@ -76,3 +74,8 @@ zoxide-bin
 bottom-bin
 dragon-drag-and-drop
 qt5-styleplugins
+urlscan
+dante
+w3m
+aerc
+pam-gnupg
