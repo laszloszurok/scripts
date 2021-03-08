@@ -2,8 +2,12 @@
 
 icon=""
 
-capacity=$(cat /sys/class/power_supply/BAT1/capacity) || exit
-status=$(cat /sys/class/power_supply/BAT1/status)
+capacity=$(cat /sys/class/power_supply/BAT0/capacity) || \
+    $(cat /sys/class/power_supply/BAT1/capacity) || \
+    exit
+
+status=$(cat /sys/class/power_supply/BAT0/status) || \
+    $(cat /sys/class/power_supply/BAT1/status)
 
 if [ "$capacity" -le 75 -a "$capacity" -gt 50 ]; then
     icon=""
