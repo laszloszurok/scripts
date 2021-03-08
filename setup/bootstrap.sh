@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ ! -f ./packagelist ] && "Missing packagelist! Aborting..." && exit 1
+[ ! -f ./packagelist ] && echo "Missing packagelist! Aborting..." && exit 1
 
 stty_orig=$(stty -g)                     # save original terminal setting.
 stty -echo                               # turn-off echoing.
@@ -16,14 +16,14 @@ echo $passwd | sudo -S pacman -Syyu
 # install git
 echo $passwd | sudo -S pacman -S --noconfirm git
 
-# installing yay
-git clone https://aur.archlinux.org/yay.git $HOME/source/yay
-cd $HOME/source/yay
+# installing paru
+git clone https://aur.archlinux.org/paru.git $HOME/source/paru
+cd $HOME/source/paru
 makepkg -si
 cd
 
 # install every package from packagelist
-< ./packagelist | xargs yay --save --sudoloop -S --noconfirm
+< ./packagelist | xargs paru --sudoloop -S --noconfirm
 
 # installing pynvim
 echo $passwd | sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim
