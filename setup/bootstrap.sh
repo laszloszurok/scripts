@@ -138,6 +138,11 @@ WantedBy=suspend.target"
 
 echo $passwd | sudo -S systemctl enable slock@$current_user.service
 
+# udev rule to allow users in the "video" group to set the display brightness
+echo $passwd | sudo -S tee /etc/udev/rules.d/90-backlight.rules <<< "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
+  RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\", \
+  RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\""
+
 echo "
 Finished
 Please reboot your computer"
