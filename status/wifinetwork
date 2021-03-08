@@ -3,7 +3,7 @@
 # this script requires netcat to be installed
 
 icon=""
-essid=`iwgetid wlo1 --raw`
+essid=$(iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
 signal=`awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless`
 msg=""
 
