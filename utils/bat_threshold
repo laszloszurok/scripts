@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+# This script sends a notification when the battery level
+# is over 80% or below 50%. Used as a cronjob it serves as
+# a reminder to plug/unplug the charger to help extend the 
+# battery life.
+
+capacity=$(cat /sys/class/power_supply/BAT0/capacity) || \
+    $(cat /sys/class/power_supply/BAT1/capacity) || \
+    exit
+
+if [ "$capacity" -ge 80 ]; then
+    dunstify "Batery level reached 80%"
+elif [ "$capacity" -le 50 ]; then
+    dunstify "Batery level is below 50%"
+fi
