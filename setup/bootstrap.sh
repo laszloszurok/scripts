@@ -85,6 +85,11 @@ cd
 # cloning my wallpapers
 git clone https://github.com/laszloszurok/Wallpapers $HOME/pictures/wallpapers
 
+# installing gtk palenight theme
+git clone https://github.com/jaxwilko/gtk-theme-framework.git $HOME/source/palenight-gtk
+cd $HOME/source/palenight-gtk
+./main.sh -i -o
+
 # spotify wm
 git clone https://github.com/dasJ/spotifywm.git $HOME/.config/spotifywm
 cd $HOME/.config/spotifywm
