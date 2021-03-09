@@ -48,9 +48,6 @@ echo $passwd | sudo -S ufw enable
 echo $passwd | sudo -S sh -c "echo -e '[Unit]\nDescription=PowerTop\n\n[Service]\nType=oneshot\nRemainAfterExit=true\nExecStart=/usr/bin/powertop --auto-tune\n\n[Install]\nWantedBy=multi-user.target\n' > /etc/systemd/system/powertop.service"
 echo $passwd | sudo -S systemctl enable --now powertop
 
-# cron service
-echo $passwd | sudo -S systemctl enable cronie.service
-
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
     Option \"DontVTSwitch\" \"True\"
@@ -142,6 +139,10 @@ WantedBy=sleep.target
 WantedBy=suspend.target"
 
 echo $passwd | sudo -S systemctl enable slock@$current_user.service
+
+# cron service
+echo $passwd | sudo -S systemctl enable cronie.service
+crontab $HOME/.config/cronjobs
 
 # udev rule to allow users in the "video" group to set the display brightness
 echo $passwd | sudo -S tee /etc/udev/rules.d/90-backlight.rules <<< "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
