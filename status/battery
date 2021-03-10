@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# This script is run evry 5 seconds with dwmblocks and displays a
+# battery indicator in the status bar.
+
+# create a file that indicates the time of the last run of this script
+lastrun="${XDG_CACHE_HOME:-$HOME/.cache}/battery_lastrun"
+[ ! -f "$lastrun" ] && touch "$lastrun"
+
 icon=""
 
 capacity=$(cat /sys/class/power_supply/BAT0/capacity) || \
@@ -18,6 +25,16 @@ elif [ "$capacity" -le 30 -a "$capacity" -gt 20 ]; then
 elif [ "$capacity" -le 20 ]; then
     icon=""
 fi
+
+# Roughly every 10 minutes we check if the the battery is over 80% or below 50%.
+# Serves as a reminder to plug/unlug the charging cable to extend battery life.
+[ $(find "$lastrun" -mmin +10) ] && \
+    touch "$lastrun" && \
+    if [ "$capacity" -ge 80 -a "$status" == "Charging" ]; then
+        dunstify "Batery level reached 80%"
+    elif [ "$capacity" -le 50 -a "$status" == "Discharging" ]; then
+        dunstify "Batery level is below 50%"
+    fi
  
 echo "$icon"
 
