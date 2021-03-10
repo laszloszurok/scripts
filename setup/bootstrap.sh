@@ -64,6 +64,7 @@ ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
 
 [Install]
 WantedBy=multi-user.target"
+################################################################################
 
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
