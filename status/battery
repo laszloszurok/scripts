@@ -24,6 +24,7 @@ elif [ "$capacity" -le 30 -a "$capacity" -gt 20 ]; then
     icon=""
 elif [ "$capacity" -le 20 ]; then
     icon=""
+    [ "$status" != "Charging" ] && dunstify --replace=789 "Low battery level!"
 fi
 
 # Roughly every 10 minutes we check if the the battery is over 80% or below 50%.
