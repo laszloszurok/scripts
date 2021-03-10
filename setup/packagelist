@@ -37,7 +37,7 @@ ffmpeg
 vifm
 cups
 ufw
-powertop
+tlp
 nodejs
 npm
 python-pip

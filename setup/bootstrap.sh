@@ -45,8 +45,7 @@ echo $passwd | sudo -S ufw default allow outgoing
 echo $passwd | sudo -S ufw enable
 
 # power saving service
-echo $passwd | sudo -S sh -c "echo -e '[Unit]\nDescription=PowerTop\n\n[Service]\nType=oneshot\nRemainAfterExit=true\nExecStart=/usr/bin/powertop --auto-tune\n\n[Install]\nWantedBy=multi-user.target\n' > /etc/systemd/system/powertop.service"
-echo $passwd | sudo -S systemctl enable --now powertop
+echo $passwd | sudo -S systemctl enable --now tlp
 
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
