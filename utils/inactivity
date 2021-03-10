@@ -15,7 +15,7 @@ do
     fi
     if [ "$MON_STATE" == "Off" ]; then
         xautolock -time 2 -locker slock &
-        BAT_STATE=`< /sys/class/power_supply/BAT1/status`
+        BAT_STATE=$(< /sys/class/power_supply/BAT0/status) || $(< /sys/class/power_supply/BAT1/status)
         [ "$BAT_STATE" == "Discharging" ] && TIME_TO_WAIT=600 || TIME_TO_WAIT=900
         NUM="0"
         while [ $NUM -lt $TIME_TO_WAIT -a $MON_STATE == "Off" ]
