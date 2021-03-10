@@ -26,7 +26,11 @@ do
         done
         MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
         AUDIO_STATE=$(cat /proc/asound/card0/pcm0p/sub0/status | head -1 | awk '{print $NF}')
-        [ "$MON_STATE" == "Off" ] && [ "$AUDIO_STATE" != "RUNNING"  ] && [ -z "$(pidof qbittorrent)" ] && systemctl suspend
+        [ "$MON_STATE" == "Off" ] && [ "$AUDIO_STATE" != "RUNNING"  ] && \
+            [ -z "$(pidof qbittorrent)" ] && \
+            [ -z "$(pidof cp)" ] && \
+            [ -z "$(pidof mv)" ] && \
+            systemctl suspend
     fi
     sleep 30
 done
