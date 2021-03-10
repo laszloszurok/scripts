@@ -23,7 +23,7 @@ makepkg -si
 cd
 
 # install every package from packagelist
-< ./packagelist | xargs paru --sudoloop -S --noconfirm
+cat ./packagelist | xargs paru --sudoloop -S --noconfirm
 
 # installing pynvim
 echo $passwd | sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim
