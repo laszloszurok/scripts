@@ -34,6 +34,7 @@ pulseaudio
 pulseaudio-alsa
 playerctl
 ffmpeg
+ffmpegthumbnailer
 vifm
 cups
 ufw
