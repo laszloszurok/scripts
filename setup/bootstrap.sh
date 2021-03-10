@@ -47,6 +47,24 @@ echo $passwd | sudo -S ufw enable
 # power saving service
 echo $passwd | sudo -S systemctl enable --now tlp
 
+# automatically spin down the secondary hdd in my machine if it is not in use
+echo $passwd | sudo -S tee /usr/lib/systemd/system-sleep/hdparm <<< "#!/bin/sh
+
+case \$1 in post)
+        /usr/bin/hdparm -q -S 60 -y /dev/sda
+        ;;
+esac"
+
+echo $passwd | sudo -S tee /etc/systemd/system/hdparm.service <<< "[Unit]
+Description=hdparm sleep
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
+
+[Install]
+WantedBy=multi-user.target"
+
 # disable tty swithcing when X is running, so the lockscreen cannot be bypassed
 echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
     Option \"DontVTSwitch\" \"True\"
