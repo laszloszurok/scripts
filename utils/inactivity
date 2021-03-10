@@ -14,9 +14,14 @@ do
         killall xautolock
     fi
     if [ "$MON_STATE" == "Off" ]; then
+
         xautolock -time 2 -locker slock &
-        BAT_STATE=$(< /sys/class/power_supply/BAT0/status) || $(< /sys/class/power_supply/BAT1/status)
+
+        BAT_STATE=$(< /sys/class/power_supply/BAT0/status) || \
+            $(< /sys/class/power_supply/BAT1/status)
+
         [ "$BAT_STATE" == "Discharging" ] && TIME_TO_WAIT=600 || TIME_TO_WAIT=900
+
         NUM="0"
         while [ $NUM -lt $TIME_TO_WAIT -a $MON_STATE == "Off" ]
         do
@@ -24,8 +29,12 @@ do
             MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
             sleep 1
         done
+
         MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
-        AUDIO_STATE=$(cat /proc/asound/card0/pcm0p/sub0/status | head -1 | awk '{print $NF}')
+
+        AUDIO_STATE=$(cat /proc/asound/card0/pcm0p/sub0/status | head -1 | awk '{print $NF}') || \
+            $(cat /proc/asound/card1/pcm0p/sub0/status | head -1 | awk '{print $NF}')
+
         [ "$MON_STATE" == "Off" ] && [ "$AUDIO_STATE" != "RUNNING"  ] && \
             [ -z "$(pidof qbittorrent)" ] && \
             [ -z "$(pidof cp)" ] && \
