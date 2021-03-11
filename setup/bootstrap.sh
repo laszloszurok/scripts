@@ -36,7 +36,7 @@ echo $passwd | sudo -S nextdns install -config 51a3bd -report-client-info -auto-
 
 # virt-manager
 echo $passwd | sudo -S usermod -aG libvirt $current_user
-echo $passwd | sudo -S systemctl enable --now libvirtd
+echo $passwd | sudo -S systemctl enable libvirtd
 echo $passwd | sudo -S virsh net-autostart default
 
 # printing service
@@ -45,11 +45,14 @@ echo $passwd | sudo -S systemctl enable org.cups.cupsd.socket
 # firewall
 echo $passwd | sudo -S ufw default deny incoming
 echo $passwd | sudo -S ufw default allow outgoing
-echo $passwd | sudo -S systemctl enable --now ufw
+echo $passwd | sudo -S systemctl enable ufw
 echo $passwd | sudo -S ufw enable
 
+# windscribe vpn service
+echo $passwd | sudo -S systemctl enable windscribe
+
 # power saving service
-echo $passwd | sudo -S systemctl enable --now tlp
+echo $passwd | sudo -S systemctl enable tlp
 
 # automatically spin down the secondary hdd in my machine if it is not in use
 echo $passwd | sudo -S tee /usr/lib/systemd/system-sleep/hdparm <<< "#!/bin/sh
