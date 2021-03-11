@@ -2,7 +2,6 @@
 
 # this script requires netcat to be installed
 
-icon=""
 essid=$(iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
 signal=`awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless`
 msg=""
@@ -13,18 +12,18 @@ check_connection() {
 
     # checking if we are connected to a wifi network
     if [ -z "$essid" ]; then
-        icon=""
-        essid="none"
-        signal=""
-        msg="| No WiFi network | "
+        echo ""
+        essid="Connection lost"
+        signal="0%"
+        msg="No WiFi network"
     else
         # checking internet connection
         echo -e "GET http://www.google.com/ HTTP/1.0\n\n" | nc google.com 80 -w 10 > /dev/null 2>&1
         if [ $? -eq 0 ]; then
-            icon=""
+            echo ""
             msg="Online"
         else
-            icon=""
+            echo ""
             msg="Offline"
         fi
     fi
@@ -32,9 +31,8 @@ check_connection() {
     dunstify --appname="wifi" --replace=1 "$essid" "$msg, signal: $signal"
 }
 
-echo "$icon"
+check_connection &
 
 case $BUTTON in
-    1) check_connection & ;;
     3) st -e nmtui & disown ;;
 esac
