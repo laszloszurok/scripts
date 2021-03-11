@@ -10,6 +10,9 @@ stty "$stty_orig"                        # restore terminal setting.
 # checking who is the current user
 current_user=$(whoami)
 
+# enable colored output for pacman
+echo $passwd | sudo -S sed -i '/Color/s/^#//g' /etc/paru.conf
+
 # sync mirrors, update the system
 echo $passwd | sudo -S pacman -Syyu
 
