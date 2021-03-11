@@ -30,7 +30,7 @@ checkfornew
 
 case $BUTTON in
     1) notify ;;
-    3) st -e aerc & disown; dunstify --replace=4 "Running mailsync..."; mailsync ;;
+    3) st -e aerc & disown; dunstify --replace=4 "Running mailsync..."; mailsync & ;;
 esac
 
 echo "$icon"
