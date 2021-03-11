@@ -45,6 +45,7 @@ echo $passwd | sudo -S systemctl enable org.cups.cupsd.socket
 # firewall
 echo $passwd | sudo -S ufw default deny incoming
 echo $passwd | sudo -S ufw default allow outgoing
+echo $passwd | sudo -S systemctl enable --now ufw
 echo $passwd | sudo -S ufw enable
 
 # power saving service
