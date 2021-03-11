@@ -1,0 +1,10 @@
+#!/bin/env sh
+
+if [ "$1" == "inc" ]; then
+    xbacklight -inc 3 
+elif [ "$1" == "dec" ]; then
+    xbacklight -dec 3
+fi
+
+dunstify --appname="brightness" --replace=9 "Brightness $(xbacklight -get | awk '{print int($1)}')%"
+
