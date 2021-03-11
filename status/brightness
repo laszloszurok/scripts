@@ -5,4 +5,4 @@ icon=""
 
 printf "%s %s%%", "$icon" "$brlevel"
 
-dunstify --replace=1 "Brightness $brlevel%"
+dunstify --appname="brightness" --replace=9 "Brightness $brlevel%"

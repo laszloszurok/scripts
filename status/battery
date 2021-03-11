@@ -24,7 +24,7 @@ elif [ "$capacity" -le 30 -a "$capacity" -gt 20 ]; then
     icon=""
 elif [ "$capacity" -le 20 ]; then
     icon=""
-    [ "$status" != "Charging" ] && dunstify --replace=789 "Low battery level!"
+    [ "$status" != "Charging" ] && dunstify --appname="battery" --replace=5 "Low battery level!"
 fi
 
 # Roughly every 10 minutes we check if the the battery is over 80% or below 50%.
@@ -32,13 +32,13 @@ fi
 [ $(find "$lastrun" -mmin +10) ] && \
     touch "$lastrun" && \
     if [ "$capacity" -ge 80 -a "$status" == "Charging" ]; then
-        dunstify "Batery level reached 80%"
+        dunstify --appname="battery" --replace=5 "Batery level reached 80%"
     elif [ "$capacity" -le 50 -a "$status" == "Discharging" ]; then
-        dunstify "Batery level is below 50%"
+        dunstify --appname="battery" --replace=5 "Batery level is below 50%"
     fi
  
 echo "$icon"
 
 case $BUTTON in
-    1) dunstify --replace=1 "Battery: $capacity%" "$status";;
+    1) dunstify --appname="battery" --replace=5 "Battery: $capacity%" "$status";;
 esac

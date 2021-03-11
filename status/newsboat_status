@@ -7,6 +7,6 @@ UNREAD=$(newsboat -x print-unread | awk '{ print $1 }')
 printf "%s", "$icon"
 
 case $BUTTON in
-    1) dunstify --replace=1 "$UNREAD unread news" "Ritht click to open newsboat";;
+    1) dunstify --replace=3 "$UNREAD unread news" "Ritht click to open newsboat";;
     3) st -e newsboat; pkill -RTMIN+21 dwmblocks;;
 esac

@@ -8,6 +8,9 @@ signal=`awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless`
 msg=""
 
 check_connection() {
+
+    dunstify --appname="wifi" --replace=1 "Checking connection" "Please wait... (Right click for options)"
+
     # checking if we are connected to a wifi network
     if [ -z "$essid" ]; then
         icon=""
@@ -16,21 +19,22 @@ check_connection() {
         msg="| No WiFi network | "
     else
         # checking internet connection
-        dunstify --replace=1 --timeout=1200 "Checking connection, please wait..."
         echo -e "GET http://www.google.com/ HTTP/1.0\n\n" | nc google.com 80 -w 10 > /dev/null 2>&1
         if [ $? -eq 0 ]; then
             icon=""
-            msg="| Online | "
+            msg="Online"
         else
             icon=""
-            msg="| Offline | "
+            msg="Offline"
         fi
     fi
+
+    dunstify --appname="wifi" --replace=1 "$essid" "$msg, signal: $signal"
 }
 
 echo "$icon"
 
 case $BUTTON in
-    1) check_connection; dunstify --replace=1 "$essid $signal" "$msg Right click to open nmtui";;
-    3) st -e nmtui & disown;;
+    1) check_connection & ;;
+    3) st -e nmtui & disown ;;
 esac

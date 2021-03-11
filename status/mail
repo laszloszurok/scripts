@@ -21,14 +21,16 @@ checkfornew() {
 }
 
 notify() {
-    [ "$counter" -gt "0" ] && dunstify "$counter new mail(s)" "Rightclick to open aerc" || dunstify "No new mail" "Rightclick to open aerc"
+    [ "$counter" -gt "0" ] && \
+        dunstify --replace=4 "$counter new mail(s)" "Rightclick to open aerc" || \
+        dunstify --replace=4 "No new mail" "Rightclick to open aerc"
 }
 
 checkfornew
 
 case $BUTTON in
     1) notify ;;
-    3) st -e aerc & disown; dunstify "Running mailsync..."; mailsync ;;
+    3) st -e aerc & disown; dunstify --replace=4 "Running mailsync..."; mailsync ;;
 esac
 
 echo "$icon"

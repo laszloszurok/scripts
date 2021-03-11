@@ -6,7 +6,7 @@
 
 sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
 
-echo "$sinkinfo" | grep "Mute: yes" > /dev/null && printf "\\n" && exit
+echo "$sinkinfo" | grep "Mute: yes" > /dev/null && printf "\\n" && dunstify --appname="volume" --replace=8 "Sound muted" && exit
 
 vol=$(echo "$sinkinfo" | grep "front-left" | awk '{ print $5 }' | tr -d "%")
 
@@ -26,9 +26,9 @@ fi
 
 printf "%s\\n" "$icon"
 
-dunstify --replace=1 "Volume $vol%"
+dunstify --appname="volume" --replace=8 "Volume $vol%"
 
 case $BUTTON in
-    1) dunstify --replace=1 "Volume $vol%";;
+    1) dunstify --appname="volume" --replace=8 "Volume $vol%";;
 esac
 

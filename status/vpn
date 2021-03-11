@@ -3,23 +3,23 @@
 icon=""
 
 connect_protonvpn() {
-    dunstify --replace=1 "Connecting..."
+    dunstify --appname="vpn" --replace=2 "Connecting..."
     sudo -A protonvpn c -f &>/dev/null
     get_status
     [ "$connection" == "Connected" ] \
-        && dunstify --replace=1 "Connected to protonvpn!" \
+        && dunstify --appname="vpn" --replace=2 "Connected to protonvpn!" \
         && icon="" \
-        || dunstify --replace=1 "Something went wrong."
+        || dunstify --appname="vpn" --replace=2 "Something went wrong."
 }
 
 disconnect_protonvpn() {
-    dunstify --replace=1 "Disconnecting..."
+    dunstify --appname="vpn" --replace=2 "Disconnecting..."
     sudo -A protonvpn d &>/dev/null
     get_status
     [ ! "$connection" == "Connected" ] \
-        && dunstify --replace=1 "Disconnected from protonvpn!" \
+        && dunstify --appname="vpn" --replace=2 "Disconnected from protonvpn!" \
         && icon="" \
-        || dunstify --replace=1 "Something went wrong."
+        || dunstify --appname="vpn" --replace=2 "Something went wrong."
 }
 
 chose_option() {
@@ -46,19 +46,20 @@ get_status() {
 }
 
 check_status() {
+    dunstify --appname="vpn" --replace=2 "Checking for VPN connection." "Please wait... (Right click for options)"
     get_status
 
     [ "$connection" == "Connected" ] \
-        && dunstify --replace=1 "$status_protonvpn" \
+        && dunstify --appname="vpn" --replace=2 "$status_protonvpn" \
         && icon="" \
         && return 0
 
-    dunstify --replace=1 "No VPN connection!"
+    dunstify --appname="vpn" --replace=2 "No VPN connection!"
     icon=""
 }
 
 case $BUTTON in
-    1) check_status ;;
+    1) check_status & ;;
     3) chose_option ;;
 esac
 

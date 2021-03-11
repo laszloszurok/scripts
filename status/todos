@@ -16,7 +16,7 @@ appointments=$(calcurse -a)
 echo "$icon"
 
 showmsg() { 
-    dunstify --replace=1 "$1" "$2"
+    dunstify --replace=6 "$1" "$2"
 }
 
 [ -z "$BUTTON" ] && showmsg "Calcurse" "There are $num_t todos and $num_a appointments today"
