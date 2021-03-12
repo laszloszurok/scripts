@@ -2,7 +2,7 @@ xf86-video-intel
 xf86-video-amdgpu
 xorg
 xorg-xinit
-pcmanfm-gtk3
+pcmanfm
 gvfs
 gvfs-mtp
 ntfs-3g
