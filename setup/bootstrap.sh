@@ -112,6 +112,43 @@ git clone https://github.com/jaxwilko/gtk-theme-framework.git $HOME/source/palen
 cd $HOME/source/palenight-gtk
 ./main.sh -i -o
 
+# global gtk-2 settings
+echo $passwd | sudo -S tee /etc/gtk-2.0/gtkrc <<< "gtk-theme-name=\"palenight\"
+gtk-icon-theme-name=\"palenight\"
+gtk-font-name=\"Sans 9\"
+gtk-cursor-theme-name=\"palenight\"
+gtk-cursor-theme-size=0
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=1
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=\"hintfull\""
+
+# global gtk-3 settings
+echo $passwd | sudo -S tee /etc/gtk-3.0/settings.ini <<< "[Settings]
+gtk-theme-name=palenight
+gtk-icon-theme-name=palenight
+gtk-font-name=Sans 9
+gtk-cursor-theme-name=palenight
+gtk-cursor-theme-size=0
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=1
+gtk-menu-images=1
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=1
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintfull
+gtk-application-prefer-dark-theme=true"
+
+# unify gtk and qt themes
+echo $passwd | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=gtk2"
+
 # spotify wm
 git clone https://github.com/dasJ/spotifywm.git $HOME/.config/spotifywm
 cd $HOME/.config/spotifywm
@@ -141,9 +178,6 @@ echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"
     Option \"Tapping\" \"on\"
     Option \"NaturalScrolling\" \"true\"
 EndSection"
-
-# theme settings
-echo $passwd | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=gtk2"
 
 # service to launch slock on suspend
 echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
