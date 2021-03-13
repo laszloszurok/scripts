@@ -54,30 +54,6 @@ echo $passwd | sudo -S systemctl enable windscribe
 # power saving service
 echo $passwd | sudo -S systemctl enable tlp
 
-# automatically spin down the secondary hdd in my machine if it is not in use
-echo $passwd | sudo -S tee /usr/lib/systemd/system-sleep/hdparm <<< "#!/bin/sh
-
-case \$1 in post)
-        /usr/bin/hdparm -q -S 60 -y /dev/sda
-        ;;
-esac"
-
-echo $passwd | sudo -S tee /etc/systemd/system/hdparm.service <<< "[Unit]
-Description=hdparm sleep
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
-
-[Install]
-WantedBy=multi-user.target"
-################################################################################
-
-# disable tty swithcing when X is running, so the lockscreen cannot be bypassed
-echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
-    Option \"DontVTSwitch\" \"True\"
-EndSection"
-
 # cloning my configs from github to a bare repository for config file management
 git clone --bare https://github.com/laszloszurok/config $HOME/.cfg
 /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME config --local status.showUntrackedFiles no
@@ -179,6 +155,28 @@ echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"
     Option \"NaturalScrolling\" \"true\"
 EndSection"
 
+# automatically spin down the secondary hdd in my machine if it is not in use
+echo $passwd | sudo -S tee /usr/lib/systemd/system-sleep/hdparm <<< "#!/bin/sh
+
+case \$1 in post)
+        /usr/bin/hdparm -q -S 60 -y /dev/sda
+        ;;
+esac"
+
+echo $passwd | sudo -S tee /etc/systemd/system/hdparm.service <<< "[Unit]
+Description=hdparm sleep
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
+
+[Install]
+WantedBy=multi-user.target"
+################################################################################
+
+# disable hardware bell on boot
+echo $passwd | sudo -S tee /etc/modprobe.d/pcspkr-blacklist.conf <<< "blacklist pcspkr"
+
 # service to launch slock on suspend
 echo $passwd | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
 Description=Lock X session using slock for user %i
@@ -198,6 +196,11 @@ WantedBy=sleep.target
 WantedBy=suspend.target"
 
 echo $passwd | sudo -S systemctl enable slock@$current_user.service
+
+# disable tty swithcing when X is running, so the lockscreen cannot be bypassed
+echo $passwd | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
+    Option \"DontVTSwitch\" \"True\"
+EndSection"
 
 # cron service
 echo $passwd | sudo -S systemctl enable cronie.service
