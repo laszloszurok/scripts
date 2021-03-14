@@ -1,15 +1,12 @@
 #!/bin/sh
 
-case "$(xset -q | grep LED | awk '{ print $10 }')" in
-  "00000002") KBD="us" ;;
-  "00001002") KBD="hu" ;;
-  *) KBD="unknown" ;;
-esac
+# Displays the current kb layout in the statusbar
+# and toggles between two layouts if the icon is
+# clicked. Set the initial layout in ~/.xinitrc
 
-# echo ""
+KBD="$(setxkbmap -query | grep layout | awk '{ print $2 }')"
 
-dunstify --replace=1 "Keyboard layout: $(echo $KBD | awk '{print toupper($0)}')"
+[ "$KBD" == "hu" ] && KBD="us" || KBD="hu"
+setxkbmap "$KBD"
 
-# case $BUTTON in
-#     1) dunstify --replace=1 "Keyboard layout: $(echo $KBD | awk '{print toupper($0)}')" "Alt+sapce to toggle";;
-# esac
+echo " $KBD"
