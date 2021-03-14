@@ -5,7 +5,12 @@
 
 case $BUTTON in
     1) pactl set-source-mute 1 toggle ;;
+    3) pavucontrol & ;;
 esac
+
+notify() {
+    dunstify --appname="microphone" --replace=1 "$1" "$2"
+}
 
 micinfo="$(pactl list sources | grep 'Name\|Mute\|Volume:')"
 
@@ -13,8 +18,8 @@ echo "$micinfo" | grep "Mute: yes" > /dev/null && mic_status="muted" || mic_stat
 
 if [ "$mic_status" == "muted" ]; then
     echo ""
-    dunstify --appname="microphone" --replace=1 "Microphone muted"
+    notify "Microphone muted"
 else
     echo ""
-    dunstify --appname="microphone" --replace=1 "Microphone active"
+    notify "Microphone active"
 fi

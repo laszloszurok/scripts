@@ -1,12 +1,17 @@
 #!/bin/sh
 
-# This script uses pactl to get the volume level and display it in
-# the form of a notification and display an appropriate icon in the 
-# status bar.
+# This script uses pactl to get the volume level, then shows it in
+# a notification and displays an appropriate icon in the status bar.
+# Use 'pactl list sinks' to get sink names.
 
 case $BUTTON in
     1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
+    3) pavucontrol & ;;
 esac
+
+notify() {
+    dunstify --appname="volume" --replace=1 "$1" "$2"
+}
 
 sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
 
@@ -14,12 +19,12 @@ echo "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted"
 
 if [ "$speaker_state" == "muted" ]; then
     icon=""
-    dunstify --appname="volume" --replace=8 "Sound muted"
+    notify "Sound muted"
 else
     vol=$(echo "$sinkinfo" | grep "front-left" | awk 'NR ==1 { print $5 }' | tr -d "%")
 
     if [ "$vol" -gt "100" ]; then
-        # Don't let the volume level exceed 100% (Use pactl list sinks to get sink names)
+        # Don't let the volume level exceed 100%
         pactl set-sink-volume @DEFAULT_SINK@ 100%
         vol=100;
         icon=""
@@ -31,7 +36,7 @@ else
         icon=""
     fi
 
-    dunstify --appname="volume" --replace=8 "Volume $vol%"
+    notify "Volume $vol%"
 fi
 
 printf "%s\\n" "$icon"
