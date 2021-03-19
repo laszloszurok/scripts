@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env bash
 
 notify() {
     dunstify --appname="clock" --replace=1 "$1" "$2"
@@ -12,5 +12,5 @@ printf "%s %s ", "$icon" "$hour_minute"
 
 case $BUTTON in
     1) notify "$date" "Right click to open calcurse";;
-	3) st -f 'mono:pixelsize=20:antialias=true:autohint=true' -e calcurse & disown;;
+	3) st -f 'mono:pixelsize=20:antialias=true:autohint=true' -e calcurse & disown ;;
 esac

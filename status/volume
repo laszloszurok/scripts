@@ -17,7 +17,7 @@ sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
 
 echo "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted"
 
-if [ "$speaker_state" == "muted" ]; then
+if [ "$speaker_state" = "muted" ]; then
     icon=""
     notify "Sound muted"
 else

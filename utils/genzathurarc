@@ -2,7 +2,7 @@
 
 # Generates zathura configuration file with pywal colors
 
-. $HOME/.cache/wal/colors.sh
+. "$HOME/.cache/wal/colors.sh"
 
 echo "
 set window-title-home-tilde true
@@ -41,6 +41,6 @@ set index-active-bg \"$foreground\"
 set index-active-fg \"$background\"
 set render-loading-bg \"$background\"
 set render-loading-fg \"$foreground\"
-" > $HOME/.config/zathura/zathurarc
+" > "$HOME/.config/zathura/zathurarc"
 
 echo "Pywal colors generated for zathura and written into $HOME/.config/zathura/zathurarc"

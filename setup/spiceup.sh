@@ -1,9 +1,9 @@
 #!/bin/bash
-[ -z $1 ] && echo "Usage: ./spiceup.sh path/to/an/image" && exit 1
-! [ -f $1 ] && echo "The given argument is not a valid file" && exit 1
+[ -z "$1" ] && echo "Usage: ./spiceup.sh path/to/an/image" && exit 1
+! [ -f "$1" ] && echo "The given argument is not a valid file" && exit 1
 
 # running wal
-wal -i $1
+wal -i "$1"
 
 ~/scripts/misc/genzathurarc
 
@@ -31,7 +31,7 @@ spicetify config prefs_path "$HOME/.config/spotify/prefs"
 spicetify config current_theme Spicy
 
 # installing lyrics fetching app for spotify
-cd "$(dirname "$(spicetify -c)")/CustomApps"
+cd "$(dirname "$(spicetify -c)")/CustomApps" || exit
 git clone https://github.com/khanhas/genius-spicetify
 mv "genius-spicetify" lyrics
 spicetify config custom_apps lyrics

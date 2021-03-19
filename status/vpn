@@ -6,24 +6,29 @@ connect_protonvpn() {
     dunstify --appname="vpn" --replace=2 "Connecting..."
     sudo -A protonvpn c -f &>/dev/null
     get_status
-    [ "$connection" == "Connected" ] \
-        && dunstify --appname="vpn" --replace=2 "Connected to protonvpn!" \
-        && icon="" \
-        || dunstify --appname="vpn" --replace=2 "Something went wrong."
+    if [ "$connection" == "Connected" ]; then
+        dunstify --appname="vpn" --replace=2 "Connected to protonvpn!"
+        icon=""
+    else 
+        dunstify --appname="vpn" --replace=2 "Something went wrong."
+    fi
 }
 
 disconnect_protonvpn() {
     dunstify --appname="vpn" --replace=2 "Disconnecting..."
     sudo -A protonvpn d &>/dev/null
     get_status
-    [ ! "$connection" == "Connected" ] \
-        && dunstify --appname="vpn" --replace=2 "Disconnected from protonvpn!" \
-        && icon="" \
-        || dunstify --appname="vpn" --replace=2 "Something went wrong."
+    if [ ! "$connection" == "Connected" ]; then
+        dunstify --appname="vpn" --replace=2 "Disconnected from protonvpn!"
+        icon=""
+    else 
+        dunstify --appname="vpn" --replace=2 "Something went wrong."
+    fi
 }
 
 chose_option() {
-    local option=$(
+    local option
+    option=$(
         yad \
             --list \
             --title="Choose an option" \

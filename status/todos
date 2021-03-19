@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # This script checks if there are todos or appointments in 
-# calcurse (a cli calendar application) and displays an icon
+# calcurse (a calendar application) and displays an icon
 # accordingly in the statusbar. It also displays the number
 # of todos and appointments in the form of a notification.
 
@@ -16,10 +16,10 @@ appointments=$(calcurse -a)
 echo "$icon"
 
 showmsg() { 
-    dunstify --replace=6 "$1" "$2"
+    dunstify --replace=100 "$1" "$2"
 }
 
-[ -z "$BUTTON" ] && showmsg "Calcurse" "There are $num_t todos and $num_a appointments today"
+showmsg "Calcurse" "There are $num_t todos and $num_a appointments today"
 
 case $BUTTON in
     1) showmsg "Todos: $num_t

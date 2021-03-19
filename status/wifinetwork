@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env bash
 
 # this script requires netcat to be installed
 
@@ -9,7 +9,7 @@ notify() {
 }
 
 essid=$(iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
-signal=`awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless`
+signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 msg=""
 
 check_connection() {
@@ -24,8 +24,7 @@ check_connection() {
         msg="No WiFi network"
     else
         # checking internet connection
-        echo -e "GET https://archlinux.org/ HTTP/1.0\n\n" | nc archlinux.org 80 -w 10 > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
+        if echo -e "GET https://archlinux.org/ HTTP/1.0\n\n" | nc archlinux.org 80 -w 10 > /dev/null 2>&1; then
             icon=""
             msg="Online"
         else

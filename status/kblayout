@@ -6,7 +6,18 @@
 
 KBD="$(setxkbmap -query | grep layout | awk '{ print $2 }')"
 
-[ "$KBD" == "hu" ] && KBD="us" || KBD="hu"
+[ "$KBD" = "hu" ] && KBD="us" || KBD="hu"
 setxkbmap "$KBD"
 
 echo " $KBD"
+
+# Bind the right alt key to Mod4 (the Windows key). Need to be run
+# every time the layout changes, because setxkbmap resets xmodmap 
+# settings. Use 'xmodmap -pke | grep Alt_R' to get the appropriate 
+# keycode.
+rebindAlt_R() {
+    xmodmap -e "keycode 108 = Super_L"
+    xmodmap -e "remove mod1 = Super_L"
+}
+
+rebindAlt_R &

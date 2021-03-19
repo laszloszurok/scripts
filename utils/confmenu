@@ -16,7 +16,7 @@ list_no_dups="$cache_dir/list_no_dups"
 mkdir -p "$cache_dir"
 
 # dmenu settings
-dmenu_cmd="dmenu -h 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p configure: $@"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p configure: $@"
 
 # find a terminal emulator
 if [ -z "$TERMINAL_CMD" ]; then
@@ -46,13 +46,13 @@ if [ -z "$TERMINAL_CMD" ]; then
 fi
 
 update_cache() {
-    sed -i "\|$1|d" $recent_cache
+    sed -i "\|$1|d" "$recent_cache"
     echo -e "$1\n$(< "$recent_cache")" > "$recent_cache"
 }
 
 # get the contents of the config folders and create recent_cache if it does not exist
-config_list=$(find ${config_paths[@]} -type f -maxdepth 2 -not -path '*/\.git/*')
-[ ! -f $recent_cache ] && echo "$config_list" > "$recent_cache"
+config_list=$(find "${config_paths[@]}" -type f -maxdepth 2 -not -path '*/\.git/*')
+[ ! -f "$recent_cache" ] && echo "$config_list" > "$recent_cache"
 
 # always write the full list to all_cache, so the list will be always up to date
 echo "$config_list" > "$all_cache"
@@ -62,7 +62,7 @@ for i in $(<"$recent_cache"); do
     for j in $(<"$all_cache"); do 
         [ "$i" == "$j" ] && found=1 && break || found=0
     done
-    [ "$found" -eq 0 ] && sed -i "\|$i|d" $recent_cache
+    [ "$found" -eq 0 ] && sed -i "\|$i|d" "$recent_cache"
 done
 
 # merge our recent cache with the full list

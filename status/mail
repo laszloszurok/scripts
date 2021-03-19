@@ -4,6 +4,10 @@
 # script from mutt-wizard. It checks if there are new mails for any account
 # and displays a status indicator icon accordingly (with dwmblocks).
 
+notify() {
+    dunstify --replace=200 "$1" "$2"
+}
+
 icon=""
 
 MBSYNCRC="$HOME/.config/mailsync/mbsyncrc"
@@ -20,17 +24,17 @@ checkfornew() {
     done
 }
 
-notify() {
+get_info() {
     [ "$counter" -gt "0" ] && \
-        dunstify --replace=4 "$counter new mail(s)" "Rightclick to open aerc" || \
-        dunstify --replace=4 "No new mail" "Rightclick to open aerc"
+        notify "$counter new mail(s)" "Rightclick to open aerc" || \
+        notify "No new mail" "Rightclick to open aerc"
 }
 
 checkfornew
 
 case $BUTTON in
-    1) notify ;;
-    3) st -e aerc & disown; dunstify --replace=4 "Running mailsync..."; mailsync & ;;
+    1) get_info ;;
+    3) st -e aerc & disown; notify "Running mailsync..."; mailsync & ;;
 esac
 
 echo "$icon"
