@@ -11,7 +11,7 @@ IFS= read -p "sudo password:" -r passwd  # read the password
 stty "$stty_orig"                        # restore terminal setting.
 
 exec_cmd() {
-    printf '%s' "$passwd" | $1
+    printf "%s\n" "$passwd" | $1
 }
 
 sysctl_enable() {
@@ -132,7 +132,7 @@ exec_cmd "sudo -S chmod +x /usr/local/spotify"
 
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
-chsh -s /usr/bin/zsh
+exec_cmd "sudo -S chsh -s /usr/bin/zsh pulzar"
 
 exec_cmd "sudo -S mkdir /usr/share/xsessions"
 write_to_file "/usr/share/xsessions/dwm.desktop" "[Desktop Entry]
