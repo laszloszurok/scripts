@@ -6,13 +6,12 @@
 # a keypress to quit. I use it to show a calendar when I right click
 # the clock in  my statusbar
 
-[ ! -d "$HOME/.cache/calendar" ] && mkdir $HOME/.cache/calendar
+[ ! -d "$HOME/.cache/calendar" ] && mkdir "$HOME/.cache/calendar"
 
 date="$(date '+%a %d %b')"
-echo "Current date: $date" > $HOME/.cache/calendar/cal.txt
-cal -my >> $HOME/.cache/calendar/cal.txt
-echo "
-Press any key to exit" >> $HOME/.cache/calendar/cal.txt
+printf "%s %s\n" "Current date:" "$date" > "$HOME/.cache/calendar/cal.txt"
+cal -my >> "$HOME/.cache/calendar/cal.txt"
+printf "Press any key to exit" >> "$HOME/.cache/calendar/cal.txt"
 
 display_center(){
     columns="$(tput cols)"

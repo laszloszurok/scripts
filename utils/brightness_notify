@@ -1,8 +1,8 @@
 #!/bin/env sh
 
-if [ "$1" == "inc" ]; then
+if [ "$1" = "inc" ]; then
     xbacklight -inc 3 
-elif [ "$1" == "dec" ]; then
+elif [ "$1" = "dec" ]; then
     xbacklight -dec 3
 fi
 
