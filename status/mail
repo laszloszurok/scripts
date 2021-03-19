@@ -18,7 +18,7 @@ counter=0
 checkfornew() {
     for account in $accounts; do
         new=$(find "$HOME/.local/share/mail/$account/INBOX/new/" "$HOME/.local/share/mail/$account/Inbox/new/" "$HOME/.local/share/mail/$account/inbox/new/" -type f 2> /dev/null)
-        newcount=$(echo "$new" | sed '/^\s*$/d' | wc -l)
+        newcount=$(printf "%s\n" "$new" | sed '/^\s*$/d' | wc -l)
         [ "$newcount" -gt "0" ] && icon="" && counter=$((counter+newcount))
 
     done
@@ -37,4 +37,4 @@ case $BUTTON in
     3) st -e aerc & disown; notify "Running mailsync..."; mailsync & ;;
 esac
 
-echo "$icon"
+printf "%s\n" "$icon"

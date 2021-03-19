@@ -9,7 +9,7 @@ KBD="$(setxkbmap -query | grep layout | awk '{ print $2 }')"
 [ "$KBD" = "hu" ] && KBD="us" || KBD="hu"
 setxkbmap "$KBD"
 
-echo " $KBD"
+printf "%s\n" " $KBD"
 
 # Bind the right alt key to Mod4 (the Windows key). Need to be run
 # every time the layout changes, because setxkbmap resets xmodmap 

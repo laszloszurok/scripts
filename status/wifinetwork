@@ -24,7 +24,7 @@ check_connection() {
         msg="No WiFi network"
     else
         # checking internet connection
-        if echo -e "GET https://archlinux.org/ HTTP/1.0\n\n" | nc archlinux.org 80 -w 10 > /dev/null 2>&1; then
+        if printf "GET https://archlinux.org/ HTTP/1.0\n\n" | nc archlinux.org 80 -w 10 > /dev/null 2>&1; then
             icon=""
             msg="Online"
         else
@@ -42,4 +42,4 @@ case $BUTTON in
     3) st -e nmtui & disown ;;
 esac
 
-echo "$icon"
+printf "%s\n" "$icon"

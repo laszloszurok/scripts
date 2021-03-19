@@ -17,9 +17,9 @@ micinfo="$(pactl list sources | grep 'Name\|Mute\|Volume:')"
 echo "$micinfo" | grep "Mute: yes" > /dev/null && mic_status="muted" || mic_status="active" 
 
 if [ "$mic_status" == "muted" ]; then
-    echo ""
+    printf "%s\n" ""
     notify "Microphone muted"
 else
-    echo ""
+    printf "%s\n" ""
     notify "Microphone active"
 fi

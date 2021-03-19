@@ -15,13 +15,13 @@ notify() {
 
 sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
 
-echo "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted"
+printf "%s\n" "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted"
 
 if [ "$speaker_state" = "muted" ]; then
     icon=""
     notify "Sound muted"
 else
-    vol=$(echo "$sinkinfo" | grep "front-left" | awk 'NR ==1 { print $5 }' | tr -d "%")
+    vol=$(printf "%s\n" "$sinkinfo" | grep "front-left" | awk 'NR ==1 { print $5 }' | tr -d "%")
 
     if [ "$vol" -gt "100" ]; then
         # Don't let the volume level exceed 100%
@@ -39,4 +39,4 @@ else
     notify "Volume $vol%"
 fi
 
-printf "%s\\n" "$icon"
+printf "%s\n" "$icon"

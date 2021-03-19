@@ -26,7 +26,7 @@ elif [ "$capacity" -le 20 ]; then
     [ "$status" != "Charging" ] && notify "Low battery level!"
 fi
 
-echo "$icon"
+printf "%s\n" "$icon"
 
 case $BUTTON in
     1) notify "Battery: $capacity%" "$status";;
