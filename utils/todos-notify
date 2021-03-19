@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+# Run this script as a cron job to get notifications about the number
+# of todos and appointments in calcurse (a calendar application).
+
+todos=$(calcurse -t)
+appointments=$(calcurse -a)
+
+[ -n "$todos" ] && num_t=$(echo "$todos" | wc -l) && (("num_t-=1")) || num_t=0
+[ -n "$appointments" ] && num_a=$(echo "$appointments" | grep -vc '^ - ') && (("num_a-=1")) || num_a=0
+
+showmsg() { 
+    dunstify --replace=100 "$1" "$2"
+}
+
+showmsg "Calcurse" "There are $num_t todos and $num_a appointments today"
