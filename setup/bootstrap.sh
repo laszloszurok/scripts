@@ -1,95 +1,213 @@
 #!/bin/bash
 
-[ ! -f ./packagelist ] && echo "Missing packagelist! Aborting..." && exit 1
+[ ! -f ./packagelist ] && printf "Missing packagelist! Aborting...\n" && exit 1
 
 stty_orig=$(stty -g)                     # save original terminal setting.
 stty -echo                               # turn-off echoing.
 IFS= read -p "sudo password:" -r passwd  # read the password
 stty "$stty_orig"                        # restore terminal setting.
 
+src_dir="$HOME/source/"
+
+exec_cmd() {
+    printf '%s' "$passwd" | $1
+}
+
+sysctl_enable() {
+    exec_cmd "sudo -S systemctl enable $1"
+}
+
+write_to_file() {
+    if [ "$3" == "-a" ]; then
+        printf '%s' "$passwd" | sudo -S tee -a "$1" <<< "$2"
+    else
+        printf '%s' "$passwd" | sudo -S tee "$1" <<< "$2"
+    fi
+}
+
+git_cln() {
+    progname="$(basename "$1" .git)"
+    if [ -n "$3" ]; then
+        git clone "$1" "$2/$3/$progname"
+    else
+        git clone "$1" "$2/$progname"
+    fi
+}
+
+install_aur_helper() {
+    git_cln "https://aur.archlinux.org/paru.git" "$src_dir"
+    cd "$src_dir/$progname" || return 1
+    makepkg -si
+}
+
+install_from_src() {
+    cd "$1" || return 1
+    for d in "$1"/*/ ; do
+        cd "$d" || return 1
+        exec_cmd "sudo -S make install"
+        cd ..
+    done
+}
+
+install_dotfiles() {
+    git clone --bare https://github.com/laszloszurok/config "$HOME"/.cfg
+    /usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" config --local status.showUntrackedFiles no
+    /usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" checkout -f
+}
+
 # checking who is the current user
 current_user=$(whoami)
 
 # enable colored output for pacman
-echo "$passwd" | sudo -S sed -i '/Color/s/^#//g' /etc/pacman.conf
-
-# sync mirrors, update the system
-echo "$passwd" | sudo -S pacman -Syyu
+exec_cmd "sudo -S sed -i '/Color/s/^#//g' /etc/pacman.conf"
 
 # install git
-echo "$passwd" | sudo -S pacman -S --noconfirm git
+exec_cmd "sudo -S pacman -S --noconfirm git"
 
-# installing paru
-git clone https://aur.archlinux.org/paru.git "$HOME/source/paru"
-cd "$HOME"/source/paru || exit
-makepkg -si
-cd || exit
+# installing an aur helper
+install_aur_helper
 
 # install every package from packagelist
 cat ./packagelist | xargs paru --sudoloop -S --noconfirm
 
 # installing pynvim
-echo "$passwd" | sudo -S -u "$current_user" python3 -m pip install --user --upgrade pynvim
+exec_cmd "sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim"
 
 # nextdns settings
-echo "$passwd" | sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate
+exec_cmd "sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate"
 
 # virt-manager
-echo "$passwd" | sudo -S usermod -aG libvirt "$current_user"
-echo "$passwd" | sudo -S systemctl enable libvirtd
-echo "$passwd" | sudo -S virsh net-autostart default
+exec_cmd "sudo -S usermod -aG libvirt $current_user"
+sysctl_enable libvirtd
+exec_cmd "sudo -S virsh net-autostart default"
 
 # printing service
-echo "$passwd" | sudo -S systemctl enable org.cups.cupsd.socket
+sysctl_enable org.cups.cupsd.socket
 
 # firewall
-echo "$passwd" | sudo -S ufw default deny incoming
-echo "$passwd" | sudo -S ufw default allow outgoing
-echo "$passwd" | sudo -S systemctl enable ufw
-echo "$passwd" | sudo -S ufw enable
+exec_cmd "sudo -S ufw default deny incoming"
+exec_cmd "sudo -S ufw default allow outgoing"
+sysctl_enable ufw
+exec_cmd "sudo -S ufw enable"
 
 # windscribe vpn service
-echo "$passwd" | sudo -S systemctl enable windscribe
+sysctl_enable windscribe
 
 # power saving service
-echo "$passwd" | sudo -S systemctl enable tlp
+sysctl_enable tlp
 
 # cloning my configs from github to a bare repository for config file management
-git clone --bare https://github.com/laszloszurok/config "$HOME"/.cfg
-/usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" config --local status.showUntrackedFiles no
-/usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" checkout -f
+install_dotfiles
 
 # cloning my scripts
-git clone https://github.com/laszloszurok/scripts "$HOME"/source/scripts
+git_cln "https://github.com/laszloszurok/scripts.git" "$src_dir"
 
 # cloning my suckless builds
 suckless_dir="$HOME/source/suckless-builds"
-git clone https://github.com/laszloszurok/dwm.git "$suckless_dir"/dwm
-git clone https://github.com/laszloszurok/dwmblocks.git "$suckless_dir"/dwmblocks
-git clone https://github.com/laszloszurok/dmenu.git "$suckless_dir"/dmenu
-git clone https://github.com/laszloszurok/st.git "$suckless_dir"/st
-git clone https://github.com/laszloszurok/slock.git "$suckless_dir"/slock
-git clone https://github.com/laszloszurok/wmname.git "$suckless_dir"/wmname
+git_cln "https://github.com/laszloszurok/dwm.git"       "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/dwmblocks.git" "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/dmenu.git"     "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/st.git"        "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/slock.git"     "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir" "$suckless_dir"
 
 # installing my suckless builds
-cd "$suckless_dir" || exit
-for d in "$suckless_dir"/*/ ; do
-    cd "$d" || exit
-    echo "$passwd" | sudo -S make install
-    cd ..
-done
-cd || exit
+install_from_src "$suckless_dir"
+
+# spotify wm
+git_cln "https://github.com/dasJ/spotifywm.git" "$src_dir"
+cd "$src_dir/spotifywm" || exit
+make
+write_to_file "/usr/local/bin/spotify" "LD_PRELOAD=/usr/lib/libcurl.so.4:$src_dir/spotifywm/spotifywm.so /usr/bin/spotify"
+exec_cmd "sudo -S chmod +x /usr/local/spotify"
+
+# changing the default shell to zsh
+write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
+chsh -s /usr/bin/zsh
+
+exec_cmd "sudo -S mkdir /usr/share/xsessions"
+write_to_file "/usr/share/xsessions/dwm.desktop" "[Desktop Entry]
+Encoding=UTF-8
+Name=dwm
+Comment=Dynamic Window Manager
+Exec=/usr/local/bin/dwm
+Type=Application"
+
+# touchpad settings
+write_to_file "/etc/X11/xorg.conf.d/30-touchpad.conf" "Section \"InputClass\"
+    Identifier \"touchpad\"
+    Driver \"libinput\"
+    MatchIsTouchpad \"on\"
+    Option \"Tapping\" \"on\"
+    Option \"NaturalScrolling\" \"true\"
+EndSection"
+
+# automatically spin down the secondary hdd in my machine if it is not in use
+write_to_file "/usr/lib/systemd/system-sleep/hdparm" "#!/bin/sh
+
+case \$1 in post)
+        /usr/bin/hdparm -q -S 60 -y /dev/sda
+        ;;
+esac"
+
+write_to_file "/etc/systemd/system/hdparm.service" "[Unit]
+Description=hdparm sleep
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
+
+[Install]
+WantedBy=multi-user.target"
+################################################################################
+
+# disable hardware bell on boot
+write_to_file "/etc/modprobe.d/pcspkr-blacklist.conf" "blacklist pcspkr"
+
+# service to launch slock on suspend
+write_to_file "/etc/systemd/system/slock@.service" "[Unit]
+Description=Lock X session using slock for user %i
+Before=sleep.target
+Before=suspend.target
+
+[Service]
+User=%i
+Type=simple
+Environment=DISPLAY=:0
+ExecStartPre=/usr/bin/xset dpms force suspend
+ExecStart=/usr/local/bin/slock
+TimeoutSec=infinity
+
+[Install]
+WantedBy=sleep.target
+WantedBy=suspend.target"
+
+sysctl_enable "slock@$current_user.service"
+
+# disable tty swithcing when X is running, so the lockscreen cannot be bypassed
+write_to_file "/etc/X11/xorg.conf.d/xorg.conf" "Section \"ServerFlags\"
+    Option \"DontVTSwitch\" \"True\"
+EndSection"
+
+# cron service
+sysctl_enable cronie.service
+crontab "$HOME"/.config/cronjobs
+
+# udev rule to allow users in the "video" group to set the display brightness
+write_to_file "/etc/udev/rules.d/90-backlight.rules" "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
+  RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\", \
+  RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\""
 
 # cloning my wallpapers
-git clone https://github.com/laszloszurok/Wallpapers "$HOME"/pictures/wallpapers
+git_cln "https://github.com/laszloszurok/Wallpapers.git" "$HOME/pictures/"
 
 # installing gtk palenight theme
-git clone https://github.com/jaxwilko/gtk-theme-framework.git "$HOME"/source/palenight-gtk
-cd "$HOME"/source/palenight-gtk || exit
+git_cln "https://github.com/jaxwilko/gtk-theme-framework.git" "$src_dir"
+cd "$src_dir/gtk-theme-framework" || exit
 ./main.sh -i -o
 
 # global gtk-2 settings
-echo "$passwd" | sudo -S tee /etc/gtk-2.0/gtkrc <<< "gtk-theme-name=\"palenight\"
+write_to_file "/etc/gtk-2.0/gtkrc" "gtk-theme-name=\"palenight\"
 gtk-icon-theme-name=\"palenight\"
 gtk-font-name=\"Sans 9\"
 gtk-cursor-theme-name=\"palenight\"
@@ -105,7 +223,7 @@ gtk-xft-hinting=1
 gtk-xft-hintstyle=\"hintfull\""
 
 # global gtk-3 settings
-echo "$passwd" | sudo -S tee /etc/gtk-3.0/settings.ini <<< "[Settings]
+write_to_file "/etc/gtk-3.0/settings.ini" "[Settings]
 gtk-theme-name=palenight
 gtk-icon-theme-name=palenight
 gtk-font-name=Sans 9
@@ -123,94 +241,6 @@ gtk-xft-hintstyle=hintfull
 gtk-application-prefer-dark-theme=true"
 
 # unify gtk and qt themes
-echo "$passwd" | sudo -S tee -a /etc/environment <<< "QT_QPA_PLATFORMTHEME=gtk2"
+write_to_file "/etc/environment" "QT_QPA_PLATFORMTHEME=gtk2" "-a"
 
-# spotify wm
-git clone https://github.com/dasJ/spotifywm.git "$HOME"/.config/spotifywm
-cd "$HOME"/.config/spotifywm || exit
-make
-echo "$passwd" | sudo -S -u "$current_user" tee /usr/local/bin/spotify <<< "LD_PRELOAD=/usr/lib/libcurl.so.4:$HOME/.config/spotifywm/spotifywm.so /usr/bin/spotify"
-echo "$passwd" | sudo -S chmod +x /usr/local/spotify
-
-cd || exit
-
-# changing the default shell to zsh
-echo "$passwd" | sudo -S tee /etc/zsh/zshenv <<< "ZDOTDIR=\$HOME/.config/zsh"
-chsh -s /usr/bin/zsh
-
-echo "$passwd" | sudo -S mkdir /usr/share/xsessions
-echo "$passwd" | sudo -S tee /usr/share/xsessions/dwm.desktop <<< "[Desktop Entry]
-Encoding=UTF-8
-Name=dwm
-Comment=Dynamic Window Manager
-Exec=/usr/local/bin/dwm
-Type=Application"
-
-# touchpad settings
-echo "$passwd" | sudo -S tee /etc/X11/xorg.conf.d/30-touchpad.conf <<< "Section \"InputClass\"
-    Identifier \"touchpad\"
-    Driver \"libinput\"
-    MatchIsTouchpad \"on\"
-    Option \"Tapping\" \"on\"
-    Option \"NaturalScrolling\" \"true\"
-EndSection"
-
-# automatically spin down the secondary hdd in my machine if it is not in use
-echo "$passwd" | sudo -S tee /usr/lib/systemd/system-sleep/hdparm <<< "#!/bin/sh
-
-case \$1 in post)
-        /usr/bin/hdparm -q -S 60 -y /dev/sda
-        ;;
-esac"
-
-echo "$passwd" | sudo -S tee /etc/systemd/system/hdparm.service <<< "[Unit]
-Description=hdparm sleep
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
-
-[Install]
-WantedBy=multi-user.target"
-################################################################################
-
-# disable hardware bell on boot
-echo "$passwd" | sudo -S tee /etc/modprobe.d/pcspkr-blacklist.conf <<< "blacklist pcspkr"
-
-# service to launch slock on suspend
-echo "$passwd" | sudo -S tee /etc/systemd/system/slock@.service <<< "[Unit]
-Description=Lock X session using slock for user %i
-Before=sleep.target
-Before=suspend.target
-
-[Service]
-User=%i
-Type=simple
-Environment=DISPLAY=:0
-ExecStartPre=/usr/bin/xset dpms force suspend
-ExecStart=/usr/local/bin/slock
-TimeoutSec=infinity
-
-[Install]
-WantedBy=sleep.target
-WantedBy=suspend.target"
-
-echo "$passwd" | sudo -S systemctl enable "slock@$current_user.service"
-
-# disable tty swithcing when X is running, so the lockscreen cannot be bypassed
-echo "$passwd" | sudo -S tee /etc/X11/xorg.conf.d/xorg.conf <<< "Section \"ServerFlags\"
-    Option \"DontVTSwitch\" \"True\"
-EndSection"
-
-# cron service
-echo "$passwd" | sudo -S systemctl enable cronie.service
-crontab "$HOME"/.config/cronjobs
-
-# udev rule to allow users in the "video" group to set the display brightness
-echo "$passwd" | sudo -S tee /etc/udev/rules.d/90-backlight.rules <<< "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
-  RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\", \
-  RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\""
-
-echo "
-Finished
-Please reboot your computer"
+printf "Finished\nPlease reboot your computer\n"
