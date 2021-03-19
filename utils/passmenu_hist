@@ -6,7 +6,7 @@
 # them.
 
 # dmenu settings
-passmenu_cmd="dmenu -h 26 -fn monospace:size=12 -l 20 -g 2 -c -i -p copy:"
+passmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -g 2 -c -i -p copy:"
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
@@ -21,7 +21,7 @@ mkdir -p "$cache_dir"
 # and remove any other occurrences. This way the last picked
 # entry will always be the first in the list.
 update_cache() {
-    sed -i "\|$1|d" $recent_cache
+    sed -i "\|$1|d" "$recent_cache"
     echo -e "$1\n$(< "$recent_cache")" > "$recent_cache"
 }
 
@@ -32,7 +32,7 @@ password_files=( "${password_files[@]#"$prefix"/}" )
 password_files=( "${password_files[@]%.gpg}" )
 
 # write to recent_cache if it does not exist
-[ ! -f $recent_cache ] && echo "${password_files[@]}" | tr " " "\n" > "$recent_cache"
+[ ! -f "$recent_cache" ] && echo "${password_files[@]}" | tr " " "\n" > "$recent_cache"
 
 # always write the full list to all_cache, so the list will be always up to date
 echo "${password_files[@]}" | tr " " "\n" > "$all_cache"
@@ -44,11 +44,11 @@ do
     do 
         [ "$i" == "$j" ] && found=1 && break || found=0
     done
-    [ "$found" -eq 0 ] && sed -i "\|$i|d" $recent_cache
+    [ "$found" -eq 0 ] && sed -i "\|$i|d" "$recent_cache"
 done
 
 # merge our recent cache with the full list
-echo "$(cat $recent_cache $all_cache)" > "$list"
+cat "$recent_cache" "$all_cache" > "$list"
 
 # find the first occurrences of every entry and remove any other occurrences,
 # so there will be no duplicates in the list
