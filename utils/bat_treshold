@@ -1,0 +1,22 @@
+#!/bin/env bash
+
+# Run this script as a cron job to get notifications when
+# the batter level reaches 80% or goes below 50%. Serves
+# as a reminder to plug/unlug the charging cable to
+# extend battery life.
+
+capacity=$(< /sys/class/power_supply/BAT0/capacity) || \
+    $(< /sys/class/power_supply/BAT1/capacity)
+
+status=$(< /sys/class/power_supply/BAT0/status) || \
+    $(< /sys/class/power_supply/BAT1/status)
+
+notify() {
+    dunstify --appname="battery" --replace=1 --timeout=86400 "$1" "$2"
+}
+
+if [ "$capacity" -ge 80 ] && [ "$status" == "Charging" ]; then
+    notify "Batery level reached 80%"
+elif [ "$capacity" -le 50 ] && [ "$status" == "Discharging" ]; then
+    notify "Batery level is below 50%"
+fi
