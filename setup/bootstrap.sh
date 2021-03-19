@@ -1,13 +1,14 @@
 #!/bin/bash
 
-[ ! -f ./packagelist ] && printf "Missing packagelist! Aborting...\n" && exit 1
+[ ! -f "$1" ] && printf "Provide the path to the packagelist as the first argument. Aborting...\n" && exit
+
+readarray -t packagelist < "$1" # storing the lines of the file in an array
+src_dir="$HOME/source"
 
 stty_orig=$(stty -g)                     # save original terminal setting.
 stty -echo                               # turn-off echoing.
 IFS= read -p "sudo password:" -r passwd  # read the password
 stty "$stty_orig"                        # restore terminal setting.
-
-src_dir="$HOME/source/"
 
 exec_cmd() {
     printf '%s' "$passwd" | $1
@@ -18,11 +19,13 @@ sysctl_enable() {
 }
 
 write_to_file() {
+    printf "%s\n" "Writing $1"
     if [ "$3" == "-a" ]; then
-        printf '%s' "$passwd" | sudo -S tee -a "$1" <<< "$2"
+        printf '%s' "$passwd" | sudo -S tee -a "$1" <<< "$2" > /dev/null 2>&1
     else
-        printf '%s' "$passwd" | sudo -S tee "$1" <<< "$2"
+        printf '%s' "$passwd" | sudo -S tee "$1" <<< "$2" > /dev/null 2>&1
     fi
+    printf "Done\n"
 }
 
 git_cln() {
@@ -38,6 +41,12 @@ install_aur_helper() {
     git_cln "https://aur.archlinux.org/paru.git" "$src_dir"
     cd "$src_dir/$progname" || return 1
     makepkg -si
+}
+
+install_packages() {
+    for package in "${packagelist[@]}"; do
+        paru -S "$package" --noconfirm
+    done
 }
 
 install_from_src() {
@@ -68,7 +77,7 @@ exec_cmd "sudo -S pacman -S --noconfirm git"
 install_aur_helper
 
 # install every package from packagelist
-cat ./packagelist | xargs paru --sudoloop -S --noconfirm
+install_packages
 
 # installing pynvim
 exec_cmd "sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim"
@@ -103,7 +112,7 @@ install_dotfiles
 git_cln "https://github.com/laszloszurok/scripts.git" "$src_dir"
 
 # cloning my suckless builds
-suckless_dir="$HOME/source/suckless-builds"
+suckless_dir="suckless-builds"
 git_cln "https://github.com/laszloszurok/dwm.git"       "$src_dir" "$suckless_dir"
 git_cln "https://github.com/laszloszurok/dwmblocks.git" "$src_dir" "$suckless_dir"
 git_cln "https://github.com/laszloszurok/dmenu.git"     "$src_dir" "$suckless_dir"
@@ -112,7 +121,7 @@ git_cln "https://github.com/laszloszurok/slock.git"     "$src_dir" "$suckless_di
 git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir" "$suckless_dir"
 
 # installing my suckless builds
-install_from_src "$suckless_dir"
+install_from_src "$src_dir/$suckless_dir"
 
 # spotify wm
 git_cln "https://github.com/dasJ/spotifywm.git" "$src_dir"
@@ -243,4 +252,4 @@ gtk-application-prefer-dark-theme=true"
 # unify gtk and qt themes
 write_to_file "/etc/environment" "QT_QPA_PLATFORMTHEME=gtk2" "-a"
 
-printf "Finished\nPlease reboot your computer\n"
+printf "\nFinished\nPlease reboot your computer\n"
