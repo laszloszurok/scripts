@@ -132,7 +132,7 @@ exec_cmd "sudo -S chmod +x /usr/local/spotify"
 
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
-exec_cmd "sudo -S chsh -s /usr/bin/zsh pulzar"
+exec_cmd "sudo -S chsh -s /usr/bin/zsh $current_user"
 
 exec_cmd "sudo -S mkdir /usr/share/xsessions"
 write_to_file "/usr/share/xsessions/dwm.desktop" "[Desktop Entry]
