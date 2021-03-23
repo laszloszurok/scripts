@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # This script checks the state of the default microphone of my laptop
 # and displays an appropriate indicator icon if it's muted/active.

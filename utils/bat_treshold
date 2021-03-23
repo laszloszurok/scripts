@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Run this script as a cron job to get notifications when
 # the batter level reaches 80% or goes below 50%. Serves

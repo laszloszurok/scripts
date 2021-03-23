@@ -1,41 +1,84 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script uses the output of the xset command to determine if the screen is turned off.
 # If it is, it starts xautolock, then it waits for the given time (based on the battery status)
 # and then checks the state of the monitor again. If the screen is still off after the wait time,
-# no audio is playing and qbittorrent is not running, the system will be suspended with systemctl.
+# no audio is playing and specific programs are not running, the system will be suspended with 
+# systemctl.
+
+get_bat_device() {
+    if [ -f /sys/class/power_supply/BAT0/status ]; then
+        bat_dev="/sys/class/power_supply/BAT0/status"
+    elif [ -f /sys/class/power_supply/BAT1/status ]; then
+        bat_dev="/sys/class/power_supply/BAT1/status"
+    else
+        bat_dev="undefined"
+    fi
+}
+
+get_bat_state() {
+    if [ "$bat_dev" != "undefined" ]; then
+        bat_state=$(cat "$bat_dev")
+    else
+        bat_state="undefined"
+    fi
+}
+
+set_wait_time() {
+    [ "$bat_state" = "Discharging" ] && time_to_wait=600 || time_to_wait=900
+}
+
+get_mon_state() {
+    mon_state=$(xset q | tail -1 | awk '{print $NF}')
+}
+
+get_audio_device() {
+    if [ -f /proc/asound/card0/pcm0p/sub0/status ]; then
+        audio_dev="/proc/asound/card0/pcm0p/sub0/status"
+    elif [ -f  /proc/asound/card1/pcm0p/sub0/status ]; then
+        audio_dev="/proc/asound/card1/pcm0p/sub0/status"
+    else
+        audio_dev="undefined"
+    fi
+}
+
+get_audio_state() {
+    if [ "$audio_dev" != "undefined" ]; then
+        audio_state=$(head -1 < "$audio_dev" | awk '{print $NF}')
+    else
+        audio_state="undefined"
+    fi
+}
+
+
+get_bat_device
+get_audio_device
 
 xset dpms 300 300 300 # monitor switches off after 300 seconds
 
-while true
-do
-    MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
-    if [ "$MON_STATE" == "On" ]; then
-        killall xautolock
-    fi
-    if [ "$MON_STATE" == "Off" ]; then
+while true; do
+    get_mon_state
+
+    if [ "$mon_state" = "On" ]; then
+        killall xautolock 2>/dev/null
+    elif [ "$mon_state" = "Off" ]; then
 
         xautolock -time 2 -locker slock &
 
-        BAT_STATE=$(< /sys/class/power_supply/BAT0/status) || \
-            $(< /sys/class/power_supply/BAT1/status)
+        get_bat_state
+        set_wait_time
 
-        [ "$BAT_STATE" == "Discharging" ] && TIME_TO_WAIT=600 || TIME_TO_WAIT=900
-
-        NUM="0"
-        while [ $NUM -lt $TIME_TO_WAIT ] && [ "$MON_STATE" == "Off" ]
-        do
-            NUM=$((NUM+1))
-            MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
+        num="0"
+        while [ $num -lt $time_to_wait ] && [ "$mon_state" = "Off" ]; do
+            num=$((num+1))
+            get_mon_state
             sleep 1
         done
 
-        MON_STATE=$(xset q | tail -1 | awk '{print $NF}')
+        get_mon_state
+        get_audio_state
 
-        AUDIO_STATE=$(head -1 < /proc/asound/card0/pcm0p/sub0/status | awk '{print $NF}') || \
-            $(head -1 < /proc/asound/card1/pcm0p/sub0/status | awk '{print $NF}')
-
-        [ "$MON_STATE" == "Off" ] && [ "$AUDIO_STATE" != "RUNNING"  ] && \
+        [ "$mon_state" = "Off" ] && [ "$audio_state" != "RUNNING"  ] && \
             [ -z "$(pidof qbittorrent)" ] && \
             [ -z "$(pidof cp)" ] && \
             [ -z "$(pidof mv)" ] && \

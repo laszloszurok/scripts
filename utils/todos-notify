@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Run this script as a cron job to get notifications about the number
 # of todos and appointments in calcurse (a calendar application).
