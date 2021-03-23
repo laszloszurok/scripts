@@ -18,6 +18,7 @@ zsh
 zsh-syntax-highlighting
 numlockx
 xclip
+xsel
 xautolock
 xwallpaper
 virt-manager
@@ -88,3 +89,6 @@ ttf-twemoji-color
 ttf-joypixels
 yad
 pavucontrol
+shellcheck
+dash
+dashbinsh
