@@ -79,6 +79,8 @@ while true; do
         get_audio_state
 
         [ "$mon_state" = "Off" ] && [ "$audio_state" != "RUNNING"  ] && \
+            [ -z "$(pidof pacman)" ] && \
+            [ -z "$(pidof paru)" ] && \
             [ -z "$(pidof qbittorrent)" ] && \
             [ -z "$(pidof cp)" ] && \
             [ -z "$(pidof mv)" ] && \
