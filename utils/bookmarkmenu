@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+urls=(
+    "https://rarbg.to"
+    "https://odysee.com"
+    "https://fontawesome.com/cheatsheet"
+    "https://envs.net"
+    "https://jonasjacek.github.io/colors/"
+)
+
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i -p bookmarks: $@"
+
+url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd)
+
+# exit if the user did not pick a url
+[[ -n $url ]] || exit
+
+xdg-open "$url"
