@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+options=("reboot" "shutdown" "logout" "suspend" "hibernate")
+
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i -p powermenu: $@"
+
+chosen=$(printf '%s\n' "${options[@]}" | $dmenu_cmd)
+
+# exit if the user did not pick an item
+[[ -n $chosen ]] || exit
+
+if [ "$chosen" = "reboot" ]; then
+    reboot
+elif [ "$chosen" = "shutdown" ]; then
+    shutdown now
+elif [ "$chosen" = "logout" ]; then
+    killall dwm
+elif [ "$chosen" = "suspend" ]; then
+    systemctl suspend
+elif [ "$chosen" = "hibernate" ]; then
+    systemctl hibernate
+fi
