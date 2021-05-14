@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# calls clipmenu with the given arguments
+
+clipmenu -lh 26 -fn "monospace:size=12" -l 20 -g 4 -c -i -p "copy:"
