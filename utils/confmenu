@@ -16,7 +16,7 @@ list_no_dups="$cache_dir/list_no_dups"
 mkdir -p "$cache_dir"
 
 # dmenu settings
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p configure: $@"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p edit: $@"
 
 # find a terminal emulator
 if [ -z "$TERMINAL_CMD" ]; then
