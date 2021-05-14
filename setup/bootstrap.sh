@@ -45,7 +45,7 @@ install_aur_helper() {
 
 install_packages() {
     for package in "${packagelist[@]}"; do
-        paru -S "$package" --noconfirm
+        paru -S "$package" --sudoloop --noconfirm
     done
 }
 
