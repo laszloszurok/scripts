@@ -6,7 +6,7 @@
 
 case $BUTTON in
     1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
-    3) pavucontrol & ;;
+    3) setsid -f pavucontrol ;;
 esac
 
 notify() {
