@@ -45,7 +45,7 @@ case "$(uname)" in
 		displays="$(pgrep -a X\(org\|wayland\) | grep -wo "[0-9]*:[0-9]\+" | sort -u)"
 	    	notify() { for x in $displays; do
 				export DISPLAY=$x
-				notify-send --app-name="mailsync" "mailsync" "$2 new mail(s) in $1 account."
+				dunstify --replace=456 "mailsync" "$2 new mail(s) in $1 account."
 			done ;}
 		;;
 esac
@@ -54,12 +54,11 @@ esac
 syncandnotify() {
     acc="$(echo "$account" | sed "s/.*\///")"
     if [ -z "$opts" ]; then mbsync "$acc"; else mbsync "$opts" "$acc"; fi
-    new=$(find "$HOME/.local/share/mail/$acc/INBOX/new/" "$HOME/.local/share/mail/$acc/Inbox/new/" "$HOME/.local/share/mail/$acc/inbox/new/" -type f -newer "${XDG_CONFIG_HOME:-$HOME/.config}/mailsync/.lastrun" 2> /dev/null)
+    new=$(find "$HOME/.local/share/mail/$acc/INBOX/new/" "$HOME/.local/share/mail/$acc/Inbox/new/" "$HOME/.local/share/mail/$acc/inbox/new/" -type f 2> /dev/null)
     newcount=$(echo "$new" | sed '/^\s*$/d' | wc -l)
     if [ "$newcount" -gt "0" ]; then
 	    notify "$acc" "$newcount" &
     fi
-    pkill -RTMIN+11 dwmblocks
 }
 
 # Sync accounts passed as argument or all.
@@ -76,10 +75,3 @@ fi
 for account in $accounts; do
     syncandnotify &
 done
-
-wait
-
-notmuch new 2>/dev/null
-
-#Create a touch file that indicates the time of the last run of mailsync
-touch "${XDG_CONFIG_HOME:-$HOME/.config}/mailsync/.lastrun"
