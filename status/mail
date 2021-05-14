@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # This script works together with a modified version of Luke Smith's mailsync
 # script from mutt-wizard. It checks if there are new mails for any account
@@ -25,16 +25,18 @@ checkfornew() {
 }
 
 get_info() {
-    [ "$counter" -gt "0" ] && \
-        notify "$counter new mail(s)" "Rightclick to open aerc" || \
+    if [ "$counter" -gt "0" ]; then
+        notify "$counter new mail(s)" "Rightclick to open aerc"
+    else
         notify "No new mail" "Rightclick to open aerc"
+    fi
 }
 
 checkfornew
 
 case $BUTTON in
     1) get_info ;;
-    3) st -e aerc & disown; notify "Running mailsync..."; mailsync & ;;
+    3) st -e aerc & notify "Running mailsync..."; mailsync & ;;
 esac
 
 printf "%s\n" "$icon"
