@@ -173,7 +173,22 @@ WantedBy=multi-user.target"
 # disable hardware bell on boot
 write_to_file "/etc/modprobe.d/pcspkr-blacklist.conf" "blacklist pcspkr"
 
-# service to launch slock on suspend
+# service to turn off the display and suspend the system after some time of inactivity on the tty (X server is not running)
+write_to_file "/etc/systemd/system/inactivity_tty.service" "[Unit]
+Description=suspend os after inactivity on the tty
+
+[Service]
+Type=simple
+ExecStart=$HOME/source/scripts/utils/inactivity_tty
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target"
+
+sysctl_enable "inactivity_tty.service"
+
+# service to launch slock on suspend (X server is running)
 write_to_file "/etc/systemd/system/slock@.service" "[Unit]
 Description=Lock X session using slock for user %i
 Before=sleep.target
