@@ -15,7 +15,7 @@ notify() {
     dunstify --appname="battery" --replace=1 --timeout=86400 "$1" "$2"
 }
 
-if [ "$capacity" -ge 80 ] && [ "$status" == "Charging" ]; then
+if [ "$capacity" -ge 80 ] && [ "$status" == "Charging" ] || [ "$status" == "Full" ]; then
     notify "Batery level reached 80%"
 elif [ "$capacity" -le 50 ] && [ "$status" == "Discharging" ]; then
     notify "Batery level is below 50%"
