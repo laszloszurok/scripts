@@ -63,7 +63,7 @@ while true; do
         killall xautolock 2>/dev/null
     elif [ "$mon_state" = "Off" ]; then
 
-        xautolock -time 2 -locker slock &
+        xautolock -time 5 -locker slock &
 
         get_bat_state
         set_wait_time
