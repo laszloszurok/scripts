@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # This script checks the state of the default microphone of my laptop
 # and displays an appropriate indicator icon if it's muted/active.
 
 case $BUTTON in
     1) pactl set-source-mute 1 toggle ;;
-    3) pavucontrol & ;;
+    3) setsid -f pavucontrol ;;
 esac
 
 notify() {
@@ -16,7 +16,7 @@ micinfo="$(pactl list sources | grep 'Name\|Mute\|Volume:')"
 
 echo "$micinfo" | grep "Mute: yes" > /dev/null && mic_status="muted" || mic_status="active" 
 
-if [ "$mic_status" == "muted" ]; then
+if [ "$mic_status" = "muted" ]; then
     printf "%s\n" ""
     notify "Microphone muted"
 else
