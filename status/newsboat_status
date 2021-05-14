@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 UNREAD=$(newsboat -x print-unread | awk '{ print $1 }')
 
