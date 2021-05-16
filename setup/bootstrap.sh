@@ -168,6 +168,8 @@ ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
 
 [Install]
 WantedBy=multi-user.target"
+
+sysctl_enable "hdparm.service"
 ################################################################################
 
 # disable hardware bell on boot
@@ -214,7 +216,7 @@ write_to_file "/etc/X11/xorg.conf.d/xorg.conf" "Section \"ServerFlags\"
 EndSection"
 
 # cron service
-sysctl_enable cronie.service
+sysctl_enable "cronie.service"
 crontab "$HOME"/.config/cronjobs
 
 # udev rule to allow users in the "video" group to set the display brightness
