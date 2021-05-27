@@ -93,3 +93,4 @@ shellcheck
 dash
 dashbinsh
 ebtables
+fzf
