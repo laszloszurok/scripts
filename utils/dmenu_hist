@@ -104,14 +104,14 @@ run_as_sudo() {
     [[ "$type" = "background" ]] && sudo -A "$cmd"
     [[ "$type" = "terminal" ]] && sudo -A $TERMINAL_CMD "$cmd"
     [[ "$type" = "terminal_hold" ]] &&
-        exec sudo -A "$TERMINAL_CMD" sh -c "$cmd && echo Press Enter to kill me... && read line"
+        exec sudo -A $TERMINAL_CMD sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
 
 run_as_normal() {
     [[ "$type" = "background" ]] && "$cmd"
     [[ "$type" = "terminal" ]] && $TERMINAL_CMD "$cmd"
     [[ "$type" = "terminal_hold" ]] &&
-        exec "$TERMINAL_CMD" sh -c "$cmd && echo Press Enter to kill me... && read line"
+        exec $TERMINAL_CMD sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
 
 # If the firts argument is the string 'sudo' and $SUDO_ASKPASS is set,
