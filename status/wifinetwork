@@ -8,7 +8,7 @@ notify() {
     dunstify --appname="wifi" --replace=1 "$1" "$2"
 }
 
-essid=$(iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
+essid=$(iwgetid wlan0 --raw || iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 msg=""
 
