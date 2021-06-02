@@ -152,6 +152,8 @@ case \$1 in post)
         ;;
 esac"
 
+exec_cmd "sudo -S chmod +x /usr/lib/systemd/system-sleep/hdparm"
+
 write_to_file "/etc/systemd/system/hdparm.service" "[Unit]
 Description=hdparm sleep
 
