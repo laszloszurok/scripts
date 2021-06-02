@@ -9,11 +9,13 @@ notify() {
 
 icon=""
 
-capacity=$(cat /sys/class/power_supply/BAT0/capacity) || \
-    $(cat /sys/class/power_supply/BAT1/capacity)
-
-status=$(cat /sys/class/power_supply/BAT0/status) || \
-    $(cat /sys/class/power_supply/BAT1/status)
+if [ -d /sys/class/power_supply/BAT0 ]; then
+    capacity=$(cat /sys/class/power_supply/BAT0/capacity)
+    status=$(cat /sys/class/power_supply/BAT0/status)
+elif [ -d /sys/class/power_supply/BAT1 ]; then
+    capacity=$(cat /sys/class/power_supply/BAT1/capacity)
+    status=$(cat /sys/class/power_supply/BAT1/status)
+fi
 
 if [ "$capacity" -le 75 ] && [ "$capacity" -gt 50 ]; then
     icon=""
@@ -29,5 +31,5 @@ fi
 printf "%s\n" "$icon"
 
 case $BUTTON in
-    1) notify "Battery: $capacity%" "$status";;
+    1) notify "Battery: $capacity%" "$status" 1 ;;
 esac
