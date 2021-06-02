@@ -1,0 +1,9 @@
+#!/bin/sh
+
+icon=""
+
+case $BUTTON in
+    1) dmenu_hist;;
+esac
+
+printf "%s\n" "$icon"
