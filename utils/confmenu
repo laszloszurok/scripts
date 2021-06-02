@@ -59,11 +59,8 @@ config_list=$(find "${config_paths[@]}" -type f -maxdepth 2 -not -path '*/\.git/
 echo "$config_list" > "$all_cache"
 
 # remove anything from recent_cache that is not present in all_cache
-for i in $(<"$recent_cache"); do
-    for j in $(<"$all_cache"); do 
-        [ "$i" == "$j" ] && found=1 && break || found=0
-    done
-    [ "$found" -eq 0 ] && sed -i "\|$i|d" "$recent_cache"
+for line in $(grep -vxf "$all_cache" "$recent_cache"); do
+    sed -i "\|$line|d" "$recent_cache"
 done
 
 # merge our recent cache with the full list
