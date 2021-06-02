@@ -33,8 +33,8 @@ fi
 
 # pass every command line argument to dmenu except the first (which is
 # used to decide if the selected program shuld be executed with sudo)
-[ "$1" == "sudo" ] && prompt="[sudo]run:" || prompt="run:"
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -g 4 -c -i -p $prompt ${@:2}"
+[ "$1" == "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
+dmenu_cmd="dmenu -o 255 -lh 26 -l 20 -fn monospace:size=12 -c -i ${@:2}"
 
 max_recent=200 # Number of recent commands to track
 
@@ -59,7 +59,7 @@ if stest -dqr -n "$rest_cache" $PATH 2>/dev/null; then
 fi
 
 IFS=" "
-cmd=$(cat "$recent_cache" "$rest_cache" | $dmenu_cmd) || exit
+cmd=$(cat "$recent_cache" "$rest_cache" | $dmenu_cmd -p "$prompt") || exit
 
 if ! grep -qx "$cmd" "$recent_cache" &> /dev/null; then
     grep -vx "$cmd" "$rest_cache" > "$rest_cache.$$"

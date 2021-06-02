@@ -2,9 +2,10 @@
 
 options=("reboot" "shutdown" "logout" "suspend" "hibernate")
 
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i -p powermenu: $@"
+prompt=" powermenu:"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i $@"
 
-chosen=$(printf '%s\n' "${options[@]}" | $dmenu_cmd)
+chosen=$(printf '%s\n' "${options[@]}" | $dmenu_cmd -p "$prompt")
 
 # exit if the user did not pick an item
 [[ -n $chosen ]] || exit

@@ -16,7 +16,8 @@ list_no_dups="$cache_dir/list_no_dups"
 mkdir -p "$cache_dir"
 
 # dmenu settings
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -g 2 -i -p edit: $@"
+prompt=" edit:"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -i $@"
 
 # find a terminal emulator
 if [ -z "$TERMINAL_CMD" ]; then
@@ -79,7 +80,7 @@ list=$(< "$list_no_dups")
 list=$(echo "$list" | sed "s\\$HOME\~\g")
 
 # pipe the list items into dmenu
-item=$(printf '%s\n' "${list[@]}" | $dmenu_cmd)
+item=$(printf '%s\n' "${list[@]}" | $dmenu_cmd -p "$prompt")
 
 # exit if the user did not pick an item
 [[ -n $item ]] || exit

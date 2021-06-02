@@ -6,7 +6,8 @@
 # them.
 
 # dmenu settings
-passmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -g 2 -c -i -p copy:"
+prompt=" copy:"
+passmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -i"
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
@@ -58,7 +59,7 @@ awk '!visited[$0]++' "$list" > "$list_no_dups"
 list=$(< "$list_no_dups")
 
 # pipe the list into dmenu to show the password picker
-password=$(printf '%s\n' "$list" | $passmenu_cmd "$@")
+password=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
 
 # check if the user picked an entry, exit if didn't
 [[ -n $password ]] || exit
