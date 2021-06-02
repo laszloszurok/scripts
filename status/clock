@@ -13,4 +13,4 @@ case $BUTTON in
 	3) setsid -f st -f 'mono:pixelsize=20:antialias=true:autohint=true' -e calcurse ;;
 esac
 
-printf "%s %s \n" "$icon" "$hour_minute"
+printf "%s %s\n" "$icon" "$hour_minute"
