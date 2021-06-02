@@ -123,13 +123,6 @@ git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir" "$suckless_di
 # installing my suckless builds
 install_from_src "$src_dir/$suckless_dir"
 
-# spotify wm
-git_cln "https://github.com/dasJ/spotifywm.git" "$src_dir"
-cd "$src_dir/spotifywm" || exit
-make
-write_to_file "/usr/local/bin/spotify" "LD_PRELOAD=/usr/lib/libcurl.so.4:$src_dir/spotifywm/spotifywm.so /usr/bin/spotify"
-exec_cmd "sudo -S chmod +x /usr/local/spotify"
-
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
 exec_cmd "sudo -S chsh -s /usr/bin/zsh $current_user"
