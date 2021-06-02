@@ -6,6 +6,8 @@
 case $BUTTON in
     1) pactl set-source-mute 1 toggle ;;
     3) setsid -f pavucontrol ;;
+    4) scrollsig=1 ;; # don't show notifications on scroll event
+    5) scrollsig=1 ;;
 esac
 
 notify() {
@@ -18,8 +20,8 @@ echo "$micinfo" | grep "Mute: yes" > /dev/null && mic_status="muted" || mic_stat
 
 if [ "$mic_status" = "muted" ]; then
     printf "%s\n" ""
-    notify "Microphone muted"
+    [ "$scrollsig" != "1" ] && notify "Microphone muted"
 else
     printf "%s\n" ""
-    notify "Microphone active"
+    [ "$scrollsig" != "1" ] && notify "Microphone active"
 fi
