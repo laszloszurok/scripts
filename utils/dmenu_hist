@@ -34,7 +34,7 @@ fi
 # pass every command line argument to dmenu except the first (which is
 # used to decide if the selected program shuld be executed with sudo)
 [ "$1" == "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
-dmenu_cmd="dmenu -o 255 -lh 26 -l 20 -fn monospace:size=12 -c -i ${@:2}"
+dmenu_cmd="dmenu -lh 26 -l 20 -fn monospace:size=12 -c -i ${@:2}"
 
 max_recent=200 # Number of recent commands to track
 
