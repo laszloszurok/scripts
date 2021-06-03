@@ -8,9 +8,10 @@ urls=(
     "https://jonasjacek.github.io/colors/"
 )
 
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i -p bookmarks: $@"
+prompt=" bookmarks:"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i"
 
-url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd)
+url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@")
 
 # exit if the user did not pick a url
 [[ -n $url ]] || exit
