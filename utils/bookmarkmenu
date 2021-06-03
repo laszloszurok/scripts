@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 urls=(
-    "https://rarbg.to"
+    "https://envs.net"
     "https://odysee.com"
     "https://fontawesome.com/cheatsheet"
-    "https://envs.net"
     "https://jonasjacek.github.io/colors/"
+    "https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124"
+    "https://rarbg.to"
 )
 
 prompt=" bookmarks:"
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i"
+dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 10 -c -i"
 
 url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@")
 
