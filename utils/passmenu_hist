@@ -7,7 +7,7 @@
 
 # dmenu settings
 prompt=" copy:"
-passmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -i"
+passmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"

@@ -17,7 +17,7 @@ mkdir -p "$cache_dir"
 
 # dmenu settings
 prompt=" edit:"
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 20 -c -i $@"
+dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
 
 # find a terminal emulator
 if [ -z "$TERMINAL_CMD" ]; then

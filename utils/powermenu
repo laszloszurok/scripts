@@ -3,7 +3,7 @@
 options=("reboot" "shutdown" "logout" "suspend" "hibernate")
 
 prompt=" powermenu:"
-dmenu_cmd="dmenu -lh 26 -fn monospace:size=12 -l 5 -c -i $@"
+dmenu_cmd="dmenu -lh 26 -l 5 -c -i $@"
 
 chosen=$(printf '%s\n' "${options[@]}" | $dmenu_cmd -p "$prompt")
 
