@@ -4,7 +4,7 @@
 # battery indicator in the status bar.
 
 notify() {
-    dunstify --appname="battery" --replace=1 "$1" "$2" --urgency "$3"
+    dunstify --appname="battery" --replace=1 "$1" "$2" --urgency="$3" --timeout="$4"
 }
 
 icon=""
@@ -25,11 +25,11 @@ elif [ "$capacity" -le 30 ] && [ "$capacity" -gt 20 ]; then
     icon=""
 elif [ "$capacity" -le 20 ]; then
     icon=""
-    [ "$status" != "Charging" ] && notify "Low battery level!" "" 2
+    [ "$status" != "Charging" ] && notify "Low battery level!" "" 2 0
 fi
 
 printf "%s\n" "$icon"
 
 case $BUTTON in
-    1) notify "Battery: $capacity%" "$status" 1 ;;
+    1) notify "Battery: $capacity%" "$status" 1 7000;;
 esac
