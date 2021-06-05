@@ -40,13 +40,20 @@ if [ -f "$1" ] ; then
             unrar e "$1" "$xdir"
             ;;
         *.7z)        
+            mkxdir ".7z"
             7z x "$1" -o "$xdir"       
             ;;
         *.gz)
-            gunzip "$1"
+            mkxdir ".gz"
+            cd "$xdir" || exit
+            gunzip ../"$1"
+            cd ..
             ;;
         *.bz2)
-            bunzip2 "$1"
+            mkxdir ".bz2"
+            cd "$xdir" || exit
+            bunzip2 ../"$1"
+            cd ..
             ;;
 
         *) 
