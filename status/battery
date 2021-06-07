@@ -1,21 +1,53 @@
 #!/bin/sh
 
-# This script is run evry 5 seconds with dwmblocks and displays a
-# battery indicator in the status bar.
+# This script runs evry 10 seconds through dwmblocks and displays a
+# battery indicator in the status bar. Left click displays the battery
+# status info in a form of a notification. Right click toggles threshold
+# notifications (notifications shown when the power level is above 80% or 
+# below 50%). A warning will always be shown when the power level is <= 20%.
+
+if [ -d /sys/class/power_supply/BAT0 ]; then
+    device="/sys/class/power_supply/BAT0"
+elif [ -d /sys/class/power_supply/BAT1 ]; then
+    device="/sys/class/power_supply/BAT1"
+fi
+
+thconfig=~/.local/share/bat_threshold_notify
+
+if [ -f ~/.local/share/bat_threshold_notify ]; then
+    bat_threshold_notify="$(cat $thconfig)"
+else
+    bat_threshold_notify=1
+fi
+
+get_info() {
+    capacity=$(cat "$device"/capacity)
+    status=$(cat "$device"/status)
+}
 
 notify() {
-    dunstify --appname="battery" --replace=1 "$1" "$2" --urgency="$3" --timeout="$4"
+    dunstify "$1" "$2" \
+        --appname="battery" \
+        --replace=1 \
+        --urgency="$3" \
+        --timeout="$4"
+}
+
+toggle_threshold_notifs() {
+    if [ "$bat_threshold_notify" -eq 1 ]; then
+        bat_threshold_notify=0
+        printf "%s" $bat_threshold_notify > $thconfig
+        notify "Battery: $capacity%" "Disabled threshold notifications" 1 7000
+    else
+        bat_threshold_notify=1
+        printf "%s" $bat_threshold_notify > $thconfig
+        notify "Battery: $capacity%" "Enabled threshold notifications" 1 7000
+    fi
 }
 
 icon=""
 
-if [ -d /sys/class/power_supply/BAT0 ]; then
-    capacity=$(cat /sys/class/power_supply/BAT0/capacity)
-    status=$(cat /sys/class/power_supply/BAT0/status)
-elif [ -d /sys/class/power_supply/BAT1 ]; then
-    capacity=$(cat /sys/class/power_supply/BAT1/capacity)
-    status=$(cat /sys/class/power_supply/BAT1/status)
-fi
+get_info
 
 if [ "$capacity" -le 75 ] && [ "$capacity" -gt 50 ]; then
     icon=""
@@ -25,11 +57,23 @@ elif [ "$capacity" -le 30 ] && [ "$capacity" -gt 20 ]; then
     icon=""
 elif [ "$capacity" -le 20 ]; then
     icon=""
-    [ "$status" != "Charging" ] && notify "Low battery level!" "" 2 0
 fi
 
 printf "%s\n" "$icon"
 
+if [ "$bat_threshold_notify" -eq 1 ]; then
+    if [ "$capacity" -ge 80 ] && [ "$status" = "Charging" ] || [ "$status" = "Full" ]; then
+        notify "Batery level reached 80%" "" 1 11000
+    elif [ "$capacity" -le 50 ] && [ "$capacity" -gt 20 ] && [ "$status" = "Discharging" ]; then
+        notify "Batery level is below 50%" "" 1 11000
+    fi
+fi
+
+if [ "$capacity" -le 20 ]; then
+    notify "Low battery level!" "" 2 11000
+fi
+
 case $BUTTON in
-    1) notify "Battery: $capacity%" "$status" 1 7000;;
+    1) notify "Battery: $capacity%" "$status" 1 7000 ;;
+    3) toggle_threshold_notifs ;;
 esac
