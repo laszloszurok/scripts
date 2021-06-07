@@ -5,11 +5,13 @@
 # as a reminder to plug/unlug the charging cable to
 # extend battery life.
 
-capacity=$(< /sys/class/power_supply/BAT0/capacity) || \
-    $(< /sys/class/power_supply/BAT1/capacity)
-
-status=$(< /sys/class/power_supply/BAT0/status) || \
-    $(< /sys/class/power_supply/BAT1/status)
+if [ -d /sys/class/power_supply/BAT0 ]; then
+    capacity=$(cat /sys/class/power_supply/BAT0/capacity)
+    status=$(cat /sys/class/power_supply/BAT0/status)
+elif [ -d /sys/class/power_supply/BAT1 ]; then
+    capacity=$(cat /sys/class/power_supply/BAT1/capacity)
+    status=$(cat /sys/class/power_supply/BAT1/status)
+fi
 
 notify() {
     dunstify --appname="battery" --replace=1 --timeout=86400 "$1" "$2"
