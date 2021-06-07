@@ -14,7 +14,7 @@ elif [ -d /sys/class/power_supply/BAT1 ]; then
 fi
 
 notify() {
-    dunstify --appname="battery" --replace=1 --timeout=86400 "$1" "$2"
+    dunstify --appname="battery" --replace=1 --timeout=0 "$1" "$2"
 }
 
 if [ "$capacity" -ge 80 ] && [ "$status" == "Charging" ] || [ "$status" == "Full" ]; then
