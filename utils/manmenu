@@ -3,7 +3,7 @@
 # simple script to browse manpages
 
 prompt=" manual for:"
-dmenu_cmd="dmenu -lh 26 -l 20 -g 2 -c -i"
+dmenu_cmd="dmenu -lh 26 -l 20 -g 3 -c -i"
 
 man=$(man -k . | awk '{ print $1 " " $2 }' | $dmenu_cmd -p "$prompt" "$@")
 
