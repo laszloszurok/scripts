@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# simple script to browse between manual pages
+
+prompt=" manual for:"
+dmenu_cmd="dmenu -lh 26 -l 20 -g 2 -c -i"
+
+man=$(man -k . | awk '{ print $1 " " $2 }' | $dmenu_cmd -p "$prompt" "$@")
+
+[ -n "$man" ] || exit 
+
+printf "%s" "$man" | awk '{ print $2 " " $1 }' | tr -d '()' | xargs "$TERMINAL" -e man
