@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# simple script to browse between manual pages
+# simple script to browse manpages
 
 prompt=" manual for:"
 dmenu_cmd="dmenu -lh 26 -l 20 -g 2 -c -i"
