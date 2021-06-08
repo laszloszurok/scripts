@@ -69,7 +69,7 @@ if [ "$bat_threshold_notify" -eq 1 ]; then
     fi
 fi
 
-if [ "$capacity" -le 20 ]; then
+if [ "$capacity" -le 20 ] && [ "$status" != "Charging" ]; then
     notify "Low battery level!" "" 2 11000
 fi
 
