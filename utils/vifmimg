@@ -41,7 +41,7 @@ main() {
 			;;
         "audio")
 			[ ! -f "${CACHE}.jpg" ] && \
-				ffmpeg -i "$6" "${CACHE}.jpg" -y &> /dev/null
+				ffmpeg -i "$6" "${CACHE}.jpg" -y > /dev/null 2>&1
 			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
 			;;
         "font")
