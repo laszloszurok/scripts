@@ -8,6 +8,7 @@ urls=(
     "https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124"
     "https://rarbg.to"
     "https://calendar.perfplanet.com/2020/html-and-css-techniques-to-reduce-your-javascript/"
+    "https://astro.build/"
 )
 
 prompt=" bookmarks:"
