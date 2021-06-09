@@ -1,21 +1,20 @@
-#!/usr/bin/env bash
-export FIFO_UEBERZUG="/tmp/vifm-ueberzug-${PPID}"
+#!/bin/sh
 
-# this should work with both local and global ueberzug install
-if [ ! -x $(command -v ueberzug >/dev/null 2>&1) ]; then
-	vifm
-	exit
-fi
+test -z "$(which ueberzug)" &&
+	exec vifm "$@" && exit
 
-function cleanup {
-    rm "$FIFO_UEBERZUG" 2>/dev/null
-    pkill -P $$ 2>/dev/null
+test -z "$DISPLAY" &&
+	exec vifm "$@" && exit
+
+cleanup() {
+    rm "$FIFO_UEBERZUG"
+    pkill -P $$ >/dev/null
 }
-pkill -P $$ 2>/dev/null
-rm "$FIFO_UEBERZUG" 2>/dev/null
-mkfifo "$FIFO_UEBERZUG" >/dev/null
-trap cleanup EXIT 2>/dev/null
-tail --follow "$FIFO_UEBERZUG" | ueberzug layer --silent --parser bash 2>&1 >/dev/null &
 
-vifm "$@"
-cleanup
+! test -d "$HOME/.cache/vifm" && mkdir -p "$HOME/.cache/vifm"
+export UEBERZUG_FIFO="$HOME/.cache/vifm/ueberzug-${PPID}" || return 1
+mkfifo "$UEBERZUG_FIFO"
+trap 'rm $UEBERZUG_FIFO 2>/dev/null && unset UEBERZUG_FIFO;
+pkill -P $$ 2>/dev/null' EXIT
+tail -f "$UEBERZUG_FIFO" | ueberzug layer --silent --parser simple --loader thread &! \
+    command vifm "$@"
