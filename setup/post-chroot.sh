@@ -27,12 +27,17 @@ pacman -S grub efibootmgr networkmanager wireless_tools wpa_supplicant os-prober
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
+systemctl enable NetworkManager.service
+
 # account settings
 passwd
 read -rp "Chose a username: " username
 useradd -m "$username"
 passwd "$username"
 usermod -aG wheel,audio,video,optical,storage "$username"
-EDITOR=nvim visudo
+echo 'Defaults editor="/usr/bin/nvim -Z -u NORC"
+%wheel ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/make clean install,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/pacman -Syyuw --noconfirm' > /etc/sudoers.d/settings
+
 echo "Done. Type exit, then umount -a, then reboot and run bootstrap.sh"
 
