@@ -24,7 +24,7 @@ main() {
 			FILE="$PWD/$6"
 			image "$1" "$2" "$3" "$4" "$5" "$FILE"
 			;;
-        "videopreview")
+        "video")
 			[ ! -f "$CACHE" ] && \
 				ffmpegthumbnailer -i "$6" -o "${CACHE}.jpg" -s 0 -q 5
 			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
