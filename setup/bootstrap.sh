@@ -60,8 +60,9 @@ install_from_src() {
 
 install_dotfiles() {
     git clone --bare https://github.com/laszloszurok/config "$HOME"/.cfg
-    /usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" config --local status.showUntrackedFiles no
-    /usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" checkout -f
+    git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" checkout -f
+    git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" fetch
 }
 
 # checking who is the current user
