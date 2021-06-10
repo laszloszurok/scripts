@@ -1,3 +1,0 @@
-#!/bin/bash
-
-sudo -A "$(dmenu_path | dmenu -lh 26 -p "run with sudo:")"
