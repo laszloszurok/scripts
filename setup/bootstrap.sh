@@ -63,6 +63,7 @@ install_dotfiles() {
     git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" checkout -f
     git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" fetch
+    git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" branch -u origin/master master
 }
 
 # checking who is the current user
