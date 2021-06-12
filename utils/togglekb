@@ -2,5 +2,12 @@
 
 kb="$(setxkbmap -query | grep -oP 'layout:\s*\K\w+')" || exit 1
 
-[ "$kb" = "hu" ] && kb="us" || kb="hu"
+if [ "$kb" = "hu" ]; then 
+    kb=$(printf "United States - us\nHungarian - hu"  | dmenu -lh 26 -l 20 -c -i -p "switch layout:") || exit
+else
+    kb=$(printf "Hungarian - hu\nUnited States - us"  | dmenu -lh 26 -l 20 -c -i -p "switch layout:") || exit
+fi
+
+kb=$(printf "%s" "$kb" | tail -c 2)
+
 setxkbmap "$kb"
