@@ -9,6 +9,7 @@ urls=(
     "https://rarbg.to"
     "https://calendar.perfplanet.com/2020/html-and-css-techniques-to-reduce-your-javascript/"
     "https://astro.build/"
+    "https://temp-mail.org/en/"
 )
 
 prompt=" bookmarks:"
