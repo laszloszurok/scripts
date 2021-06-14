@@ -5,29 +5,29 @@
 # selected program will be executed with sudo -A.
 
 # Find a terminal emulator to be able to launch programs in a terminal window
-if [ -z "$TERMINAL_CMD" ]; then
+if [ -z "$TERMINAL" ]; then
   if [ "$(which st)" ]; then
-  TERMINAL_CMD="st -e"
+  TERMINAL="st -e"
   elif [ "$(which terminal)" ]; then
-  TERMINAL_CMD="terminal -e"
+  TERMINAL="terminal -e"
   elif [ "$(which urxvt)" ]; then
-  TERMINAL_CMD="urxvt -e"
+  TERMINAL="urxvt -e"
   elif [ "$(which termite)" ]; then
-  TERMINAL_CMD="termite -e"
+  TERMINAL="termite -e"
   elif [ "$(which terminator)" ]; then
-  TERMINAL_CMD="terminator -e"
+  TERMINAL="terminator -e"
   elif [ "$(which gnome-terminal)" ]; then
-  TERMINAL_CMD="gnome-terminal -e"
+  TERMINAL="gnome-terminal -e"
   elif [ "$(which lxterminal)" ]; then
-  TERMINAL_CMD="lxterminal -e"
+  TERMINAL="lxterminal -e"
   elif [ "$(which sakura)" ]; then
-  TERMINAL_CMD="sakura -e"
+  TERMINAL="sakura -e"
   elif [ "$(which xfce4-terminal)" ]; then
-  TERMINAL_CMD="xfce4-terminal -e"
+  TERMINAL="xfce4-terminal -e"
   elif [ "$(which xterm)" ]; then
-  TERMINAL_CMD="xterm -e"
+  TERMINAL="xterm -e"
   elif [ "$(which kitty)" ]; then
-  TERMINAL_CMD="kitty -e"
+  TERMINAL="kitty -e"
   fi
 fi
 
@@ -106,16 +106,16 @@ fi
 
 run_as_sudo() {
     [ "$type" = "background" ] && sudo -A "$cmd"
-    [ "$type" = "terminal" ] && sudo -A $TERMINAL_CMD "$cmd"
+    [ "$type" = "terminal" ] && sudo -A $TERMINAL "$cmd"
     [ "$type" = "terminal_hold" ] &&
-        exec sudo -A $TERMINAL_CMD sh -c "$cmd && echo Press Enter to quit... && read line"
+        exec sudo -A $TERMINAL sh -c "$cmd && echo Press Enter to quit... && read line"
 }
 
 run_as_normal() {
     [ "$type" = "background" ] && "$cmd"
-    [ "$type" = "terminal" ] && $TERMINAL_CMD "$cmd"
+    [ "$type" = "terminal" ] && $TERMINAL "$cmd"
     [ "$type" = "terminal_hold" ] &&
-        exec $TERMINAL_CMD sh -c "$cmd && echo Press Enter to kill me... && read line"
+        exec $TERMINAL sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
 
 # If the firts argument is the string 'sudo' and $SUDO_ASKPASS is set,
