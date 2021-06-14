@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script is a dmenu_run wrapper with customized height, font and history functionality
 # If the string 'sudo' is provided as the first argument and $SUDO_ASKPASS is set, the 
@@ -33,8 +33,8 @@ fi
 
 # pass every command line argument to dmenu except the first (which is
 # used to decide if the selected program shuld be executed with sudo)
-[ "$1" == "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
-dmenu_cmd="dmenu -lh 26 -l 20 -c -i ${@:2}"
+[ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
+dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 
 max_recent=200 # Number of recent commands to track
 
@@ -61,7 +61,7 @@ fi
 IFS=" "
 cmd=$(cat "$recent_cache" "$rest_cache" | $dmenu_cmd -p "$prompt") || exit
 
-if ! grep -qx "$cmd" "$recent_cache" &> /dev/null; then
+if ! grep -qx "$cmd" "$recent_cache" > /dev/null 2>&1; then
     grep -vx "$cmd" "$rest_cache" > "$rest_cache.$$"
     if [ -s "$rest_cache.$$" ]; then
         mv "$rest_cache.$$" "$rest_cache"
@@ -70,11 +70,15 @@ if ! grep -qx "$cmd" "$recent_cache" &> /dev/null; then
     fi
 fi
 
-if [[ ! $cmd == *[[]* ]]; then
-    echo "$cmd" > "$recent_cache.$$"
-    grep -vx "$cmd" "$recent_cache" | head -n "$max_recent" >> "$recent_cache.$$"
-    mv "$recent_cache.$$"  "$recent_cache"
-fi
+case $cmd in
+    '[') 
+        ;; 
+    *)
+        echo "$cmd" > "$recent_cache.$$"
+        grep -vx "$cmd" "$recent_cache" | head -n "$max_recent" >> "$recent_cache.$$"
+        mv "$recent_cache.$$"  "$recent_cache"
+        ;;
+esac
 
 # Figure out how to run the command based on the command name, disregarding
 # arguments, if any.
@@ -82,41 +86,41 @@ word0=${cmd%% *}
 match="^$word0$"
 
 get_type () {
-    while type=$(echo "$known_types" | xargs -n1 | $dmenu_cmd -g 1 -p type:); do
-        [[ $known_types =~ $type ]] || continue
+    while type=$(echo "$known_types" | xargs -n1 | $dmenu_cmd -p type:); do
+        test "${known_types#*$type}" != "$known_types" || continue
         echo "$word0" >> "$config_dir/$type"
         break
     done
-    echo "$type"
+    printf "%s" "$type"
 }
 
 if ! type=$(grep -lx "$match" -R "$config_dir"); then
     type=$(get_type)
 else 
     type=${type##*/}
-    if ! [[ $known_types =~ $type ]]; then
+    if ! [ "${known_types#*$type}" != "$known_types" ]; then
         rm "$config_dir/$type"
         type=$(get_type)
     fi
 fi
 
 run_as_sudo() {
-    [[ "$type" = "background" ]] && sudo -A "$cmd"
-    [[ "$type" = "terminal" ]] && sudo -A $TERMINAL_CMD "$cmd"
-    [[ "$type" = "terminal_hold" ]] &&
-        exec sudo -A $TERMINAL_CMD sh -c "$cmd && echo Press Enter to kill me... && read line"
+    [ "$type" = "background" ] && sudo -A "$cmd"
+    [ "$type" = "terminal" ] && sudo -A $TERMINAL_CMD "$cmd"
+    [ "$type" = "terminal_hold" ] &&
+        exec sudo -A $TERMINAL_CMD sh -c "$cmd && echo Press Enter to quit... && read line"
 }
 
 run_as_normal() {
-    [[ "$type" = "background" ]] && "$cmd"
-    [[ "$type" = "terminal" ]] && $TERMINAL_CMD "$cmd"
-    [[ "$type" = "terminal_hold" ]] &&
+    [ "$type" = "background" ] && "$cmd"
+    [ "$type" = "terminal" ] && $TERMINAL_CMD "$cmd"
+    [ "$type" = "terminal_hold" ] &&
         exec $TERMINAL_CMD sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
 
 # If the firts argument is the string 'sudo' and $SUDO_ASKPASS is set,
 # run the selected program as sudo. Otherwise run with normal privileges.
-if [ "$1" == "sudo" ]; then
+if [ "$1" = "sudo" ]; then
     if [ -n "$SUDO_ASKPASS" ]; then
         run_as_sudo
     else
