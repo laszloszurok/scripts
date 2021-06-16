@@ -12,9 +12,13 @@ elif [ -d /sys/class/power_supply/BAT1 ]; then
     device="/sys/class/power_supply/BAT1"
 fi
 
-thconfig=~/.local/share/bat_threshold_notify
+datadir=~/.local/share/battery
+mkdir -p $datadir
+thconfig=$datadir/bat_threshold_notify
 
-if [ -f ~/.local/share/bat_threshold_notify ]; then
+[ -f $datadir/shutdown_warning_sent ] && warning_sent=$(cat $datadir/shutdown_warning_sent) || warning_sent=0
+
+if [ -f $thconfig ]; then
     bat_threshold_notify="$(cat $thconfig)"
 else
     bat_threshold_notify=1
@@ -69,8 +73,19 @@ if [ "$bat_threshold_notify" -eq 1 ]; then
     fi
 fi
 
-if [ "$capacity" -le 20 ] && [ "$status" != "Charging" ]; then
+if [ "$capacity" -le 10 ] && [ "$status" != "Charging" ]; then
+    notify "Batery level below 10%!" "Shutting down in 2 minutes!" 2 11000 111
+    if [ "$warning_sent" -eq 0 ]; then
+        printf "1" > $datadir/shutdown_warning_sent 
+        shutdown +2
+    fi
+elif [ "$capacity" -le 20 ] && [ "$status" != "Charging" ]; then
     notify "Low battery level!" "" 2 11000 111
+else
+    if [ "$warning_sent" -eq 1 ]; then
+        shutdown -c
+        printf "0" > $datadir/shutdown_warning_sent 
+    fi
 fi
 
 case $BUTTON in
