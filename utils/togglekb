@@ -1,11 +1,12 @@
 #!/bin/sh
 
 kb="$(setxkbmap -query | grep -oP 'layout:\s*\K\w+')" || exit 1
+prompt=" keyboard layout:"
 
 if [ "$kb" = "hu" ]; then 
-    kb=$(printf "United States - us\nHungarian - hu"  | dmenu -lh 26 -l 20 -c -i -p "switch layout:") || exit
+    kb=$(printf "United States - us\nHungarian - hu"  | dmenu -lh 26 -l 20 -c -i -p "$prompt") || exit
 else
-    kb=$(printf "Hungarian - hu\nUnited States - us"  | dmenu -lh 26 -l 20 -c -i -p "switch layout:") || exit
+    kb=$(printf "Hungarian - hu\nUnited States - us"  | dmenu -lh 26 -l 20 -c -i -p "$prompt") || exit
 fi
 
 kb=$(printf "%s" "$kb" | tail -c 2)
