@@ -227,7 +227,7 @@ git_cln "https://github.com/laszloszurok/Wallpapers.git" "$HOME/pictures/"
 # installing gtk palenight theme
 git_cln "https://github.com/jaxwilko/gtk-theme-framework.git" "$src_dir"
 cd "$src_dir/gtk-theme-framework" || exit
-./main.sh -i -o
+exec_cmd "sudo ./main.sh -i -o"
 
 # global gtk-2 settings
 write_to_file "/etc/gtk-2.0/gtkrc" "gtk-theme-name=\"palenight\"
