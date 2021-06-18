@@ -20,30 +20,30 @@ prompt=" edit:"
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
 
 # find a terminal emulator
-if [ -z "$TERMINAL_CMD" ]; then
-  if [ "$(which st)" ]; then
-  TERMINAL_CMD="st -e"
-  elif [ "$(which terminal)" ]; then
-  TERMINAL_CMD="terminal -e"
-  elif [ "$(which urxvt)" ]; then
-  TERMINAL_CMD="urxvt -e"
-  elif [ "$(which termite)" ]; then
-  TERMINAL_CMD="termite -e"
-  elif [ "$(which terminator)" ]; then
-  TERMINAL_CMD="terminator -e"
-  elif [ "$(which gnome-terminal)" ]; then
-  TERMINAL_CMD="gnome-terminal -e"
-  elif [ "$(which lxterminal)" ]; then
-  TERMINAL_CMD="lxterminal -e"
-  elif [ "$(which sakura)" ]; then
-  TERMINAL_CMD="sakura -e"
-  elif [ "$(which xfce4-terminal)" ]; then
-  TERMINAL_CMD="xfce4-terminal -e"
-  elif [ "$(which xterm)" ]; then
-  TERMINAL_CMD="xterm -e"
-  elif [ "$(which kitty)" ]; then
-  TERMINAL_CMD="kitty -e"
-  fi
+if [ -z "$TERMINAL" ]; then
+    if [ "$(which st)" ]; then
+        TERMINAL="st -e"
+    elif [ "$(which terminal)" ]; then
+        TERMINAL="terminal -e"
+    elif [ "$(which urxvt)" ]; then
+        TERMINAL="urxvt -e"
+    elif [ "$(which termite)" ]; then
+        TERMINAL="termite -e"
+    elif [ "$(which terminator)" ]; then
+        TERMINAL="terminator -e"
+    elif [ "$(which gnome-terminal)" ]; then
+        TERMINAL="gnome-terminal -e"
+    elif [ "$(which lxterminal)" ]; then
+        TERMINAL="lxterminal -e"
+    elif [ "$(which sakura)" ]; then
+        TERMINAL="sakura -e"
+    elif [ "$(which xfce4-terminal)" ]; then
+        TERMINAL="xfce4-terminal -e"
+    elif [ "$(which xterm)" ]; then
+        TERMINAL="xterm -e"
+    elif [ "$(which kitty)" ]; then
+        TERMINAL="kitty -e"
+    fi
 fi
 
 update_cache() {
@@ -88,4 +88,4 @@ item=$(echo "$item" | sed "s\~\\$HOME\g")
 update_cache "$item"
 
 # determine on which path the picked item is and open it in $EDITOR
- $TERMINAL_CMD "$EDITOR" "$item"
+$TERMINAL_CMD $EDITOR "$item"
