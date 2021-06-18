@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# I set this script in vifmrc as vicmd, so when a file is opend,
+# a new neovim remote will be launched, if there is not one alredy.
+# Otherwise the file will be opend in the existing instance.
+
+if pidof nvim > /dev/null 2>&1; then
+    nvr "$@"
+else
+    setsid -f $TERMINAL nvr -s "$@"
+fi
