@@ -88,4 +88,4 @@ item=$(echo "$item" | sed "s\~\\$HOME\g")
 update_cache "$item"
 
 # determine on which path the picked item is and open it in $EDITOR
-$TERMINAL_CMD $EDITOR "$item"
+$TERMINAL $EDITOR "$item"
