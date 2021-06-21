@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+save_term() { printf '\e[?1049h'; stty_orig=$(stty -g); } # saves the state of the terminal
+restore_term() { printf '\e[?1049l'; stty "$stty_orig"; } # restores the state of the terminal
+clear_screen() { printf '\e[2J'; }
+hide_cursor() { printf '\e[?25l'; }
+show_cursor() { printf '\e[?25h'; }
+enable_line_wrap() { printf '\e[?7h'; }
+# disable_line_wrap() { printf '\e[?7l'; }
+
+# put the cursor to ($2, $1) (line, column) (y, x)
+# use: move_cursor_xy x y
+move_cursor_xy() { printf '\e[%d;%dH' "$2" "$1"; }
+
+# move cursor relatively to the current position by $2 steps in the given direction
+# use: move_cursor_steps "down" 3
+# move_cursor_steps() {
+#     case $1 in
+#         "up") printf '\e[%dA' "$2" ;;
+#         "down") printf '\e[%sB' "$2" ;;
+#         "left") printf '\e[%dD' "$2" ;;
+#         "right") printf '\e[%sC' "$2" ;;
+#     esac
+# }
+
+# posix solution to get the current window size
+get_window_size() {
+    read -r LINES COLUMNS < <(stty size)
+}
+
+refresh() {
+    stty -echo # turn-off echoing (key presses won't be shown)
+    get_window_size
+    clear_screen
+    hide_cursor
+    move_cursor_xy 0 0
+
+    ((j=(LINES-2)/3))
+}
+
+# display info bar in the (LINES-1)th line
+# LINES is the last line
+show_info_bar() {
+    move_cursor_xy 0 "$((LINES-1))"
+    printf '\e[2m%s\e[m' "$1"
+}
+
+# list torrents and draw info bar
+draw() {
+    IFS=$'\n' read -d "" -ra torrents < <(transmission-remote -l) # get the list of torrents
+    unset 'torrents[0]' 'torrents[-1]' 2>/dev/null # first and last lines of 'transmission-remote -l' are not needed
+
+    torrents=("${torrents[@]}")
+
+    for((i=${k:=0};i<(j=j>${#torrents[@]}?${#torrents[@]}:j);i++));{ print_torrent "${torrents[i]/n\/a/0}";}
+
+    show_info_bar "[s]tart [p]ause [r]emove [o]pen [q]uit [j/k] scroll ($j/${#torrents[@]})"$'\e[H'
+}
+
+notify_if_done() {
+    printf "%s-%s\n" "$1" "$2" > "$datadir"/torrentsdone
+}
+
+# display informations about a torrent
+print_torrent() {
+    IFS=" %" read -r id _ <<< "$1" # get the id of the current torrent
+
+    info=$(transmission-remote -t "$id" -i | \
+        grep -E "Name|State|Percent Done|ETA|Download Speed|Upload Speed|Have|Availability|Total size|Ratio:")
+
+    # save the lines of $info into separate variables and format them
+
+    name=$(sed -n -e '1{p;q}' <(printf "%s" "$info"))
+    name=${name:8}
+
+    state=$(sed -n -e '2{p;q}' <(printf "%s" "$info"))
+    state=${state:9}
+    state=${state//Up & Down/Active}
+    state=${state//Downloading/Active}
+
+    percent_done=$(sed -n -e '3{p;q}' <(printf "%s" "$info"))
+    percent_done=${percent_done:16}
+
+    eta=$(sed -n -e '4{p;q}' <(printf "%s" "$info"))
+    eta=${eta:2}
+    eta=${eta%%(*} 
+
+    down_speed=$(sed -n -e '5{p;q}' <(printf "%s" "$info"))
+    down_speed=${down_speed:18}
+
+    up_speed=$(sed -n -e '6{p;q}' <(printf "%s" "$info"))
+    up_speed=${up_speed:16}
+
+    downloaded=$(sed -n -e '7{p;q}' <(printf "%s" "$info"))
+    downloaded=${downloaded:8}
+    downloaded=${downloaded/None/0 MB}
+    downloaded=${downloaded%%(*}
+
+    availability=$(sed -n -e '8{p;q}' <(printf "%s" "$info"))
+    availability=${availability:2}
+
+    total_size=$(sed -n -e '9{p;q}' <(printf "%s" "$info"))
+    total_size=${total_size:14}
+    total_size=${total_size%%(*}
+
+    ratio=$(sed -n -e '10{p;q}' <(printf "%s" "$info"))
+    ratio=${ratio:2}
+
+    printf '\e[K\e[2m%s' "$id: " # print id with gray color
+
+    # print name
+    if [ "$percent_done" = "100%" ]; then
+        printf '\e[1;32m%s\n' "$name" # bold green
+    else
+        printf '\e[1;33m%s\n' "$name" # bold yellow
+    fi
+
+    printf '\e[0m' # reset colors
+
+    # print remaining info
+    separator=' | '
+    printf "\e[K%s$separator%s$separator%s$separator%s$separator%s$separator%s$separator%s\n\n" \
+           "   $state" "$downloaded / $total_size $percent_done" "⇣ $down_speed" "⇡ $up_speed" "$ratio" "$availability" "$eta"
+}
+
+# send commands to transmission-remote
+send() { transmission-remote "$@" > /dev/null; }
+
+# show the cursor at the bottom of the screen and read user input
+show_prompt() {
+    move_cursor_xy 0 "$LINES"
+    show_cursor
+    stty "$stty_orig" # enable displaying of user input while a prompt is open
+    read -rp "$1"
+}
+
+handle_keypress() {
+    case "$1" in
+        s) show_prompt "start torrent: #";  send -t "$REPLY" -s ;;
+        p) show_prompt "pause torrent: #";  send -t "$REPLY" -S ;;
+        r) show_prompt "remove torrent: #"; send -t "$REPLY" -r; k=0 ;;
+        o) show_prompt "path or url: ";     send -a "$REPLY"; k=0 ;;
+
+        # handle scrolling
+        j) ((j==${#torrents[@]}))||((k=k>=j?k:++k,j=j<${#torrents[@]}?++j:j)) ;;
+        k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
+
+        q) exit 0 ;;
+    esac
+
+    # refresh the screen on scroll
+    [[ "$1" =~ (j|k) ]] || refresh
+}
+
+datadir=~/.local/share/torque/
+mkdir -p $datadir
+
+main() {
+    save_term
+    enable_line_wrap
+    refresh
+
+    trap 'restore_term; show_cursor' EXIT # restore the terminal window on exit
+    trap 'refresh; k=0' SIGWINCH # refresh on window resize
+
+    # Get the list of torrents from transmission-remote and read keypresses.
+    # The value of REPLY is the letter that the user pressed.
+    # for ex. if 's' is pressed, the 'start torrent' prompt will be displayed
+    for ((;;)); { draw; read -rsN1 -t1 && handle_keypress "$REPLY"; }
+}
+
+main
