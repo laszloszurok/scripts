@@ -5,7 +5,7 @@
 ,calcurse,"calendar and todo/appointment manager for the terminal"
 ,cronie,"for cronjobs"
 ,dash,"a fast posix shell"
-A,dashbinsh"program that links /bin/sh to dash"
+A,dashbinsh,"program that links /bin/sh to dash"
 A,dragon-drag-and-drop,"minimal gui to drag-and-drop files"
 A,bottom-bin,"system monitor for the terminal (binary called btm)"
 ,ebtables,"needed for virt-manager"
