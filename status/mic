@@ -5,7 +5,7 @@
 
 case $BUTTON in
     1) pactl set-source-mute 1 toggle ;;
-    3) setsid -f pavucontrol ;;
+    3) setsid -f $TERMINAL pulsemixer ;;
     4) scrollsig=1 ;; # don't show notifications on scroll event
     5) scrollsig=1 ;;
 esac
