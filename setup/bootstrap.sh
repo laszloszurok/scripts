@@ -1,8 +1,7 @@
 #!/bin/bash
 
-[ ! -f "$1" ] && printf "Provide the path to the packagelist as the first argument. Aborting...\n" && exit
+packagelist="https://raw.githubusercontent.com/laszloszurok/scripts/master/setup/packagelist.csv"
 
-readarray -t packagelist < "$1" # storing the lines of the file in an array
 src_dir="$HOME/source"
 
 stty_orig=$(stty -g)                     # save original terminal setting.
@@ -44,9 +43,16 @@ install_aur_helper() {
 }
 
 install_packages() {
-    for package in "${packagelist[@]}"; do
-        paru -S "$package" --sudoloop --noconfirm
-    done
+	([ -f "$packagelist" ] && cp "$packagelist" /tmp/packagelist.csv) || curl -Ls "$packagelist" | sed '/^#/d' > /tmp/packagelist.csv
+    total=$(wc -l < /tmp/packagelist.csv)
+	while IFS=, read -r tag package ; do
+        n=$((n+1))
+        printf "%s\n" "Installing $package ($n/$total)"
+		case "$tag" in
+			"A") paru -S "$package" --sudoloop --noconfirm >/dev/null 2>&1 ;;
+			*) exec_cmd "sudo -S pacman -S --noconfirm $package >/dev/null 2>&1" ;;
+		esac
+	done < /tmp/packagelist.csv
 }
 
 install_from_src() {
