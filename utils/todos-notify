@@ -10,7 +10,7 @@ appointments=$(calcurse -a)
 [ -n "$appointments" ] && num_a=$(echo "$appointments" | grep -vc '^ - ') && (("num_a-=1")) || num_a=0
 
 showmsg() { 
-    dunstify --replace=100 "$1" "$2" --urgency="$3"
+    dunstify --replace=100 "$1" "$2" --urgency="$3" --timeout=0
 }
 
 if [ "$num_a" -gt 0 ]; then
