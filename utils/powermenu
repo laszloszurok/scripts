@@ -15,7 +15,7 @@ if [ "$chosen" = "reboot" ]; then
 elif [ "$chosen" = "shutdown" ]; then
     shutdown now
 elif [ "$chosen" = "logout" ]; then
-    killall dwm
+    killall xinit
 elif [ "$chosen" = "suspend" ]; then
     systemctl suspend
 elif [ "$chosen" = "hibernate" ]; then
