@@ -107,9 +107,6 @@ exec_cmd "sudo -S ufw default allow outgoing"
 sysctl_enable ufw
 exec_cmd "sudo -S ufw enable"
 
-# windscribe vpn service
-sysctl_enable windscribe
-
 # power saving service
 sysctl_enable tlp
 
