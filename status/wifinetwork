@@ -5,7 +5,7 @@
 icon=""
 
 notify() {
-    dunstify --appname="wifi" --replace=1 "$1" "$2"
+    dunstify --appname="wifi" --replace=1 "$1" "$2" --timeout="$3"
 }
 
 essid=$(iwgetid wlan0 --raw || iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
@@ -14,7 +14,7 @@ msg=""
 
 check_connection() {
 
-    notify "Checking connection" "Please wait..."
+    notify "Checking connection" "Please wait..." 0
 
     # checking if we are connected to a wifi network
     if [ -z "$essid" ]; then
@@ -24,7 +24,7 @@ check_connection() {
         msg="No WiFi network"
     else
         # checking internet connection
-        if printf "GET https://archlinux.org/ HTTP/1.0\n\n" | nc archlinux.org 80 -w 10 > /dev/null 2>&1; then
+        if nc -z archlinux.org 443 > /dev/null 2>&1; then
             icon=""
             msg="Online"
         else
@@ -33,8 +33,7 @@ check_connection() {
         fi
     fi
 
-    notify "$essid" "$msg, signal: $signal
-Right click for options"
+    notify "$essid" "$msg, signal: $signal\nRight click for options" 7000
 }
 
 case $BUTTON in
