@@ -108,7 +108,7 @@ sysctl_enable ufw
 exec_cmd "sudo -S ufw enable"
 
 # power saving service
-sysctl_enable tlp
+sysctl_enable auto-cpufreq
 
 # cloning my configs from github to a bare repository for config file management
 install_dotfiles
