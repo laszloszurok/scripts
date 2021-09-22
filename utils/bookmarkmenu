@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 
-urls=(
-    "https://envs.net"
-    "https://odysee.com"
-    "https://fontawesome.com/cheatsheet"
-    "https://jonasjacek.github.io/colors/"
-    "https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124"
-    "https://rarbg.to"
-    "https://calendar.perfplanet.com/2020/html-and-css-techniques-to-reduce-your-javascript/"
-    "https://astro.build/"
-    "https://temp-mail.org/en/"
-)
+# This script reads urls from a file and pipes them into dmenu
+
+bookmark_file="$HOME/.local/share/bookmarks"
+urls=$(<$bookmark_file)
 
 prompt=" bookmarks:"
+
 dmenu_cmd="dmenu -lh 26 -l 10 -c -i"
 
 url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@")
