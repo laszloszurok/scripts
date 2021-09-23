@@ -1,10 +1,15 @@
 #!/bin/sh
 
+step=3
+
 if [ "$1" = "inc" ]; then
-    xbacklight -inc 3 
+    xbacklight -inc $step
 elif [ "$1" = "dec" ]; then
-    xbacklight -dec 3
+    if [ $(xbacklight -get) -le $step ]; then
+        xbacklight -set 2 # min brightness to prevent the screen from turning off
+    else
+        xbacklight -dec $step
+    fi
 fi
 
-dunstify --appname="brightness" --replace=9 "Brightness $(xbacklight -get | awk '{print int($1)}')%"
-
+tvolnoti-show $(xbacklight -get) -b
