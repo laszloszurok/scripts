@@ -1,15 +1,40 @@
 #!/bin/sh
 
+# On my machine lowering the brightness with XF86XK_MonBrightnessDown
+# turns off the backlight when it's at minimum. The minimum brightness
+# level is 0 and the brightness value is still 0 when the backlight is
+# completely off. Because of this when the brightness is increased
+# when the display is off the brightness level won't be at minimum
+# value, it will be at 0+'increase'. This is a bit annoying when I try
+# to precisely set the brightness to the minimum. To work around this
+# I differentiate 3 states of the display explained below and save the
+# current state to a file. This way when the display is off and I 
+# increase the brightness level I can set it to the minimum value.
+
+# display_state:
+# 0: no backlight (screen is off)
+# 1: screen is on, but brightness level is 0
+# 2: brightness level > 0
+
+display_state=~/.local/share/display_state
+
 step=3
 
+brightness="$(xbacklight -get)"
+
 if [ "$1" = "inc" ]; then
-    xbacklight -inc $step
-elif [ "$1" = "dec" ]; then
-    if [ $(xbacklight -get) -le $step ]; then
-        xbacklight -set 2 # min brightness to prevent the screen from turning off
+    if [ "$(cat $display_state)" -eq 0 ]; then
+        xbacklight -set 0
+        printf '1' > "$display_state"
     else
-        xbacklight -dec $step
+        xbacklight -inc "$step"
+        printf '2' > "$display_state"
     fi
+elif [ "$1" = "dec" ]; then
+    if [ "$brightness" -eq 0 ]; then
+        printf '0' > "$display_state"
+    fi
+    xbacklight -dec "$step"
 fi
 
-tvolnoti-show $(xbacklight -get) -b
+tvolnoti-show "$(xbacklight -get)" -b
