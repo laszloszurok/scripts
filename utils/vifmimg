@@ -1,18 +1,12 @@
 #!/bin/sh
-
-CACHE="$HOME/.cache/vifm/thumbnail.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$PWD/$6")" | sha256sum | awk '{print $1}'))"
+export PCACHE="$HOME/.cache/vifm/thumbnail.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$PWD/$6")" | sha256sum | awk '{print $1}'))"
 
 pclear() {
-	printf "action\tremove\tidentifier\tpreview\n" > "$UEBERZUG_FIFO"
+	printf '{"action": "remove", "identifier": "vifm-preview"}\n' > "$FIFO_UEBERZUG"
 }
 
 image() {
-	{
-		printf 'action\tadd\tidentifier\tpreview\t'
-		printf 'x\t%d\ty\t%d\t' "$2" "$3"
-		printf 'width\t%d\theight\t%d\t' "$4" "$5"
-		printf 'path\t%s\n' "$6"
-	} > "$UEBERZUG_FIFO"
+		printf '{"action": "add", "identifier": "vifm-preview", "x": "%s", "y": "%s", "width": "%s", "height": "%s", "scaler": "contain", "path": "%s"}\n' "$2" "$3" "$4" "$5" "$6" > "$FIFO_UEBERZUG"
 }
 
 main() {
@@ -25,33 +19,31 @@ main() {
 			image "$1" "$2" "$3" "$4" "$5" "$FILE"
 			;;
         "video")
-			[ ! -f "$CACHE" ] && \
-				ffmpegthumbnailer -i "$6" -o "${CACHE}.jpg" -s 0 -q 5
-			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
+			[ ! -f "$PCACHE" ] && \
+				ffmpegthumbnailer -i "$6" -o "${PCACHE}.jpg" -s 0 -q 5
+			image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
 			;;
         "epub")
-			[ ! -f "$CACHE" ] && \
-				epub-thumbnailer "$6" "$CACHE" 1024
-			image "$1" "$2" "$3" "$4" "$5" "$CACHE"
+			[ ! -f "$PCACHE" ] && \
+				epub-thumbnailer "$6" "$PCACHE" 1024
+			image "$1" "$2" "$3" "$4" "$5" "$PCACHE"
 			;;
         "pdf")
-			[ ! -f "${CACHE}.jpg" ] && \
-				pdftoppm -jpeg -f 1 -singlefile "$6" "$CACHE"
-			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
+			[ ! -f "${PCACHE}.jpg" ] && \
+				pdftoppm -jpeg -f 1 -singlefile "$6" "$PCACHE"
+			image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
 			;;
         "audio")
-			[ ! -f "${CACHE}.jpg" ] && \
-				ffmpeg -i "$6" "${CACHE}.jpg" -y > /dev/null 2>&1
-			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
+			[ ! -f "${PCACHE}.jpg" ] && \
+				ffmpeg -i "$6" "${PCACHE}.jpg" -y >/dev/null
+			image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
 			;;
         "font")
-			[ ! -f "${CACHE}.jpg" ] && \
-				fontpreview -i "$6" -o "${CACHE}.jpg"
-			image "$1" "$2" "$3" "$4" "$5" "${CACHE}.jpg"
+			[ ! -f "${PCACHE}.jpg" ] && \
+				fontpreview -i "$6" -o "${PCACHE}.jpg"
+			image "$1" "$2" "$3" "$4" "$5" "${PCACHE}.jpg"
 			;;
         *)
-			echo "Unknown command: " "$@"
-			;;
     esac
 }
 main "$@"

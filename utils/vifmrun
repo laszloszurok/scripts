@@ -1,20 +1,21 @@
 #!/bin/sh
 
-test -z "$(which ueberzug)" &&
-	exec vifm "$@" && exit
-
-test -z "$DISPLAY" &&
-	exec vifm "$@" && exit
-
-cleanup() {
-    rm "$FIFO_UEBERZUG"
-    pkill -P $$ >/dev/null
-}
-
-! test -d "$HOME/.cache/vifm" && mkdir -p "$HOME/.cache/vifm"
-export UEBERZUG_FIFO="$HOME/.cache/vifm/ueberzug-${PPID}" || return 1
-mkfifo "$UEBERZUG_FIFO"
-trap 'rm $UEBERZUG_FIFO 2>/dev/null && unset UEBERZUG_FIFO;
-pkill -P $$ 2>/dev/null' EXIT
-tail -f "$UEBERZUG_FIFO" | ueberzug layer --silent --parser simple --loader thread &! \
-    command vifm "$@"
+if [ -z "$(command -v vifm)" ]; then
+	printf "vifm isn't installed on your system!\n"
+	exit 1
+elif [ -z "$(command -v ueberzug)" ]; then
+	exec vifm "$@"
+else
+	cleanup() {
+		exec 3>&-
+	    rm "$FIFO_UEBERZUG"
+	}
+	[ ! -d "$HOME/.cache/vifm" ] && mkdir -p "$HOME/.cache/vifm"
+	export FIFO_UEBERZUG="$HOME/.cache/vifm/ueberzug-${PPID}"
+	mkfifo "$FIFO_UEBERZUG"
+	ueberzug layer -s <"$FIFO_UEBERZUG" -p json &
+	exec 3>"$FIFO_UEBERZUG"
+	trap cleanup EXIT
+	vifm "$@" 3>&-
+	vifmimg clear
+fi
