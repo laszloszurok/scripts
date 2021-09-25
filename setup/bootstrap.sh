@@ -45,12 +45,12 @@ install_aur_helper() {
 install_packages() {
 	([ -f "$packagelist" ] && cp "$packagelist" /tmp/packagelist.csv) || curl -Ls "$packagelist" | sed '/^#/d' > /tmp/packagelist.csv
     total=$(wc -l < /tmp/packagelist.csv)
-	while IFS=, read -r tag package ; do
+	while IFS=, read -r tag package _ ; do
         n=$((n+1))
         printf "%s\n" "Installing $package ($n/$total)"
 		case "$tag" in
-			"A") paru -S "$package" --sudoloop --noconfirm >/dev/null 2>&1 ;;
-			*) exec_cmd "sudo -S pacman -S --noconfirm $package >/dev/null 2>&1" ;;
+			"A") paru -S "$package" --sudoloop --noconfirm > /dev/null 2>&1 ;;
+			*) exec_cmd "sudo -S pacman -S --noconfirm $package" > /dev/null 2>&1 ;;
 		esac
 	done < /tmp/packagelist.csv
 }
