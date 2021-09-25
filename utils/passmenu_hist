@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script is a modified version of the original passmenu script which is part
 # of the pass program. This script has history functionality, which means when you
@@ -43,15 +43,9 @@ for line in $(grep -vxf "$all_cache" "$recent_cache"); do
     sed -i "\|$line|d" "$recent_cache"
 done
 
-# merge our recent cache with the full list
-cat "$recent_cache" "$all_cache" > "$list"
-
-# find the first occurrences of every entry and remove any other occurrences,
-# so there will be no duplicates in the list
-awk '!visited[$0]++' "$list" > "$list_no_dups"
-
-# read in the full list without duplicates
-list=$(< "$list_no_dups")
+# merging $recent and $all, find the first occurrence of every entry 
+# and remove any other occurrences
+list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
 # pipe the list into dmenu to show the password picker
 password=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
