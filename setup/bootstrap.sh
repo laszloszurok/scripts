@@ -57,11 +57,8 @@ install_packages() {
 
 install_from_src() {
     cd "$1" || return 1
-    for d in "$1"/*/ ; do
-        cd "$d" || return 1
-        exec_cmd "sudo -S make install"
-        cd ..
-    done
+    exec_cmd "sudo -S make install"
+    cd
 }
 
 install_dotfiles() {
@@ -117,16 +114,20 @@ install_dotfiles
 git_cln "https://github.com/laszloszurok/scripts.git" "$src_dir"
 
 # cloning my suckless builds
-suckless_dir="suckless-builds"
-git_cln "https://github.com/laszloszurok/dwm.git"       "$src_dir" "$suckless_dir"
-git_cln "https://github.com/laszloszurok/dwmblocks.git" "$src_dir" "$suckless_dir"
-git_cln "https://github.com/laszloszurok/dmenu.git"     "$src_dir" "$suckless_dir"
-git_cln "https://github.com/laszloszurok/st.git"        "$src_dir" "$suckless_dir"
-git_cln "https://github.com/laszloszurok/slock.git"     "$src_dir" "$suckless_dir"
-git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir" "$suckless_dir"
+git_cln "https://github.com/laszloszurok/dwm.git"       "$src_dir"
+git_cln "https://github.com/laszloszurok/dwmblocks.git" "$src_dir"
+git_cln "https://github.com/laszloszurok/dmenu.git"     "$src_dir"
+git_cln "https://github.com/laszloszurok/st.git"        "$src_dir"
+git_cln "https://github.com/laszloszurok/slock.git"     "$src_dir"
+git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir"
 
 # installing my suckless builds
-install_from_src "$src_dir/$suckless_dir"
+install_from_src "$src_dir/dwm"
+install_from_src "$src_dir/dwmblocks"
+install_from_src "$src_dir/dmenu"
+install_from_src "$src_dir/st"
+install_from_src "$src_dir/slock"
+install_from_src "$src_dir/wmname"
 
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
