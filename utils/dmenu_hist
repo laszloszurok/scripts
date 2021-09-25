@@ -4,54 +4,21 @@
 # If the string 'sudo' is provided as the first argument and $SUDO_ASKPASS is set, the 
 # selected program will be executed with sudo -A.
 
-# Find a terminal emulator to be able to launch programs in a terminal window
-if [ -z "$TERMINAL" ]; then
-    if [ "$(which st)" ]; then
-        TERMINAL="st -e"
-    elif [ "$(which terminal)" ]; then
-        TERMINAL="terminal -e"
-    elif [ "$(which urxvt)" ]; then
-        TERMINAL="urxvt -e"
-    elif [ "$(which termite)" ]; then
-        TERMINAL="termite -e"
-    elif [ "$(which terminator)" ]; then
-        TERMINAL="terminator -e"
-    elif [ "$(which gnome-terminal)" ]; then
-        TERMINAL="gnome-terminal -e"
-    elif [ "$(which lxterminal)" ]; then
-        TERMINAL="lxterminal -e"
-    elif [ "$(which sakura)" ]; then
-        TERMINAL="sakura -e"
-    elif [ "$(which xfce4-terminal)" ]; then
-        TERMINAL="xfce4-terminal -e"
-    elif [ "$(which xterm)" ]; then
-        TERMINAL="xterm -e"
-    elif [ "$(which kitty)" ]; then
-        TERMINAL="kitty -e"
-    fi
-fi
-
-# pass every command line argument to dmenu except the first (which is
-# used to decide if the selected program shuld be executed with sudo)
 [ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 
 max_recent=200 # Number of recent commands to track
 
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu_hist"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/dmenu_hist"
-
 recent_cache="$cache_dir/recent"
 rest_cache="$cache_dir/all"
 
-known_types=" background terminal terminal_hold "
-
-config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu_hist"
 mkdir -p "$cache_dir"
 mkdir -p "$config_dir"
 touch "$recent_cache"
 
-# Without this, it won't remember $type
-#GREP_OPTIONS='--color=never'
+known_types=" background terminal terminal_hold "
 
 IFS=:
 if stest -dqr -n "$rest_cache" $PATH 2>/dev/null; then
