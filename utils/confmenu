@@ -10,41 +10,12 @@ config_paths=(
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/confmenu"
 recent_cache="$cache_dir/recent"
 all_cache="$cache_dir/all"
-list="$cache_dir/list"
-list_no_dups="$cache_dir/list_no_dups"
 
 mkdir -p "$cache_dir"
 
 # dmenu settings
 prompt=" edit:"
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
-
-# find a terminal emulator
-if [ -z "$TERMINAL" ]; then
-    if [ "$(which st)" ]; then
-        TERMINAL="st -e"
-    elif [ "$(which terminal)" ]; then
-        TERMINAL="terminal -e"
-    elif [ "$(which urxvt)" ]; then
-        TERMINAL="urxvt -e"
-    elif [ "$(which termite)" ]; then
-        TERMINAL="termite -e"
-    elif [ "$(which terminator)" ]; then
-        TERMINAL="terminator -e"
-    elif [ "$(which gnome-terminal)" ]; then
-        TERMINAL="gnome-terminal -e"
-    elif [ "$(which lxterminal)" ]; then
-        TERMINAL="lxterminal -e"
-    elif [ "$(which sakura)" ]; then
-        TERMINAL="sakura -e"
-    elif [ "$(which xfce4-terminal)" ]; then
-        TERMINAL="xfce4-terminal -e"
-    elif [ "$(which xterm)" ]; then
-        TERMINAL="xterm -e"
-    elif [ "$(which kitty)" ]; then
-        TERMINAL="kitty -e"
-    fi
-fi
 
 update_cache() {
     sed -i "\|$1|d" "$recent_cache"
@@ -63,15 +34,8 @@ for line in $(grep -vxf "$all_cache" "$recent_cache"); do
     sed -i "\|$line|d" "$recent_cache"
 done
 
-# merge our recent cache with the full list
-cat "$recent_cache" "$all_cache" > "$list"
-
-# find the first occurrences of every entry and remove any other occurrences,
-# so there will be no duplicates in the list
-awk '!visited[$0]++' "$list" > "$list_no_dups"
-
-# read in the full list without duplicates
-list=$(< "$list_no_dups")
+# merge $recent_cache and $all_cache, remove duplicates
+list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
 # replace $HOME with ~ for every list item
 list=$(echo "$list" | sed "s\\$HOME\~\g")
