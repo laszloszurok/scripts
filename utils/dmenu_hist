@@ -1,8 +1,9 @@
 #!/bin/sh
 
-# This script is a dmenu_run wrapper with customized height, font and history functionality
-# If the string 'sudo' is provided as the first argument and $SUDO_ASKPASS is set, the 
-# selected program will be executed with sudo -A.
+# This script is a dmenu_run wrapper with history functionality. 
+# If the string 'sudo' is provided as the first argument and 
+# $SUDO_ASKPASS is set, the selected program will be executed 
+# with sudo -A.
 
 [ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
@@ -11,29 +12,32 @@ max_recent=200 # Number of recent commands to track
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/dmenu_hist"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/dmenu_hist"
-recent_cache="$cache_dir/recent"
-rest_cache="$cache_dir/all"
+recent="$cache_dir/recent"
+all="$cache_dir/all"
 
 mkdir -p "$cache_dir"
 mkdir -p "$config_dir"
-touch "$recent_cache"
+touch "$recent"
 
 known_types=" background terminal terminal_hold "
 
 IFS=:
-if stest -dqr -n "$rest_cache" $PATH 2>/dev/null; then
-    stest -flx $PATH | sort -u | grep -vf "$recent_cache" > "$rest_cache"
+if stest -dqr -n "$all" $PATH 2>/dev/null; then
+    stest -flx $PATH | sort -u > "$all"
 fi
+unset IFS
 
-IFS=" "
-cmd=$(cat "$recent_cache" "$rest_cache" | $dmenu_cmd -p "$prompt") || exit
+# deduplicated command list
+list=$(awk '!visited[$0]++' "$recent" "$all")
 
-if ! grep -qx "$cmd" "$recent_cache" > /dev/null 2>&1; then
-    grep -vx "$cmd" "$rest_cache" > "$rest_cache.$$"
-    if [ -s "$rest_cache.$$" ]; then
-        mv "$rest_cache.$$" "$rest_cache"
+cmd=$(printf "%s\n" "$list" | $dmenu_cmd -p "$prompt") || exit
+
+if ! grep -qx "$cmd" "$recent" > /dev/null 2>&1; then
+    grep -vx "$cmd" "$all" > "$all.$$"
+    if [ -s "$all.$$" ]; then
+        mv "$all.$$" "$all"
     else
-        rm "$rest_cache.$$"
+        rm "$all.$$"
     fi
 fi
 
@@ -42,9 +46,9 @@ case $cmd in
         exit
         ;; 
     *)
-        echo "$cmd" > "$recent_cache.$$"
-        grep -vx "$cmd" "$recent_cache" | head -n "$max_recent" >> "$recent_cache.$$"
-        mv "$recent_cache.$$"  "$recent_cache"
+        echo "$cmd" > "$recent.$$"
+        grep -vx "$cmd" "$recent" | head -n "$max_recent" >> "$recent.$$"
+        mv "$recent.$$"  "$recent"
         ;;
 esac
 
