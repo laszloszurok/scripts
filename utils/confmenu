@@ -2,7 +2,12 @@
 
 config_paths=(
     "$HOME/.config" 
-    "$HOME/source/suckless-builds"
+    "$HOME/.local/share" 
+    "$HOME/source/dwm"
+    "$HOME/source/dwmblocks"
+    "$HOME/source/dmenu"
+    "$HOME/source/st"
+    "$HOME/source/slock"
     "$HOME/source/scripts"
 )
 
