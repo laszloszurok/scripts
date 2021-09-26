@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# wrapper around stalonetray to use a custom config file location
+# when launching from dmenu
+
+/usr/bin/stalonetray --config "$HOME/.config/stalonetray/stalonetrayrc"
