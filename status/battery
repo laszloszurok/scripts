@@ -64,9 +64,9 @@ printf "%s\n" "$icon"
 
 if [ "$bat_threshold_notify" -eq 1 ]; then
     if [ "$capacity" -ge 80 ] && [ "$status" = "Charging" ] || [ "$status" = "Full" ]; then
-        notify "Disconnect the charger" "Batery level reached 80%" 1 111
+        notify "Disconnect the charger" "Batery level reached $capacity%" 1 111
     elif [ "$capacity" -le 50 ] && [ "$capacity" -gt 20 ] && [ "$status" = "Discharging" ]; then
-        notify "Connect the charger" "Batery level is below 50%" 1 111
+        notify "Connect the charger" "Batery level is below $capacity%" 1 111
     fi
 fi
 
