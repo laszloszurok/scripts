@@ -1,98 +1,99 @@
 #TAG,NAME IN REPO,COMMENT
-,acpilight,"adjust xorg backlight (binary called xbacklight)"
-,aerc,"an email client for the terminal"
-,w3m,"required by aerc to render html emails"
-,dante,"required by aerc to render html emails"
+,acpilight,adjust xorg backlight (binary called xbacklight)
+,aerc,an email client for the terminal
+,w3m,required by aerc to render html emails
+,dante,required by aerc to render html emails
 ,bat,"like cat but with syntax highlight, can be used for colord manpages"
-,calcurse,"calendar and todo/appointment manager for the terminal"
-,cronie,"for cronjobs"
-,dash,"a fast posix shell"
-A,dashbinsh,"program that links /bin/sh to dash"
-A,dragon-drag-and-drop,"minimal gui to drag-and-drop files"
-,bottom,"system monitor for the terminal (binary called btm)"
-,ffmpegthumbnailer,"generate thumbnailes for videos (vifmimg)"
-,flameshot,"for screenshot"
-,gimp,"for image manipulation"
-,gnu-netcat,"used in my wifi status script to check connectivity"
-,xorg-server,"is the graphical server"
-,xorg-xinit,"starts the graphical server"
-,xorg-xprop,"is a tool for detecting window properties"
-,xorg-xdpyinfo,"aids with resolution determination and screen recording"
-,picom,"compositor to display transparent windows"
-,dosfstools,"allows your computer to access dos-like filesystems"
-,libnotify,"library for sending desktop notifications"
-,dunst,"a lightweight notification daemon"
-,exfat-utils,"allows management of FAT drives"
-,imv,"is a minimalist image viewer"
-,xwallpaper,"sets the wallpaper"
-,ffmpeg,"can record and splice video and audio on the command line"
-,gnome-keyring,"serves as the system keyring"
-,neovim,"a tidier vim with some useful features"
-,mpv,"video player"
-,newsboat,"is a terminal RSS client"
+,calcurse,calendar and todo/appointment manager for the terminal
+,cronie,for cronjobs
+,dash,a fast posix shell
+A,dashbinsh,program that links /bin/sh to dash
+A,dragon-drag-and-drop,minimal gui to drag-and-drop files
+,bottom,system monitor for the terminal (binary called btm)
+,ffmpegthumbnailer,generate thumbnailes for videos (vifmimg)
+,flameshot,for screenshot
+,gimp,for image manipulation
+,gnu-netcat,used in my wifi status script to check connectivity
+,xorg-server,is the graphical server
+,xorg-xinit,starts the graphical server
+,xorg-xprop,is a tool for detecting window properties
+,xorg-xdpyinfo,aids with resolution determination and screen recording
+,picom,compositor to display transparent windows
+,dosfstools,allows your computer to access dos-like filesystems
+,libnotify,library for sending desktop notifications
+,dunst,a lightweight notification daemon
+,exfat-utils,allows management of FAT drives
+,imv,is a minimalist image viewer
+,xwallpaper,sets the wallpaper
+,ffmpeg,can record and splice video and audio on the command line
+,gnome-keyring,serves as the system keyring
+,neovim,a tidier vim with some useful features
+,mpv,video player
+,newsboat,is a terminal RSS client
 A,brave-bin,"is an elegant browser with built-in adblocking, tor and other features"
-,qutebrowser,"browser with vim-like keybindings"
-,python-adblock,"adblocker used by qutebrowser"
-,ntfs-3g,"allows accessing NTFS partitions"
-,pulseaudio-alsa,"is the audio system"
-,pulsemixer,"is an audio controller"
-,unclutter,"hides cursor after mouse inactivity"
-,unrar,"extracts rar's"
-,unzip,"unzips zips"
-,lynx,"is a terminal browser"
-,xclip,"required by pass to copy to clipboard"
-,xsel,"required by clipmenu to copy to clipboard"
-,clipmenu,"manage clipboard history with dmenu"
-,xdotool,"provides window action utilities on the command line"
-,youtube-dl,"can download any YouTube video (or playlist or channel) when given the link"
-,zathura,"is a pdf viewer with vim-like bindings"
-,zathura-pdf-mupdf,"allows mupdf pdf compatibility in zathura"
-,fzf,"is a fuzzy finder tool"
-A,simple-mtpfs,"enables the mounting of cell phones"
-,gvfs,"mount usb devices in graphical filemanagers"
-,gvfs-mtp,"mount cell phones in graphical filemanagers"
-,jdk-openjdk,"java development kit"
-,kmon,"kernel manager and activity monitor"
-,lazygit,"tui for git"
-,libreoffice-still,"office suite"
-,lxappearance,"gtk theme selector"
+,qutebrowser,browser with vim-like keybindings
+,python-adblock,adblocker used by qutebrowser
+,ntfs-3g,allows accessing NTFS partitions
+,pulseaudio-alsa,is the audio system
+,pulsemixer,is an audio controller
+,unclutter,hides cursor after mouse inactivity
+,unrar,extracts rar's
+,unzip,unzips zips
+,lynx,is a terminal browser
+,xclip,required by pass to copy to clipboard
+,xsel,required by clipmenu to copy to clipboard
+,clipmenu,manage clipboard history with dmenu
+,xdotool,provides window action utilities on the command line
+,youtube-dl,can download any YouTube video (or playlist or channel) when given the link
+,zathura,is a pdf viewer with vim-like bindings
+,zathura-pdf-mupdf,allows mupdf pdf compatibility in zathura
+,fzf,is a fuzzy finder tool
+A,simple-mtpfs,enables the mounting of cell phones
+,gvfs,mount usb devices in graphical filemanagers
+,gvfs-mtp,mount cell phones in graphical filemanagers
+,jdk-openjdk,java development kit
+,kmon,kernel manager and activity monitor
+,lazygit,tui for git
+,libreoffice-still,office suite
+,lxappearance,gtk theme selector
 ,lxsession,"provides lxpolkit, a gtk authentication agent"
-A,ncspot,"spotify client for the terminal"
-A,nextdns,"dns-over-https client"
-,nodejs,"nodejs"
-,npm,"node package manager"
-,numlockx,"to turn on numlock when x starts up"
-,pass,"cli password manager"
-,pcmanfm,"simple gui filemanager"
-,playerctl,"to control media"
-,python-pip,"python package manager"
-A,qt5-styleplugins,"to make qt use qtk theme"
-,ripgrep,"find file contents (I use it in nvim)"
+A,ncspot,spotify client for the terminal
+A,nextdns,dns-over-https client
+,nodejs,nodejs
+,npm,node package manager
+,numlockx,to turn on numlock when x starts up
+,pass,cli password manager
+,pcmanfm,simple gui filemanager
+,playerctl,to control media
+,python-pip,python package manager
+A,qt5-styleplugins,to make qt use qtk theme
+,ripgrep,find file contents (I use it in nvim)
 ,fd,"alternative to 'find', opt dep of telescope nvim plugin"
-A,scrcpy,"mirror and control android device"
-,shellcheck,"shell script analysis tool"
-,translate-shell,"cli fronted for Google Translate"
-,ttf-dejavu,"a font family based on Bitstream Vera Fonts"
-,ttf-font-awesome,"font-awesome glyphs"
-,ttf-joypixels,"emoji font"
-A,ttf-twemoji-color,"emoji font"
-,ueberzug,"for image previews in the terminal"
-,ufw,"an uncomplicated firewall"
-,urlscan,"get urls from a textfile (I use it to pipe emails into it to open links)"
+A,scrcpy,mirror and control android device
+,shellcheck,shell script analysis tool
+,translate-shell,cli fronted for Google Translate
+,ttf-dejavu,a font family based on Bitstream Vera Fonts
+,ttf-font-awesome,font-awesome glyphs
+,ttf-joypixels,emoji font
+A,ttf-twemoji-color,emoji font
+,ueberzug,for image previews in the terminal
+,ufw,an uncomplicated firewall
+,urlscan,get urls from a textfile (I use it to pipe emails into it to open links)
 ,usbutils,"provides lsusb to list usb devices, eg. check if a printer is recognized"
-,vifm,"file manager for the terminal"
-,qemu,"for virtual machines"
-,virt-manager,"for virtual machines"
-,iptables-nft,"required by virt-manager"
-,dnsmasq,"required by virt-manager"
-,edk2-ovmf,"firmware for virtual machines"
-,starship,"a cross-shell prompt"
-,zoxide,"cli tool to move around in the filesystems quicker"
-,zsh,"the z shell"
-,zsh-syntax-highlighting,"syntax highlight for zsh"
-,xarchiver,"gui archive viewer"
-,xautolock,"to launch slock on user inactivity"
-,transmission-cli,"bittorrent client"
-A,auto-cpufreq,"automatic cpu speed & power optimizer to extend laptop battery life"
-,cups,"common unix printing system"
-A,tvolnoti,"lightweight notification daemon to display graphical volume and brightness indicators"
+,vifm,file manager for the terminal
+,qemu,for virtual machines
+,virt-manager,for virtual machines
+,iptables-nft,required by virt-manager
+,dnsmasq,required by virt-manager
+,edk2-ovmf,firmware for virtual machines
+,starship,a cross-shell prompt
+,zoxide,cli tool to move around in the filesystems quicker
+,zsh,the z shell
+,zsh-syntax-highlighting,syntax highlight for zsh
+,xarchiver,gui archive viewer
+,xautolock,to launch slock on user inactivity
+,transmission-cli,bittorrent client
+A,auto-cpufreq,automatic cpu speed & power optimizer to extend laptop battery life
+,cups,common unix printing system
+A,tvolnoti,lightweight notification daemon to display graphical volume and brightness indicators
+A,sc-im,vim-like spreadsheet calculator for the terminal
