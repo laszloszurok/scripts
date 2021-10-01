@@ -50,13 +50,28 @@ get_audio_state() {
     fi
 }
 
+check_qutebrowser() {
+    dpms_state=$(xset q | grep "DPMS is")
+
+    if pacmd list-sink-inputs | grep "qutebrowser" > /dev/null; then
+        if [ "$dpms_state" = "  DPMS is Enabled" ]; then
+            xset -dpms
+        fi
+    else
+        if [ "$dpms_state" = "  DPMS is Disabled" ]; then
+            xset +dpms
+        fi
+    fi
+}
 
 get_bat_device
 get_audio_device
 
+xset s off # disable screensaver
 xset dpms 300 300 300 # monitor switches off after 300 seconds
 
 while true; do
+    check_qutebrowser
     get_mon_state
 
     if [ "$mon_state" = "On" ]; then
