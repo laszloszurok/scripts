@@ -5,7 +5,7 @@
 # Otherwise the file will be opend in the existing instance.
 
 if pidof nvim > /dev/null 2>&1; then
-    nvr "$@"
+    nvr "$@" > /dev/null 2>&1
 else
-    setsid -f $TERMINAL nvr -s "$@"
+    setsid -f $TERMINAL nvr -s "$@" > /dev/null 2>&1
 fi
