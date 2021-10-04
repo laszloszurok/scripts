@@ -25,6 +25,15 @@ IFS=:
 if stest -dqr -n "$all" $PATH 2>/dev/null; then
     stest -flx $PATH | sort -u > "$all"
 fi
+
+# remove non-existent (uninstalled) programs from recent cache
+while IFS= read -r line; do
+    line=$(echo $line  | head -n1 | cut -d " " -f1)
+    if ! which "$line" > /dev/null ; then
+        sed -i "\|$line|d" "$recent"
+    fi
+done < "$recent"
+
 unset IFS
 
 # deduplicated command list
