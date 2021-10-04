@@ -96,6 +96,7 @@ while true; do
         [ "$mon_state" = "Off" ] && [ "$audio_state" != "RUNNING"  ] && \
             [ -z "$(pidof pacman)" ] && \
             [ -z "$(pidof paru)" ] && \
+            [ -z "$(pidof makepkg)" ] && \
             [ -z "$(pidof qbittorrent)" ] && \
             [ -z "$(pidof cp)" ] && \
             [ -z "$(pidof mv)" ] && \
