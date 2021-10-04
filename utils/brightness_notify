@@ -37,4 +37,4 @@ elif [ "$1" = "dec" ]; then
     xbacklight -dec "$step"
 fi
 
-tvolnoti-show "$(xbacklight -get)" -b
+dunstify --appname="brightness" --replace=9 "Brightness $(xbacklight -get | awk '{print int($1)}')%"
