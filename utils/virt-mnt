@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script is used to mount a shared directory on a virt-manager virtual machine
 

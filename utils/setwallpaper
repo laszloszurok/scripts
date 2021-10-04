@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # If this script is given an image, it sets that image as the wallpaper.
 # Otherwise it sets the wallpaper to the last image that was used.
