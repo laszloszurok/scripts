@@ -75,6 +75,9 @@ current_user=$(whoami)
 # enable colored output for pacman
 exec_cmd "sudo -S sed -i '/Color/s/^#//g' /etc/pacman.conf"
 
+# enable parallel downloads for pacman
+exec_cmd "sudo -S sed -i '/Parallel/s/^#//g' /etc/pacman.conf"
+
 # install git
 exec_cmd "sudo -S pacman -S --noconfirm git"
 
