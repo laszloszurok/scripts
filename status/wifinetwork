@@ -38,7 +38,7 @@ check_connection() {
 
 case $BUTTON in
     1) check_connection ;;
-    3) setsid -f st -e nmtui ;;
+    3) setsid -f $TERMINAL -e nmtui ;;
 esac
 
 printf "%s\n" "$icon"
