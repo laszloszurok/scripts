@@ -150,29 +150,6 @@ write_to_file "/etc/X11/xorg.conf.d/30-touchpad.conf" "Section \"InputClass\"
     Option \"NaturalScrolling\" \"true\"
 EndSection"
 
-# automatically spin down the secondary hdd in my machine if it is not in use
-write_to_file "/usr/lib/systemd/system-sleep/hdparm" "#!/bin/sh
-
-case \$1 in post)
-        /usr/bin/hdparm -q -S 60 -y /dev/sda
-        ;;
-esac"
-
-exec_cmd "sudo -S chmod +x /usr/lib/systemd/system-sleep/hdparm"
-
-write_to_file "/etc/systemd/system/hdparm.service" "[Unit]
-Description=hdparm sleep
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/hdparm -q -S 60 -y /dev/sda
-
-[Install]
-WantedBy=multi-user.target"
-
-sysctl_enable "hdparm.service"
-################################################################################
-
 # disable hardware bell on boot
 write_to_file "/etc/modprobe.d/pcspkr-blacklist.conf" "blacklist pcspkr"
 
@@ -215,10 +192,6 @@ sysctl_enable "slock@$current_user.service"
 write_to_file "/etc/X11/xorg.conf.d/xorg.conf" "Section \"ServerFlags\"
     Option \"DontVTSwitch\" \"True\"
 EndSection"
-
-# cron service
-sysctl_enable "cronie.service"
-crontab "$HOME"/.config/cronjobs
 
 # udev rule to allow users in the "video" group to set the display brightness
 write_to_file "/etc/udev/rules.d/90-backlight.rules" "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
