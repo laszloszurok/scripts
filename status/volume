@@ -21,21 +21,22 @@ printf "%s\n" "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted
 
 vol=$(printf "%s\n" "$sinkinfo" | grep "front-left" | awk 'NR ==1 { print $5 }' | tr -d "%")
 
+if [ "$vol" -gt "100" ]; then
+    # Don't let the volume level exceed 100%
+    pactl set-sink-volume @DEFAULT_SINK@ 100%
+    vol=100
+fi
+
 if [ "$speaker_state" = "muted" ]; then
     icon=""
-    notify "Volume $vol% (muted)"
+    notify "Muted ($vol%)"
 else
-    if [ "$vol" -gt "100" ]; then
-        # Don't let the volume level exceed 100%
-        pactl set-sink-volume @DEFAULT_SINK@ 100%
-        vol=100;
+    if [ "$vol" -gt "70" ]; then
         icon=""
-    elif [ "$vol" -gt "70" ]; then
-        icon=""
-    elif [ "$vol" -lt "30" ]; then
-        icon=""
-    else
+    elif [ "$vol" -gt "30" ]; then
         icon=""
+    else
+        icon=""
     fi
 
     notify "Volume $vol%"
