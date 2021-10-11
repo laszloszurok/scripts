@@ -9,7 +9,7 @@ prompt=" bookmarks:"
 
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 
-url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@")
+url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@" | awk '{print $NF}' )
 
 # exit if the user did not pick a url
 [[ -n $url ]] || exit
