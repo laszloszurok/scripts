@@ -29,7 +29,7 @@ set_wait_time() {
 }
 
 get_mon_state() {
-    mon_state=$(xset q | tail -1 | awk '{print $NF}')
+    mon_state=$(xset q | grep "Monitor is")
 }
 
 get_audio_device() {
@@ -74,10 +74,7 @@ while true; do
     check_qutebrowser
     get_mon_state
 
-    if [ "$mon_state" = "On" ]; then
-        killall xautolock 2>/dev/null
-    elif [ "$mon_state" = "Off" ]; then
-
+    if [ "$mon_state" = "  Monitor is Off" ]; then
         xautolock -time 5 -locker slock &
 
         get_bat_state
@@ -101,6 +98,8 @@ while true; do
             [ -z "$(pidof cp)" ] && \
             [ -z "$(pidof mv)" ] && \
             systemctl suspend
+    else
+        killall xautolock 2>/dev/null
     fi
     sleep 30
 done
