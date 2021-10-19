@@ -13,8 +13,6 @@ passmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
 recent_cache="$cache_dir/recent"
 all_cache="$cache_dir/all"
-list="$cache_dir/list"
-list_no_dups="$cache_dir/list_no_dups"
 
 mkdir -p "$cache_dir"
 
