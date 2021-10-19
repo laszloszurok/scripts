@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd /tmp
+
+/usr/bin/xboard "$@"
+
+cleanup() {
+    rm -f ./log.000 ./game.000 ./players.dat
+}
+
+trap 'cleanup' EXIT
