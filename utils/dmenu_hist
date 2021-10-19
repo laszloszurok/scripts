@@ -86,15 +86,15 @@ else
 fi
 
 run_as_sudo() {
-    [ "$type" = "background" ] && sudo -A "$cmd"
-    [ "$type" = "terminal" ] && sudo -A $TERMINAL "$cmd"
+    [ "$type" = "background" ] && sudo -A $cmd
+    [ "$type" = "terminal" ] && sudo -A $TERMINAL $cmd
     [ "$type" = "terminal_hold" ] &&
         exec sudo -A $TERMINAL sh -c "$cmd && echo Press Enter to quit... && read line"
 }
 
 run_as_normal() {
-    [ "$type" = "background" ] && "$cmd"
-    [ "$type" = "terminal" ] && $TERMINAL "$cmd"
+    [ "$type" = "background" ] && $cmd
+    [ "$type" = "terminal" ] && $TERMINAL $cmd
     [ "$type" = "terminal_hold" ] &&
         exec $TERMINAL sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
