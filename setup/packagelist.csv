@@ -48,7 +48,7 @@ A,brave-bin,"is an elegant browser with built-in adblocking, tor and other featu
 ,zathura,is a pdf viewer with vim-like bindings
 ,zathura-pdf-mupdf,allows mupdf pdf compatibility in zathura
 ,fzf,is a fuzzy finder tool
-A,simple-mtpfs,enables the mounting of cell phones
+,android-file-transfer,provides gui and cli tools (aft-mpt-cli) to access files on android
 ,gvfs,mount usb devices in graphical filemanagers
 ,gvfs-mtp,mount cell phones in graphical filemanagers
 ,jdk-openjdk,java development kit
