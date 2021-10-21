@@ -9,7 +9,7 @@ all="$cache_dir/all"
 mkdir -p "$cache_dir"
 
 # dmenu settings
-prompt=" git repos:"
+prompt=" git repos:"
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
 
 # remove the picked item from $recent, then write it in the first line
