@@ -81,7 +81,7 @@ while true; do
         set_wait_time
 
         num="0"
-        while [ $num -lt $time_to_wait ] && [ "$mon_state" = " Monitor is Off" ]; do
+        while [ $num -lt $time_to_wait ] && [ "$mon_state" = "  Monitor is Off" ]; do
             num=$((num+1))
             get_mon_state
             sleep 1
@@ -90,7 +90,7 @@ while true; do
         get_mon_state
         get_audio_state
 
-        [ "$mon_state" = " Monitor is Off" ] && [ "$audio_state" != "RUNNING"  ] && \
+        [ "$mon_state" = "  Monitor is Off" ] && [ "$audio_state" != "RUNNING"  ] && \
             [ -z "$(pidof pacman)" ] && \
             [ -z "$(pidof paru)" ] && \
             [ -z "$(pidof makepkg)" ] && \
