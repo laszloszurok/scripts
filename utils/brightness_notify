@@ -37,4 +37,6 @@ elif [ "$1" = "dec" ]; then
     xbacklight -dec "$step"
 fi
 
-dunstify --appname="brightness" --replace=9 "Brightness $(xbacklight -get | awk '{print int($1)}')%"
+curr_brightness="$(xbacklight -get)"
+
+dunstify --appname="brightness" --replace=1 "Brightness $curr_brightness%" -h int:value:"$curr_brightness" --urgency 0
