@@ -21,7 +21,7 @@ selection_prompt() { # $1 : prompt str, $2 : list to choose from
 select_from() { # $1: list to choose from
     i=1
     while IFS= read -r line; do
-        if [ "$i" -eq "$num" > /dev/null 2>&1 ]; then
+        if [ "$i" == "$num" ]; then
             printf "%s\n" "$line" | awk '{ print $3 }'
             return
         fi
