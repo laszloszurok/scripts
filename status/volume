@@ -12,7 +12,7 @@ case $BUTTON in
 esac
 
 notify() {
-    dunstify --appname="volume" --replace=1 "$1" "$2"
+    dunstify --appname="volume" --replace=1 "$1" -h int:value:"$2" --urgency 0
 }
 
 sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
@@ -29,7 +29,7 @@ fi
 
 if [ "$speaker_state" = "muted" ]; then
     icon=""
-    notify "Muted ($vol%)"
+    notify "Muted ($vol%)" "$vol"
 else
     if [ "$vol" -gt "70" ]; then
         icon=""
@@ -39,7 +39,7 @@ else
         icon=""
     fi
 
-    notify "Volume $vol%"
+    notify "Volume $vol%" "$vol"
 fi
 
 printf "%s\n" "$icon"
