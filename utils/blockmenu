@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+prompt=" block devices:"
+dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
+
+disk_options=("eject" "power off" "back")
+part_options=("mount" "unmount" "back")
+
+show_disk_options() {
+    while option=$(printf "%s\n" "${disk_options[@]}" | $dmenu_cmd -p "$name":); do
+        # loop until the user types a valid option
+        if [[ ! " ${disk_options[*]} " =~ " ${option} " ]]; then
+            continue
+        fi
+        break
+    done
+    printf "%s\n" "$option"
+}
+
+show_part_options() {
+    while option=$(printf "%s\n" "${part_options[@]}" | $dmenu_cmd -p "$name":); do
+        # loop until the user types a valid option
+        if [[ ! " ${part_options[*]} " =~ " ${option} " ]]; then
+            continue
+        fi
+        break
+    done
+    printf "%s\n" "$option"
+}
+
+while chosen=$(lsblk -o name,type,label,fstype,size,mountpoints --list -n | $dmenu_cmd -p "$prompt") || exit; do
+
+    chosen=($chosen) # convert string to array of words
+    name="${chosen[0]}"
+    type="${chosen[1]}"
+
+    if [[ $type == "disk" ]]; then
+        option=$(show_disk_options)
+        case "$option" in
+            "eject") 
+                udisksctl unmount -b "/dev/$name"?* && \
+                udisksctl power-off -b "/dev/$name" && \
+                dunstify "Device manager" "$name ejected successfully" || \
+                dunstify "Device manager" "Something went wrong"
+                break
+            ;;
+            "power off") 
+                udisksctl power-off -b "/dev/$name" && \
+                dunstify "Device manager" "$name powerd off successfully" || \
+                dunstify "Device manager" "Something went wrong"
+                break
+            ;;
+            *)
+            ;;
+        esac
+    elif [[ $type == "part" ]]; then
+        option=$(show_part_options)
+        case "$option" in
+            "mount") 
+                udisksctl mount -b "/dev/$name" && \
+                dunstify "Device manager" "$name mounted successfully" || \
+                dunstify "Device manager" "Something went wrong"
+                break
+            ;;
+            "unmount") 
+                udisksctl unmount -b "/dev/$name" && \
+                dunstify "Device manager" "$name unmounted successfully" || \
+                dunstify "Device manager" "Something went wrong"
+                break
+            ;;
+            *)
+            ;;
+        esac
+    fi
+done
