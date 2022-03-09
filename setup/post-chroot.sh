@@ -21,13 +21,32 @@ echo "127.0.0.1   localhost
 127.0.1.1   $hostname.localdomain    $hostname"
 
 # installing some packages
-pacman -S grub efibootmgr networkmanager wireless_tools wpa_supplicant os-prober mtools dosfstools base-devel linux-headers
+pacman -S grub efibootmgr iwd os-prober mtools dosfstools base-devel linux-headers
 
 # grub
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
 
-systemctl enable NetworkManager.service
+# netowrking setup
+systemctl enable systemd-networkd systemd-resolved iwd
+echo "[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+
+[DHCPv4]
+RouteMetric=10" > /etc/systemd/network/20-wired.network
+
+echo "[Match]
+Name=wl*
+
+[Network]
+DHCP=yes
+IgnoreCarrierLoss=3s
+
+[DHCPv4]
+RouteMetric=20" > /etc/systemd/network/25-wireless.network
 
 # account settings
 passwd
