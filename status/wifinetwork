@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# this script requires netcat to be installed
+# wifi network status bar indicator for dwmblocks
+# uses netcat and iw to get connection information
 
 icon=""
 
@@ -8,7 +9,8 @@ notify() {
     dunstify --appname="wifi" --replace=1 "$1" "$2" --timeout="$3"
 }
 
-essid=$(iwgetid wlan0 --raw || iwgetid wlo1 --raw || iwgetid wlp2s0 --raw)
+info=$(iw dev wlan0 link | grep SSID | xargs)
+ssid=${info#"SSID: "}
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 msg=""
 
@@ -17,9 +19,9 @@ check_connection() {
     notify "Checking connection" "Please wait..." 0
 
     # checking if we are connected to a wifi network
-    if [ -z "$essid" ]; then
+    if [ -z "$ssid" ]; then
         icon=""
-        essid="Connection lost"
+        ssid="Connection lost"
         signal="0%"
         msg="No WiFi network"
     else
@@ -33,7 +35,7 @@ check_connection() {
         fi
     fi
 
-    notify "$essid" "$msg, signal: $signal\nRight click for options" 7000
+    notify "$ssid" "$msg, signal: $signal\nRight click for options" 7000
 }
 
 case $BUTTON in
