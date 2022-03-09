@@ -7,7 +7,8 @@ disk_options=("eject" "power off" "back")
 part_options=("mount" "unmount" "back")
 
 show_disk_options() {
-    while option=$(printf "%s\n" "${disk_options[@]}" | $dmenu_cmd -p "$name":); do
+    prompt=" $name:"
+    while option=$(printf "%s\n" "${disk_options[@]}" | $dmenu_cmd -p "$prompt"); do
         # loop until the user types a valid option
         if [[ ! " ${disk_options[*]} " =~ " ${option} " ]]; then
             continue
@@ -18,7 +19,8 @@ show_disk_options() {
 }
 
 show_part_options() {
-    while option=$(printf "%s\n" "${part_options[@]}" | $dmenu_cmd -p "$name":); do
+    prompt=" $name:"
+    while option=$(printf "%s\n" "${part_options[@]}" | $dmenu_cmd -p "$prompt"); do
         # loop until the user types a valid option
         if [[ ! " ${part_options[*]} " =~ " ${option} " ]]; then
             continue
