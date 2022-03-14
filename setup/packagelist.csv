@@ -96,3 +96,4 @@ A,ttf-twemoji-color,emoji font
 A,auto-cpufreq,automatic cpu speed & power optimizer to extend laptop battery life
 ,cups,common unix printing system
 A,sc-im,vim-like spreadsheet calculator for the terminal
+,wmname,prints/sets the window manager name

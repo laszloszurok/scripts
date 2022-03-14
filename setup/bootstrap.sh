@@ -122,7 +122,6 @@ git_cln "https://github.com/laszloszurok/dwmblocks.git" "$src_dir"
 git_cln "https://github.com/laszloszurok/dmenu.git"     "$src_dir"
 git_cln "https://github.com/laszloszurok/st.git"        "$src_dir"
 git_cln "https://github.com/laszloszurok/slock.git"     "$src_dir"
-git_cln "https://github.com/laszloszurok/wmname.git"    "$src_dir"
 
 # installing my suckless builds
 install_from_src "$src_dir/dwm"
