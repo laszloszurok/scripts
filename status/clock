@@ -8,9 +8,9 @@ icon=""
 date="$(date '+%a %d %b %Y')"
 hour_minute="$(date '+%H:%M')"
 
-case $BUTTON in
+case $BLOCK_BUTTON in
     1) notify "$date" "Right click to open calcurse";;
 	3) setsid -f st -f 'mono:pixelsize=20:antialias=true:autohint=true' -e calcurse ;;
 esac
 
-printf "%s %s\n" "$icon" "$hour_minute "
+printf "%s %s\n " "$icon" "$hour_minute "

@@ -4,7 +4,7 @@
 # a notification and displays an appropriate icon in the status bar.
 # Use 'pactl list sinks' to get sink names.
 
-case $BUTTON in
+case $BLOCK_BUTTON in
     1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
     3) setsid -f $TERMINAL pulsemixer ;;
     4) pactl set-sink-volume @DEFAULT_SINK@ +5%; ;;

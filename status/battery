@@ -85,7 +85,7 @@ else
     fi
 fi
 
-case $BUTTON in
+case $BLOCK_BUTTON in
     1) notify "Battery: $capacity%" "$status" 1 1;;
     3) toggle_threshold_notifs ;;
 esac

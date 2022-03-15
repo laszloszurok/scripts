@@ -3,7 +3,7 @@
 # This script checks the state of the default microphone of my laptop
 # and displays an appropriate indicator icon if it's muted/active.
 
-case $BUTTON in
+case $BLOCK_BUTTON in
     1) pactl set-source-mute 1 toggle ;;
     3) setsid -f $TERMINAL pulsemixer ;;
     4) scrollsig=1 ;; # don't show notifications on scroll event
