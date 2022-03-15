@@ -9,38 +9,62 @@ notify() {
     dunstify --appname="wifi" --replace=1 "$1" "$2" --timeout="$3"
 }
 
+data_path=~/.local/share/wifi_state
+current_state=$(<$data_path)
+
 info=$(iw dev wlan0 link | grep SSID | xargs)
 ssid=${info#"SSID: "}
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
-msg=""
 
 airplane_mode=$(rfkill list | grep yes)
 
-check_connection() {
+title="Checking connection"
+sub="Please wait..."
+timeout=0
 
-    notify "Checking connection" "Please wait..." 0
-
-    if [ ! -z "$airplane_mode" ]; then # check for airplane mode
-        icon=""
-        notify "Airplane mode active" "No signal" 7000
-    elif [ -z "$ssid" ]; then # checking if we are connected to a wifi network
-        icon=""
-        notify "Connection lost" "No WiFi network" 7000
-    else
-        # checking internet connection
-        if nc -z archlinux.org 443 > /dev/null 2>&1; then
-            icon=""
-            msg="Online"
-        else
-            icon=""
-            msg="Offline"
-        fi
-        notify "$ssid" "$msg, signal: $signal\nRight click for options" 7000
+if [ ! -z "$airplane_mode" ]; then # check for airplane mode
+    icon=""
+    title="Airplane mode"
+    sub="No signal"
+    timeout=7000
+    if [ "$current_state" != "airplane" ]; then
+        notify "$title" "$sub" "$timeout"
+        printf "airplane" > $data_path
     fi
-}
+elif [ -z "$ssid" ]; then # checking if we are connected to a wifi network
+    icon=""
+    title="Connection lost"
+    sub="No WiFi network"
+    timeout=7000
+    if [ "$current_state" != "no-network" ]; then
+        notify "$title" "$sub" "$timeout"
+        printf "no-network" > $data_path
+    fi
+else
+    # checking internet connection
+    if nc -z google.com 443 > /dev/null 2>&1; then
+        icon=""
+        title="$ssid"
+        sub="Online, signal: $signal"
+        timeout=7000
+        if [ "$current_state" != "online, $ssid" ]; then
+            notify "$title" "$sub" "$timeout"
+            printf "online, $ssid" > $data_path
+        fi
+    else
+        icon=""
+        title="$ssid"
+        sub="Offline, signal: $signal"
+        timeout=7000
+        if [ "$current_state" != "offline, $ssid" ]; then
+            notify "$title" "$sub" "$timeout"
+            printf "offline, $ssid" > $data_path
+        fi
+    fi
+fi
 
 case $BLOCK_BUTTON in
-    1) check_connection ;;
+    1) notify "$title" "$sub" "$timeout" ;;
     3) setsid -f $TERMINAL -e nmtui ;;
 esac
 
