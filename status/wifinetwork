@@ -14,16 +14,18 @@ ssid=${info#"SSID: "}
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 msg=""
 
+airplane_mode=$(rfkill list | grep yes)
+
 check_connection() {
 
     notify "Checking connection" "Please wait..." 0
 
-    # checking if we are connected to a wifi network
-    if [ -z "$ssid" ]; then
+    if [ ! -z "$airplane_mode" ]; then # check for airplane mode
+        icon=""
+        notify "Airplane mode active" "No signal" 7000
+    elif [ -z "$ssid" ]; then # checking if we are connected to a wifi network
         icon=""
-        ssid="Connection lost"
-        signal="0%"
-        msg="No WiFi network"
+        notify "Connection lost" "No WiFi network" 7000
     else
         # checking internet connection
         if nc -z archlinux.org 443 > /dev/null 2>&1; then
@@ -33,14 +35,13 @@ check_connection() {
             icon=""
             msg="Offline"
         fi
+        notify "$ssid" "$msg, signal: $signal\nRight click for options" 7000
     fi
-
-    notify "$ssid" "$msg, signal: $signal\nRight click for options" 7000
 }
 
-case $BUTTON in
+case $BLOCK_BUTTON in
     1) check_connection ;;
     3) setsid -f $TERMINAL -e nmtui ;;
 esac
 
-printf "%s\n" "$icon"
+printf "  %s\n" "$icon"
