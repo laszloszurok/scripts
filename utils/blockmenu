@@ -35,6 +35,7 @@ while chosen=$(lsblk -o name,type,label,fstype,size,mountpoints --list -n | $dme
     chosen=($chosen) # convert string to array of words
     name="${chosen[0]}"
     type="${chosen[1]}"
+    fs="${chosen[3]}"
 
     if [[ $type == "disk" ]]; then
         option=$(show_disk_options)
@@ -59,7 +60,11 @@ while chosen=$(lsblk -o name,type,label,fstype,size,mountpoints --list -n | $dme
         option=$(show_part_options)
         case "$option" in
             "mount") 
-                udisksctl mount -b "/dev/$name" && \
+                if [[ $fs == "ntfs" ]]; then # mount ntfs drives with correct unix permissions
+                    udisksctl mount -b "/dev/$name" -o dmask=022,fmask=133
+                else
+                    udisksctl mount -b "/dev/$name"
+                fi && \
                 dunstify "Device manager" "$name mounted successfully" || \
                 dunstify "Device manager" "Something went wrong"
                 break
