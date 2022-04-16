@@ -7,5 +7,5 @@
 if pidof nvim > /dev/null 2>&1; then
     nvr "$@" > /dev/null 2>&1
 else
-    setsid -f $TERMINAL nvr -s "$@" > /dev/null 2>&1
+    setsid -f $TERMINAL nvr "$@" > /dev/null 2>&1
 fi
