@@ -129,7 +129,6 @@ install_from_src "$src_dir/dwmblocks"
 install_from_src "$src_dir/dmenu"
 install_from_src "$src_dir/st"
 install_from_src "$src_dir/slock"
-install_from_src "$src_dir/wmname"
 
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
