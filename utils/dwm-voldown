@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Use 'pactl list sinks' to get sink names
+pactl set-sink-volume @DEFAULT_SINK@ -5%
+kill -37 $(pidof dwmblocks)

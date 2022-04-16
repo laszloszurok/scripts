@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Use 'pactl list sinks' to get sink names
+pactl set-sink-mute @DEFAULT_SINK@ toggle
+kill -37 $(pidof dwmblocks)
