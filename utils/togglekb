@@ -12,3 +12,5 @@ fi
 kb=$(printf "%s" "$kb" | tail -c 2)
 
 setxkbmap "$kb"
+
+kill -39 $(pidof dwmblocks)
