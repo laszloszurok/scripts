@@ -49,7 +49,8 @@ install_packages() {
         n=$((n+1))
         printf "%s\n" "Installing $package ($n/$total)"
 		case "$tag" in
-			"A") paru -S "$package" --sudoloop --noconfirm > /dev/null 2>&1 ;;
+			"aur") paru -S "$package" --sudoloop --noconfirm > /dev/null 2>&1 ;;
+			"pip") python3 -m pip install --user --upgrade "$package" > /dev/null 2>&1 ;;
 			*) exec_cmd "sudo -S pacman -S --noconfirm $package" > /dev/null 2>&1 ;;
 		esac
 	done < /tmp/packagelist.csv
@@ -86,9 +87,6 @@ install_aur_helper
 
 # install every package from packagelist
 install_packages
-
-# installing pynvim
-exec_cmd "sudo -S -u $current_user python3 -m pip install --user --upgrade pynvim"
 
 # nextdns settings
 exec_cmd "sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate"
