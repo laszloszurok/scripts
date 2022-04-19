@@ -176,7 +176,8 @@ Before=suspend.target
 [Service]
 User=%i
 Type=simple
-Environment=DISPLAY=:0
+Environment=\"DISPLAY=:0\"
+Environment=\"XAUTHORITY=/run/user/1000/Xauthority\"
 ExecStartPre=/usr/bin/xset dpms force suspend
 ExecStart=/usr/local/bin/slock
 TimeoutSec=infinity
