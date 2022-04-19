@@ -188,11 +188,6 @@ WantedBy=suspend.target"
 
 sysctl_enable "slock@$current_user.service"
 
-# disable tty swithcing when X is running, so the lockscreen cannot be bypassed
-write_to_file "/etc/X11/xorg.conf.d/xorg.conf" "Section \"ServerFlags\"
-    Option \"DontVTSwitch\" \"True\"
-EndSection"
-
 # udev rule to allow users in the "video" group to set the display brightness
 write_to_file "/etc/udev/rules.d/90-backlight.rules" "SUBSYSTEM==\"backlight\", ACTION==\"add\", \
   RUN+=\"/bin/chgrp video /sys/class/backlight/%k/brightness\", \
