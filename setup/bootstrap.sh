@@ -9,12 +9,12 @@ stty -echo                               # turn-off echoing.
 IFS= read -p "sudo password:" -r passwd  # read the password
 stty "$stty_orig"                        # restore terminal setting.
 
-exec_cmd() {
+sudo_cmd() {
     printf "%s\n" "$passwd" | $1
 }
 
 sysctl_enable() {
-    exec_cmd "sudo -S systemctl enable $1"
+    sudo_cmd "sudo -S systemctl enable $1"
 }
 
 write_to_file() {
@@ -51,14 +51,14 @@ install_packages() {
 		case "$tag" in
 			"aur") paru -S "$package" --sudoloop --noconfirm > /dev/null 2>&1 ;;
 			"pip") python3 -m pip install --user --upgrade "$package" > /dev/null 2>&1 ;;
-			*) exec_cmd "sudo -S pacman -S --noconfirm $package" > /dev/null 2>&1 ;;
+			*) sudo_cmd "sudo -S pacman -S --noconfirm $package" > /dev/null 2>&1 ;;
 		esac
 	done < /tmp/packagelist.csv
 }
 
 install_from_src() {
     cd "$1" || return 1
-    exec_cmd "sudo -S make install"
+    sudo_cmd "sudo -S make install"
     cd
 }
 
@@ -74,13 +74,13 @@ install_dotfiles() {
 current_user=$(whoami)
 
 # enable colored output for pacman
-exec_cmd "sudo -S sed -i '/Color/s/^#//g' /etc/pacman.conf"
+sudo_cmd "sudo -S sed -i '/Color/s/^#//g' /etc/pacman.conf"
 
 # enable parallel downloads for pacman
-exec_cmd "sudo -S sed -i '/Parallel/s/^#//g' /etc/pacman.conf"
+sudo_cmd "sudo -S sed -i '/Parallel/s/^#//g' /etc/pacman.conf"
 
 # install git
-exec_cmd "sudo -S pacman -S --noconfirm git"
+sudo_cmd "sudo -S pacman -S --noconfirm git"
 
 # installing an aur helper
 install_aur_helper
@@ -89,21 +89,21 @@ install_aur_helper
 install_packages
 
 # nextdns settings
-exec_cmd "sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate"
+sudo_cmd "sudo -S nextdns install -config 51a3bd -report-client-info -auto-activate"
 
 # virt-manager
-exec_cmd "sudo -S usermod -aG libvirt $current_user"
+sudo_cmd "sudo -S usermod -aG libvirt $current_user"
 sysctl_enable libvirtd
-exec_cmd "sudo -S virsh net-autostart default"
+sudo_cmd "sudo -S virsh net-autostart default"
 
 # printing service
 sysctl_enable org.cups.cupsd.socket
 
 # firewall
-exec_cmd "sudo -S ufw default deny incoming"
-exec_cmd "sudo -S ufw default allow outgoing"
+sudo_cmd "sudo -S ufw default deny incoming"
+sudo_cmd "sudo -S ufw default allow outgoing"
 sysctl_enable ufw
-exec_cmd "sudo -S ufw enable"
+sudo_cmd "sudo -S ufw enable"
 
 # power saving service
 sysctl_enable auto-cpufreq
@@ -130,9 +130,9 @@ install_from_src "$src_dir/slock"
 
 # changing the default shell to zsh
 write_to_file "/etc/zsh/zshenv" "ZDOTDIR=\$HOME/.config/zsh"
-exec_cmd "sudo -S chsh -s /usr/bin/zsh $current_user"
+sudo_cmd "sudo -S chsh -s /usr/bin/zsh $current_user"
 
-exec_cmd "sudo -S mkdir /usr/share/xsessions"
+sudo_cmd "sudo -S mkdir /usr/share/xsessions"
 write_to_file "/usr/share/xsessions/dwm.desktop" "[Desktop Entry]
 Encoding=UTF-8
 Name=dwm
@@ -199,7 +199,7 @@ git_cln "https://github.com/laszloszurok/Wallpapers.git" "$HOME/pictures/"
 # installing gtk palenight theme
 git_cln "https://github.com/jaxwilko/gtk-theme-framework.git" "$src_dir"
 cd "$src_dir/gtk-theme-framework" || exit
-exec_cmd "sudo ./main.sh -i -o"
+sudo_cmd "sudo ./main.sh -i -o"
 
 # global gtk-2 settings
 write_to_file "/etc/gtk-2.0/gtkrc" "gtk-theme-name=\"palenight\"
