@@ -68,7 +68,7 @@ fi
 
 case $BLOCK_BUTTON in
     1) notify "$title" "$sub" "$timeout" ;;
-    3) setsid -f $TERMINAL -e nmtui ;;
+    3) setsid -f $TERMINAL -e iwctl ;;
 esac
 
 printf "  %s\n" "$icon"
