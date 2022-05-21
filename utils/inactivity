@@ -53,7 +53,7 @@ get_audio_state() {
 check_qutebrowser() {
     dpms_state=$(xset q | grep "DPMS is")
 
-    if pacmd list-sink-inputs | grep "qutebrowser" > /dev/null; then
+    if pactl list sink-inputs | grep "qutebrowser" > /dev/null; then
         if [ "$dpms_state" = "  DPMS is Enabled" ]; then
             xset -dpms
         fi
