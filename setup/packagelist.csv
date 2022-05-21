@@ -38,7 +38,8 @@ aur,brave-bin,browser with built-in adblocking
 ,pipewire-alsa,pipewire support for alsa clients
 ,pipewire-pulse,pipewire support for pulseaudio clients (also handles bluetooth)
 ,pipewire-jack,pipewire support for jack clients
-,pulsemixer,an audio controller
+,pamixer,cli audio controller
+,pulsemixer,tui audio controller
 ,unclutter,hides cursor after mouse inactivity
 ,unrar,extracts rar's
 ,unzip,extracts zips
