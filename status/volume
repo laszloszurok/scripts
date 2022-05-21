@@ -5,29 +5,21 @@
 # Use 'pactl list sinks' to get sink names.
 
 case $BLOCK_BUTTON in
-    1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
+    1) pamixer --toggle-mute ;;
     3) setsid -f "$($TERMINAL pulsemixer)" ;;
-    4) pactl set-sink-volume @DEFAULT_SINK@ +5%; ;;
-    5) pactl set-sink-volume @DEFAULT_SINK@ -5%; ;;
+    4) pamixer --increase 5 ;;
+    5) pamixer --decrease 5 ;;
 esac
 
 notify() {
     dunstify --appname="volume" --replace=1 "$1" -h int:value:"$2" --urgency 0
 }
 
-sinkinfo="$(pactl list sinks | grep 'Name\|Mute\|Volume:')"
+muted=$(pamixer --get-mute)
 
-printf "%s\n" "$sinkinfo" | grep "Mute: yes" > /dev/null && speaker_state="muted"
+vol=$(pamixer --get-volume)
 
-vol=$(printf "%s\n" "$sinkinfo" | grep "front-left" | awk 'NR ==1 { print $5 }' | tr -d "%")
-
-if [ "$vol" -gt "100" ]; then
-    # Don't let the volume level exceed 100%
-    pactl set-sink-volume @DEFAULT_SINK@ 100%
-    vol=100
-fi
-
-if [ "$speaker_state" = "muted" ]; then
+if [ "$muted" = "true" ]; then
     icon=""
     notify "Muted ($vol%)" "$vol"
 else
