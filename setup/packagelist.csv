@@ -7,13 +7,12 @@
 ,calcurse,calendar and todo/appointment manager for the terminal
 ,cronie,for cronjobs
 ,dash,a fast posix shell
-A,dashbinsh,program that links /bin/sh to dash
-A,dragon-drag-and-drop,minimal gui to drag-and-drop files
+aur,dashbinsh,program that links /bin/sh to dash
+aur,dragon-drop,minimal gui to drag-and-drop files
 ,bottom,system monitor for the terminal (binary called btm)
 ,ffmpegthumbnailer,generate thumbnailes for videos (vifmimg)
 ,flameshot,for screenshot
 ,gimp,for image manipulation
-,gnu-netcat,used in my wifi status script to check connectivity
 ,xorg-server,is the graphical server
 ,xorg-xinit,starts the graphical server
 ,xorg-xprop,is a tool for detecting window properties
@@ -30,15 +29,19 @@ A,dragon-drag-and-drop,minimal gui to drag-and-drop files
 ,neovim,a tidier vim with some useful features
 ,mpv,video player
 ,newsboat,is a terminal RSS client
-A,brave-bin,"is an elegant browser with built-in adblocking, tor and other features"
+aur,brave-bin,browser with built-in adblocking
 ,qutebrowser,browser with vim-like keybindings
 ,python-adblock,adblocker used by qutebrowser
 ,ntfs-3g,allows accessing NTFS partitions
-,pulseaudio-alsa,is the audio system
-,pulsemixer,is an audio controller
+,pipewire,the audio system
+,wireplumber,session manager for pipewire
+,pipewire-alsa,pipewire support for alsa clients
+,pipewire-pulse,pipewire support for pulseaudio clients (also handles bluetooth)
+,pipewire-jack,pipewire support for jack clients
+,pulsemixer,an audio controller
 ,unclutter,hides cursor after mouse inactivity
 ,unrar,extracts rar's
-,unzip,unzips zips
+,unzip,extracts zips
 ,lynx,is a terminal browser
 ,xclip,required by pass to copy to clipboard
 ,xsel,required by clipmenu to copy to clipboard
@@ -48,7 +51,6 @@ A,brave-bin,"is an elegant browser with built-in adblocking, tor and other featu
 ,zathura,is a pdf viewer with vim-like bindings
 ,zathura-pdf-mupdf,allows mupdf pdf compatibility in zathura
 ,fzf,is a fuzzy finder tool
-,android-file-transfer,provides gui and cli tools (aft-mpt-cli) to access files on android
 ,gvfs,mount usb devices in graphical filemanagers
 ,gvfs-mtp,mount cell phones in graphical filemanagers
 ,jdk-openjdk,java development kit
@@ -57,25 +59,25 @@ A,brave-bin,"is an elegant browser with built-in adblocking, tor and other featu
 ,libreoffice-still,office suite
 ,lxappearance,gtk theme selector
 ,lxsession,"provides lxpolkit, a gtk authentication agent"
-A,ncspot,spotify client for the terminal
-A,nextdns,dns-over-https client
+aur,ncspot,spotify client for the terminal
+aur,nextdns,dns-over-https client
 ,nodejs,nodejs
 ,npm,node package manager
 ,numlockx,to turn on numlock when x starts up
-,pass,cli password manager
+,keepassxc,"modern, secure, and open-soure password manager"
 ,pcmanfm,simple gui filemanager
 ,playerctl,to control media
 ,python-pip,python package manager
-A,qt5-styleplugins,to make qt use qtk theme
+aur,qt5-styleplugins,to make qt use qtk theme
 ,ripgrep,find file contents (I use it in nvim)
 ,fd,"alternative to 'find', opt dep of telescope nvim plugin"
-A,scrcpy,mirror and control android device
+aur,scrcpy,mirror and control android device
 ,shellcheck,shell script analysis tool
 ,translate-shell,cli fronted for Google Translate
 ,ttf-dejavu,a font family based on Bitstream Vera Fonts
 ,ttf-font-awesome,font-awesome glyphs
 ,ttf-joypixels,emoji font
-A,ttf-twemoji-color,emoji font
+aur,ttf-twemoji-color,emoji font
 ,ueberzug,for image previews in the terminal
 ,ufw,an uncomplicated firewall
 ,urlscan,get urls from a textfile (I use it to pipe emails into it to open links)
@@ -92,8 +94,12 @@ A,ttf-twemoji-color,emoji font
 ,zsh-syntax-highlighting,syntax highlight for zsh
 ,xarchiver,gui archive viewer
 ,xautolock,to launch slock on user inactivity
-,transmission-cli,bittorrent client
-A,auto-cpufreq,automatic cpu speed & power optimizer to extend laptop battery life
+aur,auto-cpufreq,automatic cpu speed & power optimizer to extend laptop battery life
 ,cups,common unix printing system
-A,sc-im,vim-like spreadsheet calculator for the terminal
+aur,sc-im,vim-like spreadsheet calculator for the terminal
 ,wmname,prints/sets the window manager name
+pip,pynvim,implements support for python plugins in nvim
+pip,neovim-remote,--remote support for neovim
+pip,qbittorrentui,text user interface for qbittorrent
+,qbittorrent,a bittorrent client
+,qbittorrent-nox,qbittorrent without gui
