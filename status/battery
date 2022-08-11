@@ -71,17 +71,17 @@ if [ "$bat_threshold_notify" -eq 1 ]; then
 fi
 
 if [ "$capacity" -le 10 ] && [ "$status" != "Charging" ]; then
-    # notify "Batery level below 10%!" "Shutting down in 2 minutes!" 2 11000 111
-    if [ ! -f /run/systemd/shutdown/scheduled ]; then
-        shutdown +2
+    if [ -z "$suspend_pid" ]; then
+        ( sleep 2m; systemctl suspend ) &
+        suspend_pid=$!
     fi
-    yad --title "Low battery level" --text "<span font='10'>Battery level is below 10%. Shutting down in 2 minutes\!</span>" --no-buttons --no-escape --width=250 --timeout=120 --timeout-indicator="bottom"
+    yad --title "Low battery level" --text "<span font='10'>Battery level is below 10%. Suspending in 2 minutes\!</span>" --no-buttons --no-escape --width=250 --timeout=120 --timeout-indicator="bottom"
 elif [ "$capacity" -le 20 ] && [ "$status" != "Charging" ]; then
-    # notify "Low battery level!" "" 2 11000 111
     yad --title "Low battery level" --text "<span font='10'>Battery level is below 20%. Please connect the device to the charger.</span>" --width=250 --timeout=10
 else
     if [ -f /run/systemd/shutdown/scheduled ]; then
-        shutdown -c
+        kill $suspend_pid
+        suspend_pid=''
     fi
 fi
 
