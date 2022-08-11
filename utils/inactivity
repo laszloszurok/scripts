@@ -97,6 +97,7 @@ while true; do
             [ -z "$(pidof qbittorrent)" ] && \
             [ -z "$(pidof cp)" ] && \
             [ -z "$(pidof mv)" ] && \
+            [ -z "$(pidof cat)" ] && \
             systemctl suspend
     else
         killall xautolock 2>/dev/null
