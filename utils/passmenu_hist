@@ -39,9 +39,9 @@ password_files=( "${password_files[@]%.gpg}" )
 echo "${password_files[@]}" | tr " " "\n" > "$all_cache"
 
 # remove anything from recent_cache that is not present in all_cache (eg. the user deleted an entry from the password-store)
-for line in $(grep -vxf "$all_cache" "$recent_cache"); do
+grep -vxf "$all_cache" "$recent_cache" | while read -r line; do
     sed -i "\|$line|d" "$recent_cache"
-done
+done 
 
 # merging $recent and $all, find the first occurrence of every entry 
 # and remove any other occurrences
