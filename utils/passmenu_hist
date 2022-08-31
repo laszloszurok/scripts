@@ -56,4 +56,4 @@ entry=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
 # update the cache with the picked entry
 update_cache "$entry"
 
-pass show -c "$entry" 2>/dev/null && notify-send "$entry" "copied to clipboard"
+pass show -c "$entry" 2>/dev/null && notify-send "Passmenu" "copied $entry"
