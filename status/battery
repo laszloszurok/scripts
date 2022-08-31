@@ -60,7 +60,7 @@ elif [ "$capacity" -le 20 ]; then
     icon=""
 fi
 
-printf "%s\n" "$icon"
+printf "%s\n" " $icon "
 
 if [ "$bat_threshold_notify" -eq 1 ]; then
     if [ "$capacity" -ge 80 ] && [ "$status" = "Charging" ] || [ "$status" = "Full" ]; then

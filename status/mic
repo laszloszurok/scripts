@@ -3,6 +3,9 @@
 # This script checks the state of the default microphone and
 # displays an appropriate indicator icon if it's muted/active.
 
+icon_active=""
+icon_muted=""
+
 case $BLOCK_BUTTON in
     1) pamixer --default-source --toggle-mute ;;
     3) setsid -f "$($TERMINAL pulsemixer)" ;;
@@ -17,9 +20,9 @@ notify() {
 muted="$(pamixer --default-source --get-mute)"
 
 if [ "$muted" = "true" ]; then
-    printf "%s\n" ""
+    printf "%s\n" " $icon_muted "
     [ "$scrollsig" != "1" ] && notify "Microphone muted"
 else
-    printf "%s\n" ""
+    printf "%s\n" " $icon_active "
     [ "$scrollsig" != "1" ] && notify "Microphone active"
 fi

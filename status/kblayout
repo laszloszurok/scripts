@@ -10,4 +10,4 @@ case $BLOCK_BUTTON in
 	1) [ "$kb" = "hu" ] && kb="us" || kb="hu"; setxkbmap "$kb" ;;
 esac
 
-echo " $kb"
+echo "  $kb "

@@ -34,4 +34,4 @@ else
     notify "Volume $vol%" "$vol"
 fi
 
-printf "%s\n" "$icon"
+printf "%s\n" " $icon "

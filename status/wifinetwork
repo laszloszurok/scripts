@@ -77,4 +77,4 @@ case $BLOCK_BUTTON in
     3) setsid -f "$($TERMINAL -e iwctl)" ;;
 esac
 
-printf "  %s\n" "$icon"
+printf "%s\n" "  $icon "
