@@ -48,12 +48,12 @@ done
 list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
 # pipe the list into dmenu to show the password picker
-password=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
+entry=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
 
 # check if the user picked an entry, exit if didn't
-[[ -n $password ]] || exit
+[[ -n $entry ]] || exit
 
 # update the cache with the picked entry
-update_cache "$password"
+update_cache "$entry"
 
-pass show -c "$password" 2>/dev/null
+pass show -c "$entry" 2>/dev/null && notify-send "$entry" "copied to clipboard"
