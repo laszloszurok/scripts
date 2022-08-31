@@ -1,20 +1,35 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-# Run this script as a cron job to get notifications about the number
-# of todos and appointments in calcurse (a calendar application).
+# Send notifications if there are appointemts or todos in calcurse
 
-todos=$(calcurse -t)
-appointments=$(calcurse -a)
-
-[ -n "$todos" ] && num_t=$(echo "$todos" | wc -l) && (("num_t-=1")) || num_t=0
-[ -n "$appointments" ] && num_a=$(echo "$appointments" | grep -vc '^ - ') && (("num_a-=1")) || num_a=0
+num_of_todos=$(calcurse -t | grep -c '^[0-9]')
+num_of_appointments_today=$(calcurse -a | grep -c '^ * ')
+num_of_appointments_tomorrow=$(calcurse -a -d "$(date --date='tomorrow' +'%Y-%m-%d')" | grep -c '^ * ')
 
 showmsg() { 
-    dunstify --replace=100 "$1" "$2" --urgency="$3" --timeout=0
+    dunstify "$1" "$2" --urgency="$3" --replace="$4" --timeout=0
 }
 
-if [ "$num_a" -gt 0 ]; then
-    showmsg "Calcurse" "There are $num_t todos and $num_a appointments today" 2
-elif [ "$num_t" -gt 0 ]; then
-    showmsg "Calcurse" "There are $num_t todos and $num_a appointments today" 1
+if [ "$num_of_todos" -gt 0 ]; then
+    if [ "$num_of_todos" -eq 1 ]; then
+        showmsg "Calcurse" "There is 1 todo today" 1 100
+    else
+        showmsg "Calcurse" "There are $num_of_todos todos today" 1 100
+    fi
+fi
+
+if [ "$num_of_appointments_today" -gt 0 ]; then
+    if [ "$num_of_appointments_today" -eq 1 ]; then
+        showmsg "Calcurse" "There is 1 appointemt today" 2 101
+    else
+        showmsg "Calcurse" "There are $num_of_appointments_today appointemts today" 2 101
+    fi
+fi
+
+if [ "$num_of_appointments_tomorrow" -gt 0 ]; then
+    if [ "$num_of_appointments_tomorrow" -eq 1 ]; then
+        showmsg "Calcurse" "There is 1 appointemt tomorrow" 2 102
+    else
+        showmsg "Calcurse" "There are $num_of_appointments_tomorrow appointemts tomorrow" 2 102
+    fi
 fi
