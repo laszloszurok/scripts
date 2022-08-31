@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # wifi network status bar indicator for dwmblocks
 # uses netcat and iw to get connection information
@@ -10,7 +10,7 @@ notify() {
 }
 
 data_path=~/.local/share/wifi_state
-current_state=$(<$data_path)
+current_state=$(cat $data_path)
 
 info=$(iw dev wlan0 link | grep SSID | xargs)
 ssid=${info#"SSID: "}
@@ -22,7 +22,7 @@ title="Checking connection"
 sub="Please wait..."
 timeout=0
 
-if [ ! -z "$airplane_mode" ]; then # check for airplane mode
+if [ -n "$airplane_mode" ]; then # check for airplane mode
     icon=""
     title="Airplane mode"
     sub="No signal"
@@ -53,6 +53,12 @@ else
         if [ "$current_state" != "online, $ssid" ]; then
             notify "$title" "$sub" "$timeout"
             printf "%s\n" "online, $ssid" > $data_path
+        fi
+        if ip link | grep wg0 > /dev/null 2>&1; then
+            icon="" 
+            title="$ssid"
+            sub="Online, signal: $signal\nWireguard tunnel active"
+            timeout=7000
         fi
     else
         icon=""
