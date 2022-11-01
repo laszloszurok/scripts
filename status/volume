@@ -5,7 +5,7 @@
 # Use 'pactl list sinks' to get sink names.
 
 case $BLOCK_BUTTON in
-    1) pamixer --toggle-mute ;;
+    1) pamixer --set-volume 20 && pamixer --toggle-mute ;;
     3) setsid -f "$($TERMINAL pulsemixer)" ;;
     4) pamixer --increase 5 ;;
     5) pamixer --decrease 5 ;;
