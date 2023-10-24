@@ -79,7 +79,7 @@ if [ "$capacity" -le 10 ] && [ "$status" != "Charging" ]; then
 elif [ "$capacity" -le 20 ] && [ "$status" != "Charging" ]; then
     yad --title "Low battery level" --text "<span font='10'>Battery level is below 20%. Please connect the device to the charger.</span>" --width=250 --timeout=10
 else
-    if [ -f /run/systemd/shutdown/scheduled ]; then
+    if [ -n "$suspend_pid" ]; then
         kill $suspend_pid
         suspend_pid=''
     fi
