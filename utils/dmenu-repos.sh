@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 source_dir="$HOME/source"
 
@@ -15,7 +15,7 @@ dmenu_cmd="dmenu -lh 26 -l 20 -c -i $@"
 # remove the picked item from $recent, then write it in the first line
 update_cache() {
     sed -i "\|$1|d" "$recent"
-    echo -e "$1\n$(< "$recent")" > "$recent"
+    printf "%s\n%s" "$1" "$(cat "$recent")" > "$recent"
 }
 
 # get all directories from $source_dir in a list

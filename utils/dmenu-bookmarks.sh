@@ -1,17 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # This script reads urls from a file and pipes them into dmenu
 
 bookmark_file="$HOME/.local/share/bookmarks"
-urls=$(<$bookmark_file)
+urls=$(cat "$bookmark_file")
 
 prompt=" bookmarks:"
 
 dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
 
-url=$(printf '%s\n' "${urls[@]}" | $dmenu_cmd -p "$prompt" "$@" | awk '{print $NF}' )
+url=$(printf '%s\n' "$urls" | $dmenu_cmd -p "$prompt" "$@" | awk '{print $NF}' )
 
 # exit if the user did not pick a url
-[[ -n $url ]] || exit
+[ -n "$url" ] || exit
 
 xdg-open "$url"

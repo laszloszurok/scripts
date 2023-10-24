@@ -7,5 +7,5 @@
 if [ -f /tmp/nvr-socket ]; then
     nvr --servername=/tmp/nvr-socket "$@" > /dev/null 2>&1
 else
-    setsid -f $TERMINAL nvr --servername=/tmp/nvr-socket "$@" > /dev/null 2>&1
+    setsid -f $TERMINAL -e nvr --servername=/tmp/nvr-socket "$@" > /dev/null 2>&1
 fi

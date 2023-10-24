@@ -42,11 +42,14 @@ case "$(uname)" in
 		notify() { osascript -e "display notification \"$2 in $1\" with title \"You've got Mail\" subtitle \"Account: $account\"" && sleep 2 ;}
 		;;
 	*)
-		displays="$(pgrep -a X\(org\|wayland\) | grep -wo "[0-9]*:[0-9]\+" | sort -u)"
-	    	notify() { for x in $displays; do
-				export DISPLAY=$x
-				dunstify --replace=456 "mailsync" "$2 new mail(s) in $1 account."
-			done ;}
+		#displays="$(pgrep -a X\(org\|wayland\) | grep -wo "[0-9]*:[0-9]\+" | sort -u)"
+        notify() { 
+            dunstify --replace=456 "mailsync" "$2 new mail(s) in $1 account."
+            # for x in $displays; do
+               #  export DISPLAY=$x
+               #  dunstify --replace=456 "mailsync" "$2 new mail(s) in $1 account."
+            # done
+        }
 		;;
 esac
 

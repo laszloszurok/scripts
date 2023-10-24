@@ -5,8 +5,41 @@
 # $SUDO_ASKPASS is set, the selected program will be executed 
 # with sudo -A.
 
-[ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
-dmenu_cmd="dmenu -lh 26 -l 20 -c -i"
+terminal="alacritty.sh"
+font="monospace 12"
+
+#[ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt=" run:"
+[ "$1" = "sudo" ] && prompt="[sudo] run:" || prompt="run:"
+menu_cmd() {
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+        bemenu \
+            --fn "$font" \
+            --center \
+            --list 20 \
+            --line-height 26 \
+            --width-factor 0.2 \
+            --ch 15 \
+            --cw 2 \
+            --nf "#e0dbd2" \
+            --nb "#191b28" \
+            --ab "#191b28" \
+            --hb "#563d7c" \
+            --hf "#e0dbd2" \
+            --tf "#e0dbd2" \
+            --tb "#3e4050" \
+            --fb "#2a2c39" \
+            --ignorecase \
+            --no-spacing \
+            "$@"
+    else
+        dmenu \
+            -lh 26 \
+            -l 20 \
+            -c \
+            -i \
+            "$@"
+    fi
+}
 
 max_recent=200 # Number of recent commands to track
 
@@ -39,7 +72,7 @@ unset IFS
 # deduplicated command list
 list=$(awk '!visited[$0]++' "$recent" "$all")
 
-cmd=$(printf "%s\n" "$list" | $dmenu_cmd -p "$prompt") || exit
+cmd=$(printf "%s\n" "$list" | menu_cmd -p "$prompt" ) || exit
 
 if ! grep -qx "$cmd" "$recent" > /dev/null 2>&1; then
     grep -vx "$cmd" "$all" > "$all.$$"
@@ -67,7 +100,7 @@ word0=${cmd%% *}
 match="^$word0$"
 
 get_type () {
-    while type=$(echo "$known_types" | xargs -n1 | $dmenu_cmd -p type:); do
+    while type=$(echo "$known_types" | xargs -n1 | menu_cmd -p type:); do
         test "${known_types#*$type}" != "$known_types" || continue
         echo "$word0" >> "$config_dir/$type"
         break
@@ -87,16 +120,16 @@ fi
 
 run_as_sudo() {
     [ "$type" = "background" ] && sudo -A $cmd
-    [ "$type" = "terminal" ] && sudo -A $TERMINAL $cmd
+    [ "$type" = "terminal" ] && sudo -A $terminal -t "$cmd" -e $cmd
     [ "$type" = "terminal_hold" ] &&
-        exec sudo -A $TERMINAL sh -c "$cmd && echo Press Enter to quit... && read line"
+        exec sudo -A $terminal -t "$cmd" -e sh -c "$cmd && echo Press Enter to quit... && read line"
 }
 
 run_as_normal() {
     [ "$type" = "background" ] && $cmd
-    [ "$type" = "terminal" ] && $TERMINAL $cmd
+    [ "$type" = "terminal" ] && $terminal -t "$cmd" -e $cmd
     [ "$type" = "terminal_hold" ] &&
-        exec $TERMINAL sh -c "$cmd && echo Press Enter to kill me... && read line"
+        exec $terminal -t "$cmd" -e sh -c "$cmd && echo Press Enter to kill me... && read line"
 }
 
 # If the firts argument is the string 'sudo' and $SUDO_ASKPASS is set,

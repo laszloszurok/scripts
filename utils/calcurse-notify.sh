@@ -10,6 +10,8 @@ showmsg() {
     dunstify "$1" "$2" --urgency="$3" --replace="$4" --timeout=0
 }
 
+[ "$(loginctl show-session self | grep "Type" | cut -f2 -d=)" = "tty" ] && exit 1
+
 if [ "$num_of_todos" -gt 0 ]; then
     if [ "$num_of_todos" -eq 1 ]; then
         showmsg "Calcurse" "There is 1 todo today" 1 100

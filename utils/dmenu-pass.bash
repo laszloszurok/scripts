@@ -8,8 +8,39 @@
 shopt -s nullglob globstar
 
 # dmenu settings
-prompt=" copy:"
-passmenu_cmd="dmenu -lh 26 -l 20 -c -i"
+font="monospace 12"
+#prompt=" copy:"
+prompt="copy:"
+menu_cmd() {
+    if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+        bemenu \
+            --fn "$font" \
+            --center \
+            --list 20 \
+            --line-height 26 \
+            --width-factor 0.2 \
+            --ch 15 \
+            --cw 2 \
+            --nf "#e0dbd2" \
+            --nb "#191b28" \
+            --ab "#191b28" \
+            --hb "#563d7c" \
+            --hf "#e0dbd2" \
+            --tf "#e0dbd2" \
+            --tb "#3e4050" \
+            --fb "#2a2c39" \
+            --ignorecase \
+            --no-spacing \
+            "$@"
+    else
+        dmenu \
+            -lh 26 \
+            -l 20 \
+            -c \
+            -i \
+            "$@"
+    fi
+}
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/passmenu_hist"
@@ -48,7 +79,7 @@ done
 list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
 # pipe the list into dmenu to show the password picker
-entry=$(printf '%s\n' "$list" | $passmenu_cmd -p "$prompt" "$@")
+entry=$(printf '%s\n' "$list" | menu_cmd -p "$prompt" "$@")
 
 # check if the user picked an entry, exit if didn't
 [[ -n $entry ]] || exit
