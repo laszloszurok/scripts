@@ -47,4 +47,6 @@ fzfwrap() {
 
 export -f fzfwrap
 
-alacritty --class float -e bash -c fzfwrap
+alacritty \
+    --class float \
+    --command bash -c fzfwrap

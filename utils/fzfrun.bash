@@ -11,4 +11,7 @@ fzfwrap() {
 
 export -f fzfwrap
 
-alacritty --class float -e bash -c fzfwrap
+alacritty \
+    --option window.dimensions.columns=40 \
+    --class float \
+    --command bash -c fzfwrap
