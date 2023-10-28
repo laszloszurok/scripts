@@ -1,6 +1,7 @@
 #!/bin/bash
 
 fzfwrap() {
+    fzfcmd="fzf --no-preview"
     max_recent=20 # Number of recent commands to track
 
     config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzfrun-hist"
@@ -18,7 +19,7 @@ fzfwrap() {
             > "$recent_cache"
     }
 
-    known_types=" background terminal terminal_hold "
+    known_types=("background" "terminal" "terminal_hold")
 
     # get every executable on path with bash compgen
     # and write the list to $all_cache
@@ -43,12 +44,53 @@ fzfwrap() {
     # deduplicated command list
     cmd_all=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
-    cmd_sel="$(echo "$cmd_all" | fzf --no-preview)"
+    cmd_sel="$(echo "$cmd_all" | $fzfcmd)"
 
-    if [[ -n "$cmd_sel" ]] && [[ "$cmd_all" =~ $cmd_sel ]]; then
-        notify-send "Launching $cmd_sel"
-        update_cache "$cmd_sel"
-        eval setsid -f "$cmd_sel"
+    get_type () {
+        # keep asking for $type while it is not in known_types
+        type="none";
+        while [ -n "$type" ] && ! echo "${known_types[@]}" | grep -qw "$type"; do
+            { read -r query && read -r choice; } <<< \
+                "$(printf "%s\n" "${known_types[@]}" | $fzfcmd --print-query)"
+
+            # ignore invalid user input
+            if [ -n "$query" ] && [ -z "$choice" ]; then
+                continue
+            fi
+
+            type="$choice"
+        done
+        echo "$cmd_sel" >> "$config_dir/$type"
+        printf "%s" "$type"
+    }
+
+    if [ -n "$cmd_sel" ] && [[ "$cmd_all" =~ $cmd_sel ]]; then
+        # if $cmd_sel does not already have a type, call get_type
+        # otherwise use the existing type
+        if type=$(! grep -lx "$cmd_sel" -R "$config_dir"); then
+            type=$(get_type)
+        else
+            type=${type##*/}
+            # if the existing type is not in known_types, call get_type
+            # and remove the invalid type
+            if ! echo "${known_types[@]}" | grep -qw "$type"; then
+                rm "$config_dir/$type"
+                type=$(get_type)
+            fi
+        fi
+
+        if [ -n "$type" ]; then
+            notify-send "Launching $cmd_sel"
+            update_cache "$cmd_sel"
+
+            if [ "$type" = "background" ]; then
+                setsid -f "$cmd_sel"
+            elif [ "$type" = "terminal" ]; then
+                setsid -f alacritty -t "$cmd_sel" -e "$cmd_sel"
+            elif [ "$type" = "terminal_hold" ]; then
+                setsid -f alacritty -t "$cmd_sel" -e sh -c "$cmd_sel && echo Press Enter to kill me... && read line"
+            fi
+        fi
     fi
 }
 
