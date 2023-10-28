@@ -4,7 +4,7 @@ fzfwrap() {
     shopt -s nullglob globstar
 
     # files to work with
-    cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfpass-hist"
+    cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfpass"
     recent_cache="$cache_dir/recent"
     all_cache="$cache_dir/all"
 

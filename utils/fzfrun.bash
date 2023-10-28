@@ -4,8 +4,8 @@ fzfwrap() {
     fzfcmd="fzf --no-preview"
     max_recent=20 # Number of recent commands to track
 
-    config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzfrun-hist"
-    cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfrun-hist"
+    config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzfrun"
+    cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfrun"
     recent_cache="$cache_dir/recent"
     all_cache="$cache_dir/all"
 
