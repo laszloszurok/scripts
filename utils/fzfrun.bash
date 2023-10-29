@@ -1,7 +1,7 @@
 #!/bin/bash
 
 fzfwrap() {
-    fzfcmd="fzf --no-preview"
+    fzfcmd="fzf --scheme=history --no-preview"
     max_recent=20 # Number of recent commands to track
 
     config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzfrun"

@@ -36,7 +36,7 @@ fzfwrap() {
 
     list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
-    pass_sel="$(printf '%s\n' "$list" | fzf --no-preview)"
+    pass_sel="$(printf '%s\n' "$list" | fzf --scheme=history --no-preview)"
 
     if [[ -n "$pass_sel" ]] && [[ "${password_files[*]}" =~ $pass_sel ]]; then
         notify-send "Copying $pass_sel"
