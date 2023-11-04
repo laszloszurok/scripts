@@ -7,7 +7,9 @@ num_of_appointments_today=$(calcurse -a | grep -c '^ * ')
 num_of_appointments_tomorrow=$(calcurse -a -d "$(date --date='tomorrow' +'%Y-%m-%d')" | grep -c '^ * ')
 
 showmsg() { 
-    dunstify "$1" "$2" --urgency="$3" --replace="$4" --timeout=0
+    if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+        dunstify "$1" "$2" --urgency="$3" --replace="$4" --timeout=0
+    fi
 }
 
 [ "$(loginctl show-session self | grep "Type" | cut -f2 -d=)" = "tty" ] && exit 1
