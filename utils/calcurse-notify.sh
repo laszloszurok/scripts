@@ -8,7 +8,7 @@ num_of_appointments_tomorrow=$(calcurse -a -d "$(date --date='tomorrow' +'%Y-%m-
 
 showmsg() { 
     if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-        dunstify "$1" "$2" --urgency="$3" --replace="$4" --timeout=0
+        notify-send "$1" "$2" --urgency="$3" --replace-id="$4" --expire-time=0
     fi
 }
 
