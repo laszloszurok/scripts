@@ -2,14 +2,16 @@
 
 # Send notifications if there are appointemts or todos in calcurse
 
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+    exit 1
+fi
+
 num_of_todos=$(calcurse -t | grep -c '^[0-9]')
 num_of_appointments_today=$(calcurse -a | grep -c '^ * ')
 num_of_appointments_tomorrow=$(calcurse -a -d "$(date --date='tomorrow' +'%Y-%m-%d')" | grep -c '^ * ')
 
 showmsg() { 
-    if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
-        notify-send "$1" "$2" --urgency="$3" --replace-id="$4" --expire-time=0
-    fi
+    notify-send "$1" "$2" --urgency="$3" --replace-id="$4" --expire-time=0
 }
 
 [ "$(loginctl show-session self | grep "Type" | cut -f2 -d=)" = "tty" ] && exit 1
