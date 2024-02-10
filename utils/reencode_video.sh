@@ -5,6 +5,7 @@ if ffprobe "$1" -show_streams | grep ^codec_name=h264 ; then
     read -rs -n1 -p "Do you want to reencode with h265? (y/n) " key
     case $key in
         "y") 
+            # crf 28 is the default constant rate factor
             ffmpeg -i "$1" -vcodec libx265 -crf 28 output.mp4 ;;
         *) 
             exit 0 ;;
