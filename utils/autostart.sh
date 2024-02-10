@@ -47,3 +47,4 @@ swayidle -w \
 
 battery-low.sh &
 kanshi &
+tvnotipy &
