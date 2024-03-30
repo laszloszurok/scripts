@@ -49,4 +49,4 @@ export -f fzfwrap
 
 alacritty \
     --class float \
-    --command bash -c fzfwrap
+    --command bash -i -c fzfwrap
