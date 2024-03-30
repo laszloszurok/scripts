@@ -79,8 +79,7 @@ get_bat_device
 get_audio_device
 
 while true; do
-    session_type=$(loginctl show-session self | grep "Type" | cut -f2 -d=)
-    if [ "$session_type" = "tty" ]; then
+    if [ "$XDG_SESSION_TYPE" = "tty" ]; then
         if "$run_setterm"; then
             setterm --term linux --blank 1 > /dev/console # blank the screen after 5 minutes
             run_setterm=false
@@ -104,7 +103,7 @@ while true; do
                 fi
             fi
         fi
-    elif [ "$session_type" = "x11" ]; then
+    elif [ "$XDG_SESSION_TYPE" = "x11" ]; then
         if "$run_xset"; then
             xset s off # disable screensaver
             xset dpms "$screen_off_seconds" "$screen_off_seconds" "$screen_off_seconds" # monitor switches off after 300 seconds
@@ -140,7 +139,7 @@ while true; do
         else
             killall xautolock 2>/dev/null
         fi
-    elif [ "$session_type" = "wayland" ]; then
+    elif [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         :
     else
         :
