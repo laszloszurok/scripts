@@ -1,7 +1,18 @@
 #!/bin/bash
 
+usage() {
+    echo "Usage:
+  fzfpass.bash [--newwin]
+
+Options:
+  --help, -h - Display this message
+  --newwin   - Open a new terminal window and run the script inside it
+"
+}
+
 fzfwrap() {
     shopt -s nullglob globstar
+    fzfparams="$*"
 
     # files to work with
     cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfpass"
@@ -36,7 +47,7 @@ fzfwrap() {
 
     list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
-    pass_sel="$(printf '%s\n' "$list" | fzf --scheme=history --no-preview)"
+    pass_sel="$(printf '%s\n' "$list" | fzf $fzfparams --scheme=history --no-preview)"
 
     if [[ -n "$pass_sel" ]] && [[ "${password_files[*]}" =~ $pass_sel ]]; then
         notify-send "Copying $pass_sel"
@@ -45,8 +56,13 @@ fzfwrap() {
     fi
 }
 
-export -f fzfwrap
+[ "$1" = "--help" ] || [ "$1" = "-h" ] && usage && exit 0
 
-alacritty \
-    --class float \
-    --command bash -i -c fzfwrap
+if [ "$1" = "--newwin" ]; then
+    export -f fzfwrap
+    alacritty \
+        --class float \
+        --command bash -i -c fzfwrap
+else
+    fzfwrap --height 20
+fi
