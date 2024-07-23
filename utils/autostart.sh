@@ -29,9 +29,9 @@ if command -v dbus-update-activation-environment >/dev/null 2>&1; then
     dbus-update-activation-environment DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 fi
 
-waybar &
+#waybar &
 
-swaybg --image ~/pictures/wallpapers/planets-2.jpg &
+#swaybg --image ~/pictures/wallpapers/planets-2.jpg &
 
 # swayidle -w \
 #     timeout 420 'hyprctl dispatch dpms off' \
@@ -45,6 +45,7 @@ swayidle -w \
     timeout 2100 'systemctl suspend' \
     before-sleep "$lockcmd" &
 
-battery-low.sh &
-kanshi &
-tvnotipy &
+#kanshi &
+
+[ -z "$(pidof -x battery-low.sh)" ] && battery-low.sh &
+[ -z "$(pidof -x tvnotipy)" ] && tvnotipy &
