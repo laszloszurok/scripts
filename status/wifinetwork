@@ -84,4 +84,5 @@ case $BLOCK_BUTTON in
 esac
 
 #printf "%s\n" "  $icon "
-printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
+#printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
+printf "%s %s\n" "$icon" "$signal"
