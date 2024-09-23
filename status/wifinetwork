@@ -12,8 +12,7 @@ notify() {
 data_path=~/.local/share/wifi_state
 current_state=$(cat $data_path)
 
-info=$(iw dev wlan0 link | grep SSID | xargs)
-ssid=${info#"SSID: "}
+ssid=$(nmcli -get-values name,device connection show --active | grep wlp1s0 | cut -d : -f1)
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 [ -z "$signal" ] && signal="0%"
 
@@ -58,7 +57,7 @@ else
             notify "$title" "$sub" "$timeout"
             printf "%s\n" "online, $ssid" > $data_path
         fi
-        if ip link | grep wg0 > /dev/null 2>&1; then
+        if nmcli -get-values type connection show --active | grep wireguard > /dev/null 2>&1; then
             icon="" 
             title="$ssid"
             sub="Online, signal: $signal\nWireguard tunnel active"
@@ -84,5 +83,5 @@ case $BLOCK_BUTTON in
 esac
 
 #printf "%s\n" "  $icon "
-#printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
-printf "%s %s\n" "$icon" "$signal"
+printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
+#printf "%s %s\n" "$icon" "$signal"
