@@ -2,7 +2,7 @@
 
 # packages needed: v4l2loopback-dkms, scrcpy, ffmpeg
 
-# connect android to pc and enable usd debugging
+# connect android to pc and enable usb debugging
 
 # check if phone is connected
 if [ -z "$(adb devices | tail +2)" ]; then
