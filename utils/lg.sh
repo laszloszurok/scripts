@@ -7,5 +7,5 @@
 if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     /usr/bin/lazygit
 else
-    /usr/bin/lazygit --git-dir=$HOME/.cfg --work-tree=$HOME
+    /usr/bin/lazygit --git-dir="$HOME/.dotfiles" --work-tree="$HOME"
 fi
