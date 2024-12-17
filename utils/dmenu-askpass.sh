@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# This script can be used with the sudo -A flag, to show
-# a dmenu prompt asking for sudo password.
-
-dmenu -P -lh 26 -c -p "password:" <&-
