@@ -14,15 +14,17 @@ case $BLOCK_BUTTON in
 esac
 
 notify() {
-    dunstify --appname="microphone" --replace=1 "$1" "$2"
+    notify-send --app-name="microphone" --replace-id=1 "$1" "$2"
 }
 
 muted="$(pamixer --default-source --get-mute)"
 
 if [ "$muted" = "true" ]; then
-    printf "%s\n" " $icon_muted "
+    #printf "%s\n" " $icon_muted "
+    printf "%s\n" "{\"text\":\"muted\", \"alt\":\"muted\"}"
     [ "$scrollsig" != "1" ] && notify "Microphone muted"
 else
+    printf "%s\n" "{\"text\":\"active\", \"alt\":\"active\"}"
     printf "%s\n" " $icon_active "
     [ "$scrollsig" != "1" ] && notify "Microphone active"
 fi
