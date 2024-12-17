@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# wifi network status bar indicator for dwmblocks
-# uses netcat and iw to get connection information
+# WiFi network status bar indicator.
+# Uses nmcli to get connection information.
 
 icon=""
 
@@ -76,11 +76,6 @@ else
         fi
     fi
 fi
-
-case $BLOCK_BUTTON in
-    1) notify "$title" "$sub" "$timeout" ;;
-    3) setsid -f "$($TERMINAL -e iwctl)" ;;
-esac
 
 #printf "%s\n" "  $icon "
 printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
