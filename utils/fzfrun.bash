@@ -86,9 +86,9 @@ fzfwrap() {
             if [ "$type" = "background" ]; then
                 setsid -f "$cmd_sel"
             elif [ "$type" = "terminal" ]; then
-                setsid -f alacritty -t "$cmd_sel" -e "$cmd_sel"
+                setsid -f kitty --class "$cmd_sel" "$cmd_sel"
             elif [ "$type" = "terminal_hold" ]; then
-                setsid -f alacritty -t "$cmd_sel" -e sh -c "$cmd_sel && echo Press Enter to kill me... && read line"
+                setsid -f kitty --class "$cmd_sel" sh -c "$cmd_sel && echo Press Enter to kill me... && read line"
             fi
         fi
     fi
@@ -96,7 +96,6 @@ fzfwrap() {
 
 export -f fzfwrap
 
-alacritty \
-    --option window.dimensions.columns=40 \
+kitty \
     --class float \
-    --command bash -c fzfwrap
+    bash -c fzfwrap

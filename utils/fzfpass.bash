@@ -60,9 +60,9 @@ fzfwrap() {
 
 if [ "$1" = "--newwin" ]; then
     export -f fzfwrap
-    alacritty \
+    kitty \
         --class float \
-        --command bash -i -c fzfwrap
+        bash -i -c fzfwrap
 else
     fzfwrap --height 20
 fi

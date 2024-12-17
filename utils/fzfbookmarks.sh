@@ -2,9 +2,9 @@
 
 bookmark_file="$HOME/.local/share/bookmarks"
 
-alacritty \
+kitty \
     --class float \
-    --command sh -i -c "
+    sh -i -c "
         sel=\$(tac $bookmark_file | fzf --no-preview | awk '{print \$NF}')
         xdg-open \$sel &
     "
