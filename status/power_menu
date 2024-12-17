@@ -1,9 +1,0 @@
-#!/bin/sh
-
-icon=""
-
-case $BUTTON in
-    1) powermenu;;
-esac
-
-printf "%s  \n" "$icon"
