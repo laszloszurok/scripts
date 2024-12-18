@@ -84,7 +84,7 @@ fzfwrap() {
             update_cache "$cmd_sel"
 
             if [ "$type" = "background" ]; then
-                setsid -f "$cmd_sel"
+                setsid -f "$cmd_sel" &> /dev/null
             elif [ "$type" = "terminal" ]; then
                 setsid -f kitty --class "$cmd_sel" "$cmd_sel"
             elif [ "$type" = "terminal_hold" ]; then
