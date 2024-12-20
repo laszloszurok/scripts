@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 fzfwrap() {
     fzfcmd="fzf --scheme=history --no-preview"

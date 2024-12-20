@@ -20,63 +20,43 @@ airplane_mode=$(rfkill list | grep yes)
 
 title="Checking connection"
 sub="Please wait..."
-timeout=0
+timeout=7000
 
 if [ -n "$airplane_mode" ]; then # check for airplane mode
     icon=""
     title="Airplane mode"
     sub="No signal"
-    timeout=7000
     status="airplane"
-    if [ "$current_state" != "airplane" ]; then
-        notify "$title" "$sub" "$timeout"
-        printf "airplane" > $data_path
-    fi
 elif [ -z "$ssid" ]; then # checking if we are connected to a wifi network
     icon=""
     title="Connection lost"
     sub="No WiFi network"
-    timeout=7000
-    status="disconnected"
-    if [ "$current_state" != "no-network" ]; then
-        notify "$title" "$sub" "$timeout"
-        printf "no-network" > $data_path
-    fi
+    status="no-network"
 else
-    # checking internet connection
-    if [ "$BLOCK_BUTTON" = 1 ]; then
-        notify "Checking connection" "Please wait..." 0;
-    fi
+    title="$ssid"
     if ping -c 2 -W 1 8.8.8.8 > /dev/null 2>&1; then
         icon=""
-        title="$ssid"
         sub="Online, signal: $signal"
-        timeout=7000
         status="online"
-        if [ "$current_state" != "online, $ssid" ]; then
-            notify "$title" "$sub" "$timeout"
-            printf "%s\n" "online, $ssid" > $data_path
-        fi
         if nmcli -get-values type connection show --active | grep wireguard > /dev/null 2>&1; then
             icon="" 
-            title="$ssid"
             sub="Online, signal: $signal\nWireguard tunnel active"
-            timeout=7000
             status="wireguard"
+        fi
+        if ! host -W 3 google.com > /dev/null 2>&1; then
+            sub="Online, signal: $signal\nDNS resolution timeout"
+            status="dns-timeout"
         fi
     else
         icon=""
-        title="$ssid"
         sub="Offline, signal: $signal"
-        timeout=7000
         status="offline"
-        if [ "$current_state" != "offline, $ssid" ]; then
-            notify "$title" "$sub" "$timeout"
-            printf "%s\n" "offline, $ssid" > $data_path
-        fi
     fi
 fi
 
-#printf "%s\n" "  $icon "
+if [ "$current_state" != "$status" ]; then
+    notify "$title" "$sub" "$timeout"
+    printf "%s\n" "$status" > $data_path
+fi
+
 printf "%s\n" "{\"text\":\"$signal\", \"alt\":\"$status\"}"
-#printf "%s %s\n" "$icon" "$signal"
