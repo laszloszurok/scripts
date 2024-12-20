@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# If this script is given an image, it sets that image as the wallpaper.
-# Otherwise it sets the wallpaper to the last image that was used.
+# Create a link at ~/.config/wallpaper to an image file
+# passed as the first argument. Then ~/.config/wallpaper
+# can be used to set the wallpeper to that image.
 
 wallpaper_path=$HOME/.config/wallpaper
 
