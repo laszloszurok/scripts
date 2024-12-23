@@ -7,12 +7,18 @@ usage() {
 Options:
   --help, -h - Display this message
   --newwin   - Open a new terminal window and run the script inside it
+  --show     - Only show the selected item instead of copying it
 "
 }
 
 fzfwrap() {
     shopt -s nullglob globstar
-    fzfparams="$*"
+    if [ "$1" = "--show" ]; then
+        show="true"
+        fzfparams="${*:2}"
+    else
+        fzfparams="$*"
+    fi
 
     # files to work with
     cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfpass"
@@ -50,8 +56,13 @@ fzfwrap() {
     pass_sel="$(printf '%s\n' "$list" | fzf $fzfparams --scheme=history --no-preview)"
 
     if [[ -n "$pass_sel" ]] && [[ "${password_files[*]}" =~ $pass_sel ]]; then
-        notify-send "Copying $pass_sel"
-        pass -c "$pass_sel"
+        if [ "$show" = "true" ]; then
+            echo "$pass_sel"
+            pass show "$pass_sel"
+        else
+            notify-send "Copying $pass_sel"
+            pass -c "$pass_sel"
+        fi
         update_cache "$pass_sel"
     fi
 }
@@ -64,5 +75,9 @@ if [ "$1" = "--newwin" ]; then
         --class float \
         bash -i -c fzfwrap
 else
-    fzfwrap --height 20
+    if [ "$1" = "--show" ]; then
+        fzfwrap --show --height 20
+    else
+        fzfwrap --height 20
+    fi
 fi
