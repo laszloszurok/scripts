@@ -11,7 +11,9 @@ Options:
 "
 }
 
-eval set -- "$(getopt -o 'hs' --long 'help,show,height:' -n 'fzfpass.bash' -- "$@" || exit 1)"
+fzfparams="--scheme=history --no-preview"
+
+eval set -- "$(getopt --options 'hs' --long 'help,show,height:' --name 'fzfpass.bash' -- "$@")"
 
 while true; do
 	case "$1" in
@@ -25,7 +27,7 @@ while true; do
 			continue
 		;;
 		'--height')
-			fzfparams="--height $2"
+			fzfparams="$fzfparams --height=$2"
 			shift 2
 			continue
 		;;
@@ -75,7 +77,8 @@ done
 
 list=$(awk '!visited[$0]++' "$recent_cache" "$all_cache")
 
-pass_sel="$(printf '%s\n' "$list" | fzf $fzfparams --scheme=history --no-preview)"
+# shellcheck disable=SC2086
+pass_sel="$(printf '%s\n' "$list" | fzf $fzfparams)"
 
 if [[ -n "$pass_sel" ]] && [[ "${password_files[*]}" =~ $pass_sel ]]; then
     if [ "$show" = "true" ]; then
