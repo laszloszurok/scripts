@@ -2,22 +2,45 @@
 
 usage() {
     echo "Usage:
-  fzfpass.bash [--newwin]
+  fzfpass.bash [OPTIONS]
 
 Options:
-  --help, -h - Display this message
-  --newwin   - Open a new terminal window and run the script inside it
-  --show     - Only show the selected item instead of copying it
+  -h, --help - Display this message
+  -s, --show - Only show the selected item instead of copying it
+  --height HEIGHT - set the height of the fzf UI to HEIGHT
 "
 }
 
+eval set -- "$(getopt -o 'hs' --long 'help,show,height:' -n 'fzfpass.bash' -- "$@" || exit 1)"
+
+while true; do
+	case "$1" in
+		'-h'|'--help')
+            usage
+            exit 0
+		;;
+		'-s'|'--show')
+			show="true"
+			shift
+			continue
+		;;
+		'--height')
+			fzfparams="--height $2"
+			shift 2
+			continue
+		;;
+		'--')
+			shift
+			break
+		;;
+		*)
+			echo 'Internal error!' >&2
+			exit 1
+		;;
+	esac
+done
+
 shopt -s nullglob globstar
-if [ "$1" = "--show" ]; then
-    show="true"
-    fzfparams="${*:2}"
-else
-    fzfparams="$*"
-fi
 
 # files to work with
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfpass"
