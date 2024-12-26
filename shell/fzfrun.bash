@@ -1,33 +1,27 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
+set -o errexit
 
 fzfcmd="fzf --scheme=history --no-preview"
-max_recent=20 # Number of recent commands to track
-
+max_recent=100 # Number of recent commands to track
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fzfrun"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/fzfrun"
 recent_cache="$cache_dir/recent"
 all_cache="$cache_dir/all"
-
+known_types="background terminal terminal_hold"
 mkdir -p "$cache_dir"
 mkdir -p "$config_dir"
 touch "$recent_cache"
 
 update_cache() {
-    echo -e \
-        "$1\n$(sed "\|$1|d" "$recent_cache" | head -n "$max_recent")" \
-        > "$recent_cache"
+    printf '%s\n%s' "$1" "$(sed "\|$1|d" "$recent_cache" | head -n "$max_recent")" > "$recent_cache"
 }
 
-known_types=("background" "terminal" "terminal_hold")
-
-# get every executable on path with bash compgen
-# and write the list to $all_cache
-grep \
-    --fixed-strings \
-    --line-regexp \
-    --invert-match \
-    --file <(compgen -A function -abk) <(compgen -c) \
-    > "$all_cache"
+# get every executable on path and write the list to $all_cache
+set +o errexit
+# shellcheck disable=SC2086
+(IFS=:; find $PATH -maxdepth 1 -executable \( -type f -o -type l \) -printf '%f\n' 2> /dev/null > "$all_cache")
+set -o errexit
 
 # remove anything from recent_cache that is not present in all_cache
 grep \
@@ -48,9 +42,10 @@ cmd_sel="$(echo "$cmd_all" | $fzfcmd)"
 get_type () {
     # keep asking for $type while it is not in known_types
     type="none";
-    while [ -n "$type" ] && ! echo "${known_types[@]}" | grep -qw "$type"; do
-        { read -r query && read -r choice; } <<< \
-            "$(printf "%s\n" "${known_types[@]}" | $fzfcmd --print-query)"
+    while [ -n "$type" ] && ! echo "$known_types" | grep --silent --word-regexp "$type"; do
+        fzfout=$(printf "%s\n" "$known_types" | xargs -n1 | $fzfcmd --print-query)
+        query=$(echo "$fzfout" | head -n 1)
+        choice=$(echo "$fzfout" | tail -n 1)
 
         # ignore invalid user input
         if [ -n "$query" ] && [ -z "$choice" ]; then
@@ -63,7 +58,7 @@ get_type () {
     printf "%s" "$type"
 }
 
-if [ -n "$cmd_sel" ] && [[ "$cmd_all" =~ $cmd_sel ]]; then
+if [ -n "$cmd_sel" ] && echo "$cmd_all" | grep --silent "$cmd_sel"; then
     # if $cmd_sel does not already have a type, call get_type
     # otherwise use the existing type
     if type=$(! grep -lx "$cmd_sel" -R "$config_dir"); then
@@ -72,7 +67,7 @@ if [ -n "$cmd_sel" ] && [[ "$cmd_all" =~ $cmd_sel ]]; then
         type=${type##*/}
         # if the existing type is not in known_types, call get_type
         # and remove the invalid type
-        if ! echo "${known_types[@]}" | grep -qw "$type"; then
+        if ! echo "$known_types" | grep --silent --word-regexp "$type"; then
             rm "$config_dir/$type"
             type=$(get_type)
         fi
@@ -83,7 +78,7 @@ if [ -n "$cmd_sel" ] && [[ "$cmd_all" =~ $cmd_sel ]]; then
         update_cache "$cmd_sel"
 
         if [ "$type" = "background" ]; then
-            setsid -f "$cmd_sel" &> /dev/null
+            setsid -f "$cmd_sel" > /dev/null 2>&1
         elif [ "$type" = "terminal" ]; then
             setsid -f kitty --class "$cmd_sel" "$cmd_sel"
         elif [ "$type" = "terminal_hold" ]; then
