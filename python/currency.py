@@ -50,7 +50,7 @@ def getCurrencyCode(prompt: str) -> str:
     currencyCode = input(prompt).upper().strip()
     while not checkCurrencyCode(currencyCode):
         print("Invalid currency code. Please try again.")
-        currencyCode = input(prompt)
+        currencyCode = input(prompt).upper().strip()
     return currencyCode
 
 
