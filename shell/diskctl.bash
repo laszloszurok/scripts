@@ -39,8 +39,8 @@ while true; do
     info=$(lsblk --list)
     devices=$(printf "%s\n" "$info" | grep "disk" | nl -w1 -s' - ')
     partitions=$(printf "%s\n" "$info" | grep "part")
-    mounted=$(printf "%s\n" "$partitions" | grep -v " part $" | nl -w1 -s' - ')
-    unmounted=$(printf "%s\n" "$partitions" | grep " part $" | nl -w1 -s' - ')
+    mounted=$(printf "%s\n" "$partitions" | grep -v "[[:space:]]*part[[:space:]]*$" | nl -w1 -s' - ')
+    unmounted=$(printf "%s\n" "$partitions" | grep "[[:space:]]*part[[:space:]]*$" | nl -w1 -s' - ')
 
     printf "l - list devices\nm - mount a partition\nu - unmount a partition\ne - eject a device\np - power off a device\nq - quit\n\n"
     read -r -n1 -p "Select an option: " key
