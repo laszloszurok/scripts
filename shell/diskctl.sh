@@ -1,39 +1,38 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # This script provides an interactive menu to mount/unmount/eject, etc.
 # block devices. It uses the output of lsblk to get device names and
 # udisksctl to execute a selected action.
 
-save_term() { printf '\e[?1049h'; stty_orig=$(stty -g); }
-restore_term() { printf '\e[?1049l'; stty "$stty_orig"; }
-clear_screen() { printf '\e[2J'; }
-move_cursor_xy() { printf '\e[%d;%dH' "$2" "$1"; }
+save_term() { tput smcup; }
+restore_term() { tput rmcup; }
+clear_screen() { tput clear; }
 
-selection_prompt() { # $1 : prompt str, $2 : list to choose from
+# $1 : prompt str, $2 : list to choose from
+selection_prompt() {
     printf "%s\n\n" "$1"
     printf "%s\n\n" "$2"
-    read -r -n1 -p "Number: " num
+    printf "Number: "
+    read -r num
     printf "\n"
     clear_screen
-    move_cursor_xy 0 0
 }
 
-select_from() { # $1: list to choose from
+# $1: list to choose from
+select_from() {
     i=1
-    while IFS= read -r line; do
-        if [ "$i" == "$num" ]; then
+    printf "%s" "$1" | while IFS= read -r line; do
+        if [ "$i" = "$num" ]; then
             printf "%s\n" "$line" | awk '{ print $3 }'
             return
         fi
         i=$((i+1))
-    done <<< "$1"
+    done
     exit 1
 }
 
 trap 'restore_term' EXIT
 save_term
-clear_screen
-move_cursor_xy 0 0
 
 while true; do
     info=$(lsblk --list)
@@ -43,15 +42,14 @@ while true; do
     unmounted=$(printf "%s\n" "$partitions" | grep "[[:space:]]*part[[:space:]]*$" | nl -w1 -s' - ')
 
     printf "l - list devices\nm - mount a partition\nu - unmount a partition\ne - eject a device\np - power off a device\nq - quit\n\n"
-    read -r -n1 -p "Select an option: " key
+    printf "Select an option: "
+    read -r key
 
     clear_screen
-    move_cursor_xy 0 0
 
     case $key in
         "l")
-            lsblk
-            ;;
+            lsblk ;;
         "m") 
             selection_prompt "Select a partition to mount:" "$unmounted"
             selected=$(select_from "$unmounted") \
