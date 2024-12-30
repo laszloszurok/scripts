@@ -33,6 +33,7 @@ select_from() {
 
 trap 'restore_term' EXIT
 save_term
+clear_screen
 
 while true; do
     info=$(lsblk --list)
