@@ -21,14 +21,13 @@ selection_prompt() {
 # $1: list to choose from
 select_from() {
     i=1
-    printf "%s" "$1" | while IFS= read -r line; do
+    printf "%s\n" "$1" | while IFS= read -r line; do
         if [ "$i" = "$num" ]; then
             printf "%s\n" "$line" | awk '{ print $3 }'
-            return
+            break
         fi
         i=$((i+1))
     done
-    exit 1
 }
 
 trap 'restore_term' EXIT
@@ -53,28 +52,40 @@ while true; do
             lsblk ;;
         "m") 
             selection_prompt "Select a partition to mount:" "$unmounted"
-            selected=$(select_from "$unmounted") \
-                && udisksctl mount -b "/dev/$selected" \
-                || printf "Selection failed\n"
+            selected=$(select_from "$unmounted")
+            if [ -n "$selected" ]; then
+                udisksctl mount -b "/dev/$selected"
+            else
+                printf "Selection failed\n"
+            fi
             ;;
         "u") 
             selection_prompt "Select a partition to unmount:" "$mounted"
-            selected=$(select_from "$mounted") \
-                && udisksctl unmount -b "/dev/$selected" \
-                || printf "Selection failed\n"
+            selected=$(select_from "$mounted")
+            if [ -n "$selected" ]; then
+                udisksctl unmount -b "/dev/$selected"
+            else
+                printf "Selection failed\n"
+            fi
             ;;
         "e") 
             selection_prompt "Select a device to eject:" "$devices"
-            selected=$(select_from "$devices") \
-                && udisksctl unmount -b "/dev/$selected"?* \
-                && udisksctl power-off -b "/dev/$selected" \
-                || printf "Selection failed\n"
+            selected=$(select_from "$devices")
+            if [ -n "$selected" ]; then
+                udisksctl unmount -b "/dev/$selected"?*
+                udisksctl power-off -b "/dev/$selected"
+            else
+                printf "Selection failed\n"
+            fi
             ;;
         "p")
             selection_prompt "Select a device to power off:" "$devices"
-            selected=$(select_from "$devices") \
-                && udisksctl power-off -b "/dev/$selected" \
-                || printf "Selection failed\n"
+            selected=$(select_from "$devices")
+            if [ -n "$selected" ]; then
+                udisksctl power-off -b "/dev/$selected"
+            else
+                printf "Selection failed\n"
+            fi
             ;;
         "q")
             exit 0 ;;
