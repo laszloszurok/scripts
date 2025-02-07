@@ -4,8 +4,8 @@
 # block devices. It uses the output of lsblk to get device names and
 # udisksctl to execute a selected action.
 
-save_term() { tput smcup; }
-restore_term() { tput rmcup; }
+save_term() { tput smcup; stty_orig=$(stty -g); }
+restore_term() { tput rmcup; stty "$stty_orig"; }
 clear_screen() { tput clear; }
 
 # $1 : prompt str, $2 : list to choose from
