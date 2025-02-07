@@ -12,11 +12,12 @@ notify() {
 data_path=~/.local/share/wifi_state
 current_state=$(cat $data_path)
 
-ssid=$(nmcli -get-values name,device connection show --active | grep wlp1s0 | cut -d : -f1)
+#ssid=$(nmcli -get-values name,device connection show --active | grep wlp1s0 | cut -d : -f1)
+ssid=$(iw dev wlp1s0 link | grep 'SSID: .*' | cut -d ' ' -f 2-)
 signal=$(awk 'NR==3 {printf("%.0f%%",$3*10/7)}' /proc/net/wireless)
 [ -z "$signal" ] && signal="0%"
 
-airplane_mode=$(rfkill list | grep yes)
+airplane_mode=$(rfkill | grep wlan | grep --word-regexp blocked)
 
 title="Checking connection"
 sub="Please wait..."
@@ -43,10 +44,10 @@ else
             sub="Online, signal: $signal\nWireguard tunnel active"
             status="wireguard"
         fi
-        if ! host -W 3 google.com > /dev/null 2>&1; then
-            sub="Online, signal: $signal\nDNS resolution timeout"
-            status="dns-timeout"
-        fi
+        # if ! host -W 3 google.com > /dev/null 2>&1; then
+        #     sub="Online, signal: $signal\nDNS resolution timeout"
+        #     status="dns-timeout"
+        # fi
     else
         icon=""
         sub="Offline, signal: $signal"
