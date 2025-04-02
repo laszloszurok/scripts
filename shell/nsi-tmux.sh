@@ -4,7 +4,7 @@
 
 socket=~/.cache/nvim/server.sock
 
-if ! pidof tmux; then
+if [ ! "$TERM" = "tmux-256color" ] || [ -z "$TMUX" ]; then
     nvim "$@"
 elif echo "$@" | grep vifm.rename; then
     nvim "$@"
