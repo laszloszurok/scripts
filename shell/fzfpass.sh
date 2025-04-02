@@ -80,7 +80,7 @@ if [ -n "$pass_sel" ] && echo "$password_files" | grep --silent "$pass_sel"; the
         echo "$pass_sel"
         pass show "$pass_sel"
     else
-        notify-send "Copying $pass_sel"
+        notify-send "Copying $pass_sel" > /dev/null 2>&1
         pass -c "$pass_sel"
     fi
     update_cache "$pass_sel"
