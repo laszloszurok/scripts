@@ -7,5 +7,5 @@ if [ ! "$TERM" = "tmux-256color" ] || [ -z "$TMUX" ]; then
 else
     killall lazygit
     tmux select-window -t lazygit
-    tmux send-keys -t lazygit.0 "cd $PWD && lazygit $*" Enter
+    tmux send-keys -t lazygit.1 "cd $PWD && lazygit $*" Enter
 fi

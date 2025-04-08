@@ -14,7 +14,7 @@ else
         nvim --server "$socket" --remote "$@" > /dev/null 2>&1
         tmux select-window -t neovim
     else
-        tmux send-keys -t neovim.0 "cd $PWD && nvim $* --listen '$socket'" Enter
+        tmux send-keys -t neovim.1 "cd $PWD && nvim $* --listen '$socket'" Enter
         tmux select-window -t neovim
     fi
 fi
