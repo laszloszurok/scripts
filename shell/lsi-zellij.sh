@@ -7,6 +7,6 @@ if [ -z "$ZELLIJ_SESSION_NAME" ]; then
 else
     killall lazygit
     zellij action go-to-tab-name lazygit
-    zellij action write-chars "lazygit --path $PWD"
+    zellij action write-chars "cd $PWD && lazygit"
     zellij action write 13
 fi
