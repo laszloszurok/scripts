@@ -11,8 +11,8 @@ nvim_start_listen() {
 }
 
 nvim_attach() {
-    nvim --server "$socket" --remote-send "<esc><esc>:cd $PWD<cr>" > /dev/null 2>&1
-    nvim --server "$socket" --remote "$@" > /dev/null 2>&1
+    nvim --embed --server "$socket" --remote-send "<esc><esc>:cd $PWD<cr>"
+    nvim --embed --server "$socket" --remote "$@"
     zellij action go-to-tab-name neovim
 }
 
@@ -31,4 +31,4 @@ else
     else
         nvim_start_listen "$@"
     fi
-fi
+fi > /dev/null 2>&1
