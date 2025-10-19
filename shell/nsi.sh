@@ -18,6 +18,6 @@ else
             fi
         fi
     else
-        setsid -f kitty --class neovim-single-instance nvim "$@" --listen "$socket"
+        setsid -f kitty --class neovim-single-instance nvim "$@" --listen "$socket" > /dev/null 2>&1
     fi
-fi > /dev/null 2>&1
+fi
