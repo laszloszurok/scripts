@@ -2,7 +2,7 @@
 
 # neovim single instance in tmux
 
-socket=~/.cache/nvim/server.sock
+socket=/tmp/nvim-server.sock
 
 if [ ! "$TERM" = "tmux-256color" ] || [ -z "$TMUX" ]; then
     nvim "$@"

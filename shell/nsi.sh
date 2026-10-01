@@ -2,7 +2,7 @@
 
 # neovim single instance
 
-socket=~/.cache/nvim/server.sock
+socket=/tmp/nvim-server.sock
 
 if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
     nvim "$@"

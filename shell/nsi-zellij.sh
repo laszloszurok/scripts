@@ -2,7 +2,7 @@
 
 # neovim single instance in zellij
 
-socket=~/.cache/nvim/server.sock
+socket=/tmp/nvim-server.sock
 
 nvim_start_listen() {
     zellij action go-to-tab-name neovim
