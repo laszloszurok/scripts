@@ -6,8 +6,7 @@ socket=/tmp/nvim-server.sock
 
 nvim_start_listen() {
     zellij action go-to-tab-name neovim
-    zellij action write-chars "cd $PWD && nvim $* --listen '$socket'"
-    zellij action write 13
+    zellij run --in-place --close-replaced-pane -- nvim $* --listen "$socket"
 }
 
 nvim_attach() {
